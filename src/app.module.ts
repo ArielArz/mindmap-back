@@ -10,6 +10,7 @@ import { UserStateModule } from './modules/user-state/user-state.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import typeormConfig from './config/typeorm.config';
+import { MailerModule } from './modules/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import typeormConfig from './config/typeorm.config';
     UsersModule,
     LocationModule,
     UserStateModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
