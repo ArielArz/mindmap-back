@@ -7,10 +7,23 @@ export class FilesUploadRepository {
   async uploadFile(file: Express.Multer.File): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream(
-        { resource_type: 'auto' }, // auto detecta imagen/audio/video/pdf
+        { resource_type: 'auto' },
         (error, result) => {
-          if (error || !result) reject(error || new Error('Upload failed'));
-          else resolve(result);
+          if (error) {
+            const message =
+              typeof error === 'string'
+                ? error
+                : error instanceof Error
+                ? error.message
+                : JSON.stringify(error);
+            return reject(new Error(message)); // 👈 Este sí cumple la regla
+          }
+
+          if (!result) {
+            return reject(new Error('Upload failed'));
+          }
+
+          resolve(result);
         },
       );
 
