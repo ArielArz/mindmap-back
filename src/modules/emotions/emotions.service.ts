@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEmotionDto } from './dto/create-emotion.dto';
-import { UpdateEmotionDto } from './dto/update-emotion.dto';
+import { DataSource } from "typeorm";
+import { CreateEmotionDto } from "./dto/create-emotion.dto";
+import { UpdateEmotionDto } from "./dto/update-emotion.dto";
+import { seedEmotions } from "./emotion.seeder";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class EmotionsService {
-  create(createEmotionDto: CreateEmotionDto) {
-    return 'This action adds a new emotion';
+  constructor(private dataSource: DataSource) { }
+
+  async create(createEmotionDto: CreateEmotionDto) {
+    const repo = this.dataSource.getRepository('emotion');
+    const existing = await repo.findOneBy({ name: createEmotionDto.name });
+    if (existing) {
+      return { message: 'La emoción ya existe' };
+    }
+    const newEmotion = repo.create(createEmotionDto);
+    return repo.save(newEmotion);
   }
 
-  findAll() {
-    return `This action returns all emotions`;
+  async findAll() {
+    return this.dataSource.getRepository('emotion').find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} emotion`;
+  async findOne(id: string) {
+    return this.dataSource.getRepository('emotion').findOneBy({ id });
   }
 
-  update(id: number, updateEmotionDto: UpdateEmotionDto) {
-    return `This action updates a #${id} emotion`;
+  async update(id: string, updateEmotionDto: UpdateEmotionDto) {
+    const repo = this.dataSource.getRepository('emotion');
+    await repo.update(id, updateEmotionDto);
+    return repo.findOneBy({ id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} emotion`;
+  async remove(id: string) {
+    const repo = this.dataSource.getRepository('emotion');
+    await repo.delete(id);
+    return { message: 'Emoción eliminada' };
+  }
+
+  async addEmotions() {
+    await seedEmotions(this.dataSource);
+    return { message: 'Emociones precargadas' };
   }
 }
