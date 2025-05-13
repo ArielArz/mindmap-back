@@ -8,7 +8,7 @@ export class MailerController {
   @Get('test')
   async sendTestEmail() {
     const testEmail = 'miguelfuenzalida.n97@gmail.com';
-    const testName = 'Miguel';
+    const testName = 'Ariel';
 
     await this.mailerService.sendWelcomeEmail(testEmail, testName);
     return { message: `Test email sent to ${testEmail}` };
