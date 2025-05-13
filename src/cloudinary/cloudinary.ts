@@ -12,6 +12,6 @@ export const CloudinaryConfig = {
       api_secret: process.env.CLOUDINARY_API_SECRET,
     });
 
-    return cloudinary as ConfigOptions; // ⚠️ Aseguramos que TypeScript entienda el tipo
+    return cloudinary as ConfigOptions;
   },
 };

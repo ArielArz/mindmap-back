@@ -21,15 +21,15 @@ export class ResourcesService {
   ) {}
 
   async create(dto: CreateResourceDto, file: Express.Multer.File): Promise<Resource> {
-    const user = await this.userRepo.findOneBy({ id: dto.uploadedById });
-    if (!user) throw new NotFoundException('User not found');
+    // const user = await this.userRepo.findOneBy({ id: dto.uploadedById });
+    // if (!user) throw new NotFoundException('User not found');
 
     const uploadResult = await this.cloudinary.uploadFile(file);
 
     const resource = this.resourceRepo.create({
       ...dto,
       cloudinaryUrl: uploadResult.secure_url,
-      uploadedBy: user,
+      // uploadedBy: user,
     });
 
     return this.resourceRepo.save(resource);
