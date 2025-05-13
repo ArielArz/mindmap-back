@@ -8,18 +8,34 @@ import { UsersModule } from './modules/users/users.module';
 import { LocationModule } from './modules/location/location.module';
 import { UserStateModule } from './modules/user-state/user-state.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DataSourceOptions } from 'typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import typeormConfig from './config/typeorm.config';
 import { MailerModule } from './modules/mailer/mailer.module';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env.local',
+      load: [typeormConfig],
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: typeormConfig,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const typeOrmConfig = config.get<DataSourceOptions>('typeorm');
+        return {
+          ...typeOrmConfig,
+          autoLoadEntities: true,
+        };
+      },
+    }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1h' },
     }),
     AuthModule,
     EmotionsModule,
