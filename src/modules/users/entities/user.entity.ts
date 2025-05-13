@@ -7,25 +7,26 @@ import {
 } from 'typeorm';
 import { UserRole } from './enum/user-role.enum';
 
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
+  @Column({ type: 'varchar', length: 100 ,nullable: false })
   name: string;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ type: 'varchar', unique: true, nullable: false })
   email: string;
 
-  @Column({ nullable: false })
+  @Column({ type: 'varchar', nullable: false })
   password: string;
 
   @Column({ nullable: true })
   address: string;
 
-  @Column({ name: 'profile_image', nullable: true })
-  profileImage: string;
+  @Column({ name: 'varchar', nullable: true })
+  profileImage?: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.FREE })
   role: UserRole;
