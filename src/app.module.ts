@@ -8,8 +8,8 @@ import { UsersModule } from './modules/users/users.module';
 import { LocationModule } from './modules/location/location.module';
 import { UserStateModule } from './modules/user-state/user-state.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from './config/typeorm.config';
 import { ConfigModule } from '@nestjs/config';
+import typeormConfig from './config/typeorm.config';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env.local',
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: typeOrmConfig,
+      useFactory: typeormConfig,
     }),
     AuthModule,
     EmotionsModule,
