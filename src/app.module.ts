@@ -1,15 +1,32 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { EmotionsModule } from './emotions/emotions.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { ResourcesModule } from './resources/resources.module';
-import { UsersModule } from './users/users.module';
-import { FileUploadModule } from './file-upload/file-upload.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { EmotionsModule } from './modules/emotions/emotions.module';
+import { ResourcesModule } from './modules/resources/resources.module';
+import { UsersModule } from './modules/users/users.module';
+import { LocationModule } from './modules/location/location.module';
+import { UserStateModule } from './modules/user-state/user-state.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfig } from './config/typeorm.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [AuthModule, EmotionsModule, NotificationsModule, ResourcesModule, UsersModule, FileUploadModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env.local',
+    }),
+    TypeOrmModule.forRootAsync({
+      useFactory: typeOrmConfig,
+    }),
+    AuthModule,
+    EmotionsModule,
+    ResourcesModule,
+    UsersModule,
+    LocationModule,
+    UserStateModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
