@@ -6,9 +6,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { FileType } from '../common/enums/file-type.enum';
-import { FileExtension } from '../common/enums/file-extension.enum';
+import { User } from '../../users/entities/user.entity';
+import { FileType } from './enum/file-type.enum';
+import { FileExtension } from './enum/file-extension.enum';
 
 @Entity('resources')
 export class Resource {

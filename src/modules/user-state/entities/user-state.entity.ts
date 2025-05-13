@@ -6,8 +6,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Emotion } from './emotion.entity';
+import { User } from '../../users/entities/user.entity';
+import { Emotion } from '../../emotions/entities/emotion.entity';
 
 @Entity('user_state')
 export class UserState {
