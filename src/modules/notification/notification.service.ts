@@ -10,17 +10,17 @@ export class NotificationService {
     private readonly userService: UsersService,
   ) {}
 
-  // @Cron('*/30 * * * * *') // Cada semana (domingo a las 00:00)
-  // async sendEmailsUsers() {
-  //   const premiumUsers = await this.userService.getPremiumUsers();
+  @Cron(CronExpression.EVERY_WEEKDAY)
+  async sendEmailsUsers() {
+    const premiumUsers = await this.userService.getPremiumUsers();
 
-  //   for (const user of premiumUsers) {
-  //     try {
-  //       await this.mailerService.sendWeeklyEmail(user.email, user.name);
-  //       console.log(`Correo enviado a ${user.email}`);
-  //     } catch (error) {
-  //       console.error(`Error al enviar correo a ${user.email}`, error);
-  //     }
-  //   }
-  // }
+    for (const user of premiumUsers) {
+      try {
+        await this.mailerService.sendWeeklyEmail(user.email, user.name);
+        console.log(`Correo enviado a ${user.email}`);
+      } catch (error) {
+        console.error(`Error al enviar correo a ${user.email}`, error);
+      }
+    }
+  }
 }
