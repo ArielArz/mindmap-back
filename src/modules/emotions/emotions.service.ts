@@ -1,45 +1,50 @@
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { CreateEmotionDto } from "./dto/create-emotion.dto";
 import { UpdateEmotionDto } from "./dto/update-emotion.dto";
 import { seedEmotions } from "./emotion.seeder";
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Emotion } from "./entities/emotion.entity";
 
 @Injectable()
 export class EmotionsService {
-  constructor(private dataSource: DataSource) { }
+  constructor(
+    @InjectRepository(Emotion)
+    private readonly emotionRepo: Repository<Emotion>
+  ) { }
 
   async create(createEmotionDto: CreateEmotionDto) {
-    const repo = this.dataSource.getRepository('emotion');
-    const existing = await repo.findOneBy({ name: createEmotionDto.name });
+
+    const existing = await this.emotionRepo.findOneBy({ name: createEmotionDto.name });
     if (existing) {
       return { message: 'La emoción ya existe' };
     }
-    const newEmotion = repo.create(createEmotionDto);
-    return repo.save(newEmotion);
+    const newEmotion = this.emotionRepo.create(createEmotionDto);
+    return this.emotionRepo.save(newEmotion);
   }
 
   async findAll() {
-    return this.dataSource.getRepository('emotion').find();
+    return this.emotionRepo.find();
   }
 
   async findOne(id: string) {
-    return this.dataSource.getRepository('emotion').findOneBy({ id });
+    return this.emotionRepo.findOneBy({ id });
   }
 
   async update(id: string, updateEmotionDto: UpdateEmotionDto) {
-    const repo = this.dataSource.getRepository('emotion');
-    await repo.update(id, updateEmotionDto);
-    return repo.findOneBy({ id });
+    await this.emotionRepo.update(id, updateEmotionDto);
+    return this.emotionRepo.findOneBy({ id });
   }
 
   async remove(id: string) {
-    const repo = this.dataSource.getRepository('emotion');
-    await repo.delete(id);
+    await this.emotionRepo.delete(id);
     return { message: 'Emoción eliminada' };
   }
 
   async addEmotions() {
-    await seedEmotions(this.dataSource);
+    console.log('Entró al método addEmotions');
+
+    await seedEmotions(this.emotionRepo);
     return { message: 'Emociones precargadas' };
   }
 }
