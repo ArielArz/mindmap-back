@@ -23,9 +23,6 @@ export class UserState {
   @Column({ nullable: false })
   date: Date;
 
-  @Column({ type: 'int', nullable: false })
-  intensity: number;
-
   @Column({ type: 'text', nullable: true })
   description: string;
 
