@@ -12,7 +12,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataSourceOptions } from 'typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import typeormConfig from './config/typeorm.config';
-
+import { MailerModule } from './modules/mailer/mailer.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -36,12 +37,14 @@ import typeormConfig from './config/typeorm.config';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     EmotionsModule,
     ResourcesModule,
     UsersModule,
     LocationModule,
     UserStateModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
