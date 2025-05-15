@@ -1,5 +1,5 @@
 
-import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { FileType } from '../entities/enum/file-type.enum';
 import { FileExtension } from '../entities/enum/file-extension.enum';
 

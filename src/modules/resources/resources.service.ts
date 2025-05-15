@@ -29,6 +29,8 @@ export class ResourcesService {
     const resource = this.resourceRepo.create({
       ...dto,
       cloudinaryUrl: uploadResult.secure_url,
+      publicId: uploadResult.public_id,
+      resourceType: uploadResult.resource_type,
       // uploadedBy: user,
     });
 
@@ -56,6 +58,13 @@ export class ResourcesService {
 
   async remove(id: string): Promise<void> {
     const resource = await this.findOne(id);
+    if (!resource) throw new NotFoundException('Recurso no encontrado');
+
+    // Eliminar archivo de Cloudinary si tenés public_id
+    if (resource.publicId) {
+      await this.cloudinary.deleteFile(resource.publicId, resource.resourceType);
+    }
+
     await this.resourceRepo.remove(resource);
   }
 }

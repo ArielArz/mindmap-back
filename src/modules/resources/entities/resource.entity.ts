@@ -27,6 +27,12 @@ export class Resource {
   @Column()
   cloudinaryUrl: string;
 
+  @Column({ nullable: true })
+  publicId: string;
+
+  @Column({ nullable: true })
+  resourceType: string;
+
   @Column({ type: 'text', nullable: true })
   description: string;
 
