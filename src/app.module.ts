@@ -14,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
 import typeormConfig from './config/typeorm.config';
 import { MailerModule } from './modules/mailer/mailer.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ContactModule } from './modules/contact/contact.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     LocationModule,
     UserStateModule,
     MailerModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],
