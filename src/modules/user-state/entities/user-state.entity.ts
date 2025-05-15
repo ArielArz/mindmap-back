@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Emotion } from '../../emotions/entities/emotion.entity';
@@ -14,7 +15,8 @@ export class UserState {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.states, { eager: false, nullable: false })
+  @ManyToOne(() => User, user => user.states, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
   user: User;
 
   @ManyToOne(() => Emotion, { eager: true, nullable: false })
@@ -27,7 +29,7 @@ export class UserState {
   date: Date;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  comentario: string;
 
   @CreateDateColumn()
   createdAt: Date;

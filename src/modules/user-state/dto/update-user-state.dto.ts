@@ -4,12 +4,6 @@ export class UpdateUserStateDto {
 
   @IsOptional()
   @IsString()
-  description?: string;
-
-  @IsNumber()
-  @IsOptional()
-  intensidad?: number;
-
-  //emotionId del update
+  comentario?: string; //DEFINIR TIEMPO DENTRO DEL DIA Y QUE SE PUEDA MODIFICAR UNA SOLA VEZ
 
 }

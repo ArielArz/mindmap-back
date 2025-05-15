@@ -7,78 +7,78 @@ import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import { AuthenticationGuard } from 'src/guard/auth.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    @InjectRepository(User) private readonly userRepository: Repository<User>
-  ) {}
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
+  ) { }
 
-  // Registro local de usuario
   @Post('signup')
   async signup(@Body() data: SignUpDto) {
-    const user = await this.userRepository.findOneBy({ email: data.email });
-    if(!user) {
-      // Por momento solo registramos sin enviar correo
-      return await this.authService.signUp(data);
-    }
-    throw new BadRequestException('El correo ya esta registrado');
+    const user = await this.userRepository.findOneBy({ email: data.email })
+    return await this.authService.signUp(data);
   }
 
-  // Inicio de sesion local
-  // @Post('signin')
-  // async signin(@Body() data: SignInDto, @Res({ passthrough: true }) res: Response){
-  //   const { token, userWhitOutPassword } = await this.authService.signIn(data);
 
-  //   res.cookie('token', token, {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: 'none',
-  //     maxAge: 1000 * 60 * 60 * 24,
-  //   });
-  // }
+  @Post('signin')
+  async signin(@Body() data: SignInDto, @Res({ passthrough: true }) res: Response) {
+    const { token, user } = await this.authService.signIn(data);
 
-  // // validar sesion activa
-  // @Post('session')
-  // @UseGuards(AuthenticationGuard)
-  // getSession(@Req() req){
-  //   return req.user;
-  // }
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 1000 * 60 * 60 * 24, // 1 día
+    });
 
-  // // Google OAuth - inicio del flujo
-  // @Get('google')
-  // @UseGuards(AuthGuard('google'))
-  // async googleAuth(){
-  //   console.log('Inicia el proceso de autenticacion con Google.');
-  // }
+    // Para no enviar password en la respuesta:
+    const { password, ...userWithoutPassword } = user;
 
-  // // Google OAuth - redireccion
-  // @Get('google/redirect')
-  // @UseGuards(AuthGuard('google'))
-  // async googleAuthRedirect(@Req() requestAnimationFrame, @Res({ passthrough: true }) res: Response){
-  //   const { user, token } = await this.authService.validateGoogleUser(req.user);
-
-  //   res.cookie('token', token, {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: 'none',
-  //     maxAge: 1000 * 60 * 60 * 24
-  //   });
-  //   res.redirected(`${process.env.API_FRONT}/sentia`);
-  // }
-
-  // // Logout: limpiar cookie
-  // @Get('logout')
-  // @UseGuards(AuthenticationGuard)
-  // async logout(@Res({ passthrough: true }) res: Response){
-  //   res.clearCookie('token', {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: 'none',
-  //     path: '/'
-  //   });
-  //   return res.json({ message: 'Sesion cerrada correctamente' });
-  // }
-
+    return { user: userWithoutPassword, token };
+  }
 }
+// // validar sesion activa
+// @Post('session')
+// @UseGuards(AuthenticationGuard)
+// getSession(@Req() req){
+//   return req.user;
+// }
+
+// // Google OAuth - inicio del flujo
+// @Get('google')
+// @UseGuards(AuthGuard('google'))
+// async googleAuth(){
+//   console.log('Inicia el proceso de autenticacion con Google.');
+// }
+
+// // Google OAuth - redireccion
+// @Get('google/redirect')
+// @UseGuards(AuthGuard('google'))
+// async googleAuthRedirect(@Req() requestAnimationFrame, @Res({ passthrough: true }) res: Response){
+//   const { user, token } = await this.authService.validateGoogleUser(req.user);
+
+//   res.cookie('token', token, {
+//     httpOnly: true,
+//     secure: true,
+//     sameSite: 'none',
+//     maxAge: 1000 * 60 * 60 * 24
+//   });
+//   res.redirected(`${process.env.API_FRONT}/sentia`);
+// }
+
+// // Logout: limpiar cookie
+// @Get('logout')
+// @UseGuards(AuthenticationGuard)
+// async logout(@Res({ passthrough: true }) res: Response){
+//   res.clearCookie('token', {
+//     httpOnly: true,
+//     secure: true,
+//     sameSite: 'none',
+//     path: '/'
+//   });
+//   return res.json({ message: 'Sesion cerrada correctamente' });
+// }
