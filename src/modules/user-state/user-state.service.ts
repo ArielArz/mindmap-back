@@ -21,7 +21,7 @@ export class UserStateService {
   ) { }
 
   async create(createUserStateDto: CreateUserStateDto) {
-    const { userId, emotionId, intensidad, description } = createUserStateDto;
+    const { userId, emotionId, intensidad, comentario } = createUserStateDto;
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
@@ -34,7 +34,7 @@ export class UserStateService {
       emotion,
       intensidad,
       date: new Date(),
-      description,
+      comentario,
     });
 
     return await this.userStateRepository.save(newUserState);
@@ -67,19 +67,19 @@ export class UserStateService {
     //   state.emotion = emotion;
     // }
 
-    if (dto.intensidad !== undefined) state.intensidad = dto.intensidad;
-    if (dto.description !== undefined) state.description = dto.description;
+    // if (dto.intensidad !== undefined) state.intensidad = dto.intensidad;
+    if (dto.comentario !== undefined) state.comentario = dto.comentario;
 
     return await this.userStateRepository.save(state);
   }
 
-  async remove(id: number) {
-    const result = await this.userStateRepository.delete({ id: String(id) });
+  async remove(id: string) {
+    const result = await this.userStateRepository.delete(id);
 
     if (result.affected === 0) {
       throw new NotFoundException(`Estado con ID ${id} no encontrado`);
     }
 
-    return { message: `Estado con ID ${id} eliminado correctamente` };
+    return { message: `${id} eliminado correctamente` };
   }
 }

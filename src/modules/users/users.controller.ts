@@ -6,12 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
+import { AuthenticationGuard } from 'src/guard/auth.guard';
+import { UserRole } from './entities/enum/user-role.enum';
+import { RolesGuard } from 'src/guard/roles.guard';
 @ApiTags('users')
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
@@ -33,6 +39,8 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthenticationGuard, RolesGuard)
   @ApiOperation({ summary: 'Actualizar un usuario existente' })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDto);

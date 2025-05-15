@@ -1,4 +1,4 @@
-import { IsUUID, IsDateString, IsOptional, IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsUUID, IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
 export class CreateUserStateDto {
   @IsUUID()
@@ -11,9 +11,9 @@ export class CreateUserStateDto {
 
   @IsNumber()
   @IsNotEmpty()
-  intensidad?: number;
+  intensidad?: number; //VER SI SIGUE O COMO LO USAMOS
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  description?: string;
+  comentario: string;
 }

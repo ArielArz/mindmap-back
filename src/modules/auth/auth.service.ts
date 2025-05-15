@@ -13,15 +13,19 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
-  // Registro
   async signUp(signUpDto: SignUpDto) {
     const { email, password } = signUpDto;
 
     const existingUser = await this.usersService.findOneByEmail(email);
-    if(existingUser) {
-      throw new BadRequestException('El correo ya esta registrado');
+
+    if (existingUser) {
+      if (existingUser.password) {
+        throw new BadRequestException('El correo ya está registrado manualmente');
+      } else {
+        throw new BadRequestException('El correo está registrado mediante Google');
+      }
     }
 
     const user = await this.usersService.createUser(signUpDto);
@@ -37,22 +41,24 @@ export class AuthService {
     const { email, password } = signInDto;
 
     const user = await this.usersService.findOneByEmail(email);
-    if(!user) throw new UnauthorizedException('Credenciales invalidas');
+    console.log('Usuario encontrado:', user);
+
+    if (!user) throw new UnauthorizedException('Credenciales invalidas - E');
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if(!isPasswordValid) throw new UnauthorizedException('Credenciales invalidas');
+    if (!isPasswordValid) throw new UnauthorizedException('Credenciales invalidas -BCR');
 
     const payload = { sub: user.id, email: user.email, role: user.role };
     const token = this.jwtService.sign(payload);
 
-    return { token };
+    return { token, user };
   }
 
   // Autenticacion con Google OAuth
   async validateGoogleUser(googleUser: any) {
     let user = await this.usersService.findOneByEmail(googleUser.email);
 
-    if(!user){
+    if (!user) {
       user = await this.usersService.createUser({
         name: googleUser.name,
         email: googleUser.email,

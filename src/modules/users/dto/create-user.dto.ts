@@ -30,7 +30,6 @@ export class UserDto {
 
   @ApiProperty({ example: 'Calle Falsa 123, Córdoba' })
   @IsString({ message: 'La dirección debe ser una cadena de texto.' })
-  // @IsNotEmpty({ message: 'La dirección es obligatoria.' })
   @Length(3, 80, { message: 'La dirección debe tener entre 3 y 80 caracteres.' })
   address: string;
 

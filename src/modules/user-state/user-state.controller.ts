@@ -29,6 +29,6 @@ export class UserStateController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.userStateService.remove(+id);
+    return this.userStateService.remove(id);
   }
 }
