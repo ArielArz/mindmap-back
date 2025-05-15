@@ -1,26 +1,71 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { SignUpDto } from './dto/signup.dto';
+import { SignInDto } from './dto/signin.dto';
+import * as bcrypt from 'bcrypt';
+import { User } from '../users/entities/user.entity';
+
+
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  // Registro
+  async signUp(signUpDto: SignUpDto) {
+    const { email, password } = signUpDto;
+
+    const existingUser = await this.usersService.findOneByEmail(email);
+    if(existingUser) {
+      throw new BadRequestException('El correo ya esta registrado');
+    }
+
+    const user = await this.usersService.createUser(signUpDto);
+
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = this.jwtService.sign(payload);
+
+    return { token };
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  // Inicio de sesion
+  async signIn(signInDto: SignInDto) {
+    const { email, password } = signInDto;
+
+    const user = await this.usersService.findOneByEmail(email);
+    if(!user) throw new UnauthorizedException('Credenciales invalidas');
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if(!isPasswordValid) throw new UnauthorizedException('Credenciales invalidas');
+
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = this.jwtService.sign(payload);
+
+    return { token };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+  // Autenticacion con Google OAuth
+  async validateGoogleUser(googleUser: any) {
+    let user = await this.usersService.findOneByEmail(googleUser.email);
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if(!user){
+      user = await this.usersService.createUser({
+        name: googleUser.name,
+        email: googleUser.email,
+        password: '', // No se necesita para Google
+        confirmPassword: '',
+        address: googleUser.address || 'Cuenta de Google',
+        profileImage: googleUser.profileImage || '',
+      });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const payload = { sub: user.id, email: user.email, role: user };
+    const token = this.jwtService.sign(payload);
+
+    return { token, user };
   }
 }
