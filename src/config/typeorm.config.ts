@@ -2,9 +2,6 @@ import { registerAs } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './env';
 
-
-
-
 const config: DataSourceOptions = {
   type: 'postgres',
   host: DB_HOST,
