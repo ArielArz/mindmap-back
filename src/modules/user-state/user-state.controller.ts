@@ -3,9 +3,9 @@ import { UserStateService } from './user-state.service';
 import { CreateUserStateDto } from './dto/create-user-state.dto';
 import { UpdateUserStateDto } from './dto/update-user-state.dto';
 
-@Controller('user-state')
+@Controller('user_state')
 export class UserStateController {
-  constructor(private readonly userStateService: UserStateService) {}
+  constructor(private readonly userStateService: UserStateService) { }
 
   @Post()
   create(@Body() createUserStateDto: CreateUserStateDto) {

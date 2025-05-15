@@ -14,10 +14,10 @@ export class UserState {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.states, { eager: false, nullable: false })
   user: User;
 
-  @ManyToOne(() => Emotion)
+  @ManyToOne(() => Emotion, { eager: true, nullable: false })
   emotion: Emotion;
 
   @Column({ nullable: false })

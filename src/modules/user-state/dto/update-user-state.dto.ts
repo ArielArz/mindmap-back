@@ -10,4 +10,6 @@ export class UpdateUserStateDto {
   @IsOptional()
   intensidad?: number;
 
+  //emotionId del update
+
 }
