@@ -17,21 +17,21 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly mailerService: MailerService,
-  ) {}
+  ) { }
 
   async findAll() {
     return this.userRepository.find();
   }
 
   async findOne(id: string) {
-    const foundUser = await this.userRepository.findOne({ where: { id } });
+    const foundUser = await this.userRepository.findOne({ where: { id }, relations: ['states', 'states.emotion'] });
     if (!foundUser) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`Usuario con id ${id} no encontrado`);
     }
     return foundUser;
   }
 
-  async findOneByEmail(email: string){
+  async findOneByEmail(email: string) {
     return await this.userRepository.findOneBy({ email: email });
   }
 
@@ -65,14 +65,23 @@ export class UsersService {
   async remove(id: string) {
     const foundUser = await this.userRepository.findOne({ where: { id } });
     if (!foundUser) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Usuario no encontrado');
     }
     return await this.userRepository.remove(foundUser);
   }
 
-  async updateUser(user: User): Promise<User> {
-    return this.userRepository.save(user);
+  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const updatedUser = { ...user, ...updateUserDto };
+
+    return this.userRepository.save(updatedUser);
   }
+
 
   async getPremiumUsers(): Promise<User[]> {
     const premiumUsers = await this.userRepository.find({
@@ -80,7 +89,7 @@ export class UsersService {
     });
 
     if (!premiumUsers || premiumUsers.length === 0) {
-      throw new NotFoundException(`There are no premium users`);
+      throw new NotFoundException(`No son usuarios premium`);
     }
     return premiumUsers;
   }

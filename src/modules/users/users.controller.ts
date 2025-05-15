@@ -10,15 +10,15 @@ import {
 import { UsersService } from './users.service';
 import { UserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
-
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
+  @ApiOperation({ summary: 'Crear un nuevo usuario' })
   create(@Body() createUserDto: UserDto) {
-    return this.usersService.createUser(createUserDto);
     return this.usersService.createUser(createUserDto);
   }
 
@@ -30,17 +30,18 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
-    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() user: User) {
-    return this.usersService.updateUser(user);
+  @ApiOperation({ summary: 'Actualizar un usuario existente' })
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(id, updateUserDto);
   }
 
+
   @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar un usuario existente' })
   remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
     return this.usersService.remove(id);
   }
 }
