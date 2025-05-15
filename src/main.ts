@@ -2,10 +2,28 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { loggerDI } from './middlewares/loggerDI.middleware';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const config = new DocumentBuilder()
+    .setTitle('Sentia Backend API')
+    .setDescription(
+      'Proyecto Final de Full Stack Developer, Bootcamp soyHenry',
+    )
+    .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('users')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+
+
+
   const PORT = process.env.PORT ?? 3000;
 
   // Middleware personalizado

@@ -1,18 +1,17 @@
-import { IsUUID, IsDateString, IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsUUID, IsDateString, IsOptional, IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
 export class CreateUserStateDto {
   @IsUUID()
+  @IsNotEmpty()
   userId: string;
 
   @IsUUID()
+  @IsNotEmpty()
   emotionId: string;
 
   @IsNumber()
-  @IsOptional()
+  @IsNotEmpty()
   intensidad?: number;
-
-  @IsDateString()
-  date: string; // formato YYYY-MM-DD
 
   @IsOptional()
   @IsString()

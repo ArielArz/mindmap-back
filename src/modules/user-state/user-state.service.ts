@@ -1,26 +1,85 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserStateDto } from './dto/create-user-state.dto';
 import { UpdateUserStateDto } from './dto/update-user-state.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserState } from './entities/user-state.entity';
+import { User } from '../users/entities/user.entity';
+import { Emotion } from '../emotions/entities/emotion.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserStateService {
-  create(createUserStateDto: CreateUserStateDto) {
-    return 'This action adds a new userState';
+  constructor(
+    @InjectRepository(UserState)
+    private readonly userStateRepository: Repository<UserState>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Emotion)
+    private readonly emotionRepository: Repository<Emotion>,
+  ) { }
+
+  async create(createUserStateDto: CreateUserStateDto) {
+    const { userId, emotionId, intensidad, description } = createUserStateDto;
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
+
+    const emotion = await this.emotionRepository.findOne({ where: { id: emotionId } });
+    if (!emotion) throw new NotFoundException(`Emoción con ID ${emotionId} no encontrada`);
+
+    const newUserState = this.userStateRepository.create({
+      user,
+      emotion,
+      intensidad,
+      date: new Date(),
+      description,
+    });
+
+    return await this.userStateRepository.save(newUserState);
   }
 
-  findAll() {
-    return `This action returns all userState`;
+  async findAll() {
+    return await this.userStateRepository.find({
+      relations: ['user'],
+      order: { date: 'DESC' }
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userState`;
+  async findOne(id: number) {
+    const state = await this.userStateRepository.findOne({
+      where: { id: String(id) },
+      relations: ['user'],
+    });
+
+    if (!state) throw new NotFoundException(`Estado con ID ${id} no encontrado`);
+    return state;
   }
 
-  update(id: number, updateUserStateDto: UpdateUserStateDto) {
-    return `This action updates a #${id} userState`;
+  async update(id: number, dto: UpdateUserStateDto) {
+    const state = await this.userStateRepository.findOne({ where: { id: String(id) } });
+    if (!state) throw new NotFoundException(`Estado con ID ${id} no encontrado`);
+
+    // if (dto.emotionId) {
+    //   const emotion = await this.emotionRepository.findOne({ where: { id: dto.emotionId } });
+    //   if (!emotion) throw new NotFoundException(`Emoción con ID ${dto.emotionId} no encontrada`);
+    //   state.emotion = emotion;
+    // }
+
+    if (dto.intensidad !== undefined) state.intensidad = dto.intensidad;
+    if (dto.description !== undefined) state.description = dto.description;
+
+    return await this.userStateRepository.save(state);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userState`;
+  async remove(id: number) {
+    const result = await this.userStateRepository.delete({ id: String(id) });
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Estado con ID ${id} no encontrado`);
+    }
+
+    return { message: `Estado con ID ${id} eliminado correctamente` };
   }
 }
