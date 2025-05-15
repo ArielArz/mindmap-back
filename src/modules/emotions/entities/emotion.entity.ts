@@ -5,6 +5,9 @@ export class Emotion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', nullable: true })
+  significado: string;
+
   @Column({ nullable: false })
   name: string;
 

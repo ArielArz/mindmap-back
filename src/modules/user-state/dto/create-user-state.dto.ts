@@ -1,4 +1,4 @@
-import { IsUUID, IsDateString, IsOptional, IsString } from 'class-validator';
+import { IsUUID, IsDateString, IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class CreateUserStateDto {
   @IsUUID()
@@ -6,6 +6,10 @@ export class CreateUserStateDto {
 
   @IsUUID()
   emotionId: string;
+
+  @IsNumber()
+  @IsOptional()
+  intensidad?: number;
 
   @IsDateString()
   date: string; // formato YYYY-MM-DD
