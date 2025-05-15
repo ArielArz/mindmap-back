@@ -4,4 +4,9 @@ export class CreateEmotionDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  significado: string;
+
 }

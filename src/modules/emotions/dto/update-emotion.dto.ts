@@ -1,4 +1,13 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateEmotionDto } from './create-emotion.dto';
 
-export class UpdateEmotionDto extends PartialType(CreateEmotionDto) {}
+import { IsString, IsNotEmpty } from 'class-validator';
+
+export class UpdateEmotionDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  significado: string;
+
+}

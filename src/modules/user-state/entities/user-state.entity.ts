@@ -21,6 +21,9 @@ export class UserState {
   emotion: Emotion;
 
   @Column({ nullable: false })
+  intensidad: number;
+
+  @Column({ nullable: false })
   date: Date;
 
   @Column({ type: 'text', nullable: true })
