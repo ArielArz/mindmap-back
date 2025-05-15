@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { CLIENT_RENEG_WINDOW } from 'tls';
+// import { CLIENT_RENEG_WINDOW } from "tls";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor() {
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID, // Desde las variables de entorno
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientID: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
       callbackURL: `${process.env.API_BACKEND}/auth/google/redirect`,
       scope: ['email', 'profile'],
     });
   }
 
-  async validate(
+  validate(
     accessToken: string,
     refreshToken: string,
     profile: any,
     done: VerifyCallback,
-  ): Promise<any> {
+  ): any {
     const { name, emails, photos } = profile;
 
     const user = {
@@ -28,6 +28,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       profileImage: photos[0].value,
       googleId: profile.id,
     };
+
     done(null, user);
   }
 }
