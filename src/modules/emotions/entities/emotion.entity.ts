@@ -8,6 +8,9 @@ export class Emotion {
   @Column({ type: 'text', nullable: true })
   significado: string;
 
+  // @Column({ type: 'text', nullable: true })
+  // reflexion: string;
+
   @Column({ nullable: false })
   name: string;
 

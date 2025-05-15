@@ -11,13 +11,20 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { MailerService } from '../mailer/mailer.service';
 import { UserRole } from './entities/enum/user-role.enum';
+import { UserState } from '../user-state/entities/user-state.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
     private readonly mailerService: MailerService,
+
+    @InjectRepository(UserState)
+    private readonly userStateRepository: Repository<UserState>,
   ) { }
+
 
   async findAll() {
     return this.userRepository.find();
@@ -67,7 +74,16 @@ export class UsersService {
     if (!foundUser) {
       throw new NotFoundException('Usuario no encontrado');
     }
-    return await this.userRepository.remove(foundUser);
+
+    // Eliminar estados del usuario
+    await this.userStateRepository
+      .createQueryBuilder()
+      .delete()
+      .where('userId = :id', { id })
+      .execute();
+
+    // Eliminar usuario
+    return await this.userRepository.delete(id);
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
