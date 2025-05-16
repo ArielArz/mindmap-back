@@ -49,23 +49,30 @@ export class UsersService {
       where: { email },
     });
     if (existingUser) {
-      throw new UnauthorizedException(
-        'El correo electronico ya esta registrado',
-      );
+      // si existe, devolver directamente para evitar error en OAuth
+      return existingUser;
     }
 
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    let hashedPassword = '';
+    if(password){
+      const saltRounds = 10;
+      hashedPassword = await bcrypt.hash(password, saltRounds)
+    }
 
     const newUser = this.userRepository.create({
       name,
       email,
-      password: hashedPassword,
+      password: hashedPassword, // Queda vacio si es OAuth
       address,
       profileImage,
     });
     const userCreated = await this.userRepository.save(newUser);
-    await this.mailerService.sendWelcomeEmail(email, name);
+
+    // Solo enviar si se creo con password (registro manual)
+    if(password){
+      await this.mailerService.sendWelcomeEmail(email, name);
+    }
+
     return userCreated;
   }
 

@@ -5,6 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 interface JwtPayload {
     sub: string;
     email: string;
+    role: string; //Agregar el rol al payload para gestionar autorizaciones basadas en roles
 }
 
 
@@ -21,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    validate(payload: JwtPayload): { userId: string; email: string } {
-        return { userId: payload.sub, email: payload.email };
+    validate(payload: JwtPayload): { userId: string; email: string; role:string } {
+        return { userId: payload.sub, email: payload.email, role: payload.role };
     }
 }

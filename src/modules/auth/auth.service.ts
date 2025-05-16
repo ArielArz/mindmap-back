@@ -64,7 +64,7 @@ export class AuthService {
         email: googleUser.email,
         password: '', // No se necesita para Google
         confirmPassword: '',
-        address: googleUser.address || 'Cuenta de Google',
+        address: '',
         profileImage: googleUser.profileImage || '',
       });
     }
