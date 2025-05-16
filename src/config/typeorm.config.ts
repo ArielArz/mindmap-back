@@ -11,8 +11,10 @@ const config: DataSourceOptions = {
   database: DB_NAME,
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
-  synchronize: true,
+  synchronize: false,
   dropSchema: false,
+  ssl:
+    process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
 };
 
 export default registerAs('typeorm', () => config);
