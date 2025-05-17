@@ -48,28 +48,28 @@ export class AuthController {
     // Passport intercepta y redirige
   }
 
-  // Google OAuth - redireccion
-  // @Get('google/redirect')
-  // @UseGuards(AuthGuard('google'))
-  // async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response){
-  //   // const { user, token } = await this.authService.validateGoogleUser(req.user);
+  // Google Oauth - redireccion
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req: any,@Res({ passthrough: true }) res: Response) {
+    const { user, token } = await this.authService.validateGoogleUser(req.user);
 
-  //   res.cookie('token', token, {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: 'none',
-  //   });
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 1000 * 60 * 60 * 24, // 1 dia
+    });
 
-  //   res.redirect(`${process.env.API_FRONT}/sentia`);
+    res.redirect(`${process.env.API_FRONT}/sentia`);
+  }
 
-  // }
-
-  // Logout: limpar cookie
+  // Logout: limpiar cookie
   @Get('logout')
   @UseGuards(AuthenticationGuard)
   async logout(@Res({ passthrough: true }) res: Response){
     res.clearCookie('token', {
-      httpOnly:true,
+      httpOnly: true,
       secure: true,
       sameSite: 'none',
       path: '/',

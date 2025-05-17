@@ -33,11 +33,11 @@ import { ContactModule } from './modules/contact/contact.module';
         };
       },
     }),
-    JwtModule.register({
-      global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
-    }),
+    // JwtModule.register({
+    //   global: true,
+    //   secret: process.env.JWT_SECRET,
+    //   signOptions: { expiresIn: '1h' },
+    // }),
     ScheduleModule.forRoot(),
     AuthModule,
     EmotionsModule,

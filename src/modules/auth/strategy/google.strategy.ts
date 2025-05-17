@@ -1,25 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-// import { CLIENT_RENEG_WINDOW } from "tls";
+import { AuthService } from "../auth.service";
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor() {
-    super({
-      clientID: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      callbackURL: `${process.env.API_BACKEND}/auth/google/redirect`,
-      scope: ['email', 'profile'],
-    });
-  }
+export class GoogleStrategy extends PassportStrategy(Strategy, 'google'){
+    constructor(private readonly authService: AuthService){
+        super(
+            {
+                clientID: process.env.GOOGLE_CLIENT_ID || '',
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+                callbackURL: `${process.env.API_BACKEND}/auth/google/redirect`,
+                scope: ['email', 'profile'],
+            }
+        );
+    }
 
-  validate(
-    accessToken: string,
-    refreshToken: string,
-    profile: any,
-    done: VerifyCallback,
-  ): any {
+    async validate(
+        accessToken: string,
+        refreshToken: string,
+        profile: any,
+        done: VerifyCallback,
+    ): Promise<any> {
     const { name, emails, photos } = profile;
 
     const user = {
@@ -29,6 +31,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       googleId: profile.id,
     };
 
-    done(null, user);
-  }
+    try {
+        const validateUser = await this.authService.validateGoogleUser(user);
+        return done(null, validateUser);
+    } catch (err){
+        return done(new UnauthorizedException('Error al autenticar con Google'), false)
+    }
+}
 }
