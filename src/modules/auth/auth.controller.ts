@@ -41,7 +41,7 @@ export class AuthController {
     return { user: userWithoutPassword, token };
   }
 
-  // Google Oauth - inicio del flujo
+  // Google OAuth - inicio del flujo
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(){
