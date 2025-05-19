@@ -1,11 +1,12 @@
 
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
-  constructor(private jwtService: JwtService) { }
+  constructor(private jwtService: JwtService, private configService: ConfigService) { }
 
   canActivate(
     context: ExecutionContext,
@@ -19,14 +20,17 @@ export class AuthenticationGuard implements CanActivate {
     }
 
     try {
-      const secret = process.env.JWT_SECRET;
-      const user = this.jwtService.verify(token, { secret });
+      const secret = this.configService.get<string>('JWT_SECRET');
 
+      if(!secret) {
+        throw new UnauthorizedException('JWT_SECRET no configurado');
+      }
+
+      const user = this.jwtService.verify(token, { secret });
       request.user = user;
       return true;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      throw new UnauthorizedException('Token invalido');
+      throw new UnauthorizedException('Token invalido o expirado')
     }
   }
 }
