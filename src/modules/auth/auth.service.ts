@@ -74,4 +74,30 @@ export class AuthService {
 
     return { token, user };
   }
+
+  // Login manual con datos de Google (pruebas desde Insomnia o fronted directo)
+  async googleLoginManual(googleUser: any){
+    if(!googleUser?.email || !googleUser?.sub){
+      throw new BadRequestException('Falatan datos del usuario de Google');
+    }
+
+    let user = await this.usersService.findOneByEmail(googleUser.email);
+
+    if(!user) {
+      user = await this.usersService.createUser({
+        name: googleUser.name,
+        email: googleUser.email,
+        password: '', // No se requiere
+        confirmPassword: '',
+        address: '',
+        profileImage: googleUser.profileImage || '',
+      });
+    }
+
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = this.jwtService.sign(payload);
+
+    return { token, user };
+
+  } 
 }
