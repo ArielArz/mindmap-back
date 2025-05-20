@@ -15,6 +15,7 @@ import typeormConfig from './config/typeorm.config';
 import { MailerModule } from './modules/mailer/mailer.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ContactModule } from './modules/contact/contact.module';
+import { MercadopagoModule } from './mercadopago/mercadopago.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ContactModule } from './modules/contact/contact.module';
     UserStateModule,
     MailerModule,
     ContactModule,
+    MercadopagoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
