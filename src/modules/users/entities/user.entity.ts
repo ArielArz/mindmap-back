@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { UserRole } from './enum/user-role.enum';
 import { UserState } from 'src/modules/user-state/entities/user-state.entity';
-
+import { Subscription } from '../../subscription/entities/subscription.entity';
 
 @Entity('users')
 export class User {
@@ -35,6 +35,9 @@ export class User {
 
   @OneToMany(() => UserState, (userState) => userState.user)
   states: UserState[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.user)
+  subscriptions: Subscription[];
 
   @CreateDateColumn()
   createdAt: Date;
