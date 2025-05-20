@@ -11,7 +11,7 @@ const config: DataSourceOptions = {
   database: DB_NAME,
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
-  synchronize: false,
+  synchronize: true,
   dropSchema: false,
   ssl:
     process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
