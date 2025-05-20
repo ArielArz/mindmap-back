@@ -17,7 +17,7 @@ export class EmotionsService {
 
     const existing = await this.emotionRepo.findOneBy({ name: createEmotionDto.name });
     if (existing) {
-      return { message: 'La emoción ya existe' };
+      return { message: 'La emoción ya existe en la base de datos' };
     }
     const newEmotion = this.emotionRepo.create(createEmotionDto);
     return this.emotionRepo.save(newEmotion);

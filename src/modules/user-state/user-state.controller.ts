@@ -11,6 +11,7 @@ export class UserStateController {
   create(@Body() createUserStateDto: CreateUserStateDto) {
     return this.userStateService.create(createUserStateDto);
   }
+  // GET /user_state: obtener emociones del usuario (por fecha o rango)
 
   @Get()
   findAll() {

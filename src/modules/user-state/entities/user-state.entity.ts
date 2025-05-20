@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Emotion } from '../../emotions/entities/emotion.entity';
+import { EmotionIntensity } from 'src/modules/emotions/entities/intensidad.enum';
 
 @Entity('user_state')
 export class UserState {
@@ -22,8 +23,9 @@ export class UserState {
   @ManyToOne(() => Emotion, { eager: true, nullable: false })
   emotion: Emotion;
 
-  @Column({ nullable: false })
-  intensidad: number;
+
+  @Column({ type: 'enum', enum: EmotionIntensity })
+  intensidad: EmotionIntensity;
 
   @Column({ nullable: false })
   date: Date;

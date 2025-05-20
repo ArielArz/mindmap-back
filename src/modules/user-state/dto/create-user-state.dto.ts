@@ -1,4 +1,5 @@
-import { IsUUID, IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsUUID, IsString, IsNumber, IsNotEmpty, IsEnum } from 'class-validator';
+import { EmotionIntensity } from 'src/modules/emotions/entities/intensidad.enum';
 
 export class CreateUserStateDto {
   @IsUUID()
@@ -9,9 +10,9 @@ export class CreateUserStateDto {
   @IsNotEmpty()
   emotionId: string;
 
-  @IsNumber()
+  @IsEnum(EmotionIntensity)
   @IsNotEmpty()
-  intensidad?: number; //VER SI SIGUE O COMO LO USAMOS
+  intensidad: EmotionIntensity;
 
   @IsNotEmpty()
   @IsString()
