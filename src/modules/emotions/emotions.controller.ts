@@ -33,6 +33,7 @@ export class EmotionsController {
   }
 
 
+  // IEG = suma de todos los puntajes emocionales / cantidad total de registros
 
   // GET /analysis/weekly: devolver resumen semanal por emoción + IEG
 
