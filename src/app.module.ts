@@ -15,7 +15,7 @@ import typeormConfig from './config/typeorm.config';
 import { MailerModule } from './modules/mailer/mailer.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ContactModule } from './modules/contact/contact.module';
-import { MercadopagoModule } from './mercadopago/mercadopago.module';
+import { MercadopagoModule } from './modules/mercadopago/mercadopago.module';
 
 @Module({
   imports: [

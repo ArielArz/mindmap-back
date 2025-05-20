@@ -41,10 +41,28 @@ export class AuthController {
     return { user: userWithoutPassword, token };
   }
 
-  // Google pruebas manuales
+  /**
+   * Login con Google desde frontend (POST)
+   * {
+   *   name: 'sentia',
+   *   email: 'pfsentia@gmail.com',
+   *   image: 'https://lh3.googleusercontent.com/a/...',
+   *   sub: '115610386182944254964'
+   * }
+   */
   @Post('google')
-  async googleManualLogin(@Body() googlUserData: any, @Res({ passthrough: true }) res: Response){
-    const { token, user } = await this.authService.googleLoginManual(googlUserData);
+  async googleManualLogin(@Body() googleUserData: any, @Res({ passthrough: true }) res: Response){
+    // Validacion minima
+    if(!googleUserData?.email || !googleUserData?.sub){
+      return { error: 'Faltan datos del usuario de Google' };
+    }
+    
+    const { token, user } = await this.authService.googleLoginManual({
+      name: googleUserData.name,
+      email: googleUserData.email,
+      profileImage: googleUserData.profileImage,
+      sub: googleUserData.sub,
+    });
 
     res.cookie('token', token, {
       httpOnly:true,
@@ -58,27 +76,27 @@ export class AuthController {
   }
 
   // Google OAuth - inicio del flujo
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth(){
-    // Passport intercepta y redirige
-  }
+  // @Get('google')
+  // @UseGuards(AuthGuard('google'))
+  // async googleAuth(){
+  //   // Passport intercepta y redirige
+  // }
 
-  // Google Oauth - redireccion
-  @Get('google/redirect')
-  @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req: any,@Res({ passthrough: true }) res: Response) {
-    const { user, token } = await this.authService.validateGoogleUser(req.user);
+  // // Google Oauth - redireccion
+  // @Get('google/redirect')
+  // @UseGuards(AuthGuard('google'))
+  // async googleAuthRedirect(@Req() req: any,@Res({ passthrough: true }) res: Response) {
+  //   const { user, token } = await this.authService.validateGoogleUser(req.user);
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      maxAge: 1000 * 60 * 60 * 24, // 1 dia
-    });
+  //   res.cookie('token', token, {
+  //     httpOnly: true,
+  //     secure: true,
+  //     sameSite: 'none',
+  //     maxAge: 1000 * 60 * 60 * 24, // 1 dia
+  //   });
 
-    res.redirect(`${process.env.API_FRONT}/sentia`);
-  }
+  //   res.redirect(`${process.env.API_FRONT}/sentia`);
+  // }
 
   // Logout: limpiar cookie
   @Get('logout')
