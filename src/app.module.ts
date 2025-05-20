@@ -34,11 +34,11 @@ import { MercadopagoModule } from './mercadopago/mercadopago.module';
         };
       },
     }),
-    JwtModule.register({
-      global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
-    }),
+    // JwtModule.register({
+    //   global: true,
+    //   secret: process.env.JWT_SECRET,
+    //   signOptions: { expiresIn: '1h' },
+    // }),
     ScheduleModule.forRoot(),
     AuthModule,
     EmotionsModule,
