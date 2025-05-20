@@ -42,7 +42,7 @@ export class UserStateService {
 
   async findAll() {
     return await this.userStateRepository.find({
-      relations: ['user'],
+      relations: ['user', 'emotion'],
       order: { date: 'DESC' }
     });
   }
@@ -50,7 +50,7 @@ export class UserStateService {
   async findOne(id: number) {
     const state = await this.userStateRepository.findOne({
       where: { id: String(id) },
-      relations: ['user'],
+      relations: ['user', 'emotion'],
     });
 
     if (!state) throw new NotFoundException(`Estado con ID ${id} no encontrado`);
