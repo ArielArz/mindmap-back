@@ -1,10 +1,12 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
+import { SetPasswordDto } from './dto/set-password.dto';
+import { MailerService } from '../mailer/mailer.service';
 
 
 
@@ -13,6 +15,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService
   ) { }
 
   async signUp(signUpDto: SignUpDto) {
@@ -100,4 +103,64 @@ export class AuthService {
     return { token, user };
 
   } 
+
+  // Metodo para establecer contraseña a usuarios de Google
+  async addPasswordToGoogleUser(data: SetPasswordDto){
+    const { email, newPassword, confirmPassword } = data;
+
+    const user = await this.usersService.findOneByEmail(email);
+
+    if(!user){
+      throw new BadRequestException('El usuario no existe');
+    }
+
+    if(user.password){
+      throw new BadRequestException('Este usuario ya tiene una contraseña asignada');
+    }
+
+    if(newPassword !== confirmPassword){
+      throw new BadRequestException('Las contraseñas no coinciden');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    await this.usersService.saveUser(user);
+
+    return { message: 'Contraseña asignada correctamente, Ya pudes iniciar sesion manualmente.' };
+  }
+
+  // Metodo ¿Olvidaste tu contraseña?
+  async sendPasswrodResetToken(email: string): Promise<{ message: string }>{
+    const user = await this.usersService.findOneByEmail(email);
+    if(!user){
+      throw new NotFoundException('No existe un usuario con ese email');
+    }
+
+    const token = this.jwtService.sign({ email }, { secret:process.env.JWT_SECRET, expiresIn: '30m' });
+
+    await this.mailerService.sendPasswordResetEmail(email, token);
+
+    return { message: 'Enlace de restablecimiento enviado por correo' };
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<{ message: string }>{
+    try {
+      const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
+      const user = await this.usersService.findOneByEmail(payload.email);
+      
+      if(!user){
+        throw new NotFoundException('Usuario no encontrado.');
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+
+      await this.usersService.saveUser(user);
+
+      return { message: 'Contraseña actualizada correctamente' };
+    } catch {
+      throw new UnauthorizedException('Token invalido o expirado');
+    }
+  }
 }
