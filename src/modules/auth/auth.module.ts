@@ -8,10 +8,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailerModule } from '../mailer/mailer.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    MailerModule,
     UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
