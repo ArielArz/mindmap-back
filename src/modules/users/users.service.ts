@@ -116,4 +116,8 @@ export class UsersService {
     }
     return premiumUsers;
   }
+
+  async saveUser(user: User): Promise<User>{
+    return await this.userRepository.save(user);
+  }
 }
