@@ -32,12 +32,15 @@ export class EmotionsController {
     return this.emotionsService.findAll();
   }
 
+  @Get('/analysis/weekly') //devolver resumen semanal por emoción + IEG // Estado Emocional Global
+  analysisWeek() {
+    return this.emotionsService.analysisWeek();
+  }
 
-  // IEG = suma de todos los puntajes emocionales / cantidad total de registros
-
-  // GET /analysis/weekly: devolver resumen semanal por emoción + IEG
-
-  // GET /analysis/monthly: lo mismo para mes
+  @Get('/analysis/monthly') //devolver resumen mensual por emoción
+  analysisMonth() {
+    return this.emotionsService.analysisMonth();
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
