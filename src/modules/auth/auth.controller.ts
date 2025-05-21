@@ -8,6 +8,7 @@ import { SignInDto } from './dto/signin.dto';
 import { AuthenticationGuard } from 'src/guard/auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
+import { SetPasswordDto } from './dto/set-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -110,5 +111,20 @@ export class AuthController {
     });
 
     return { message: 'Sesion cerrada correctamente' };
+  }
+
+  @Post('set-password')
+  async setPassword(@Body() data: SetPasswordDto){
+    return this.authService.addPasswordToGoogleUser(data);
+  }
+
+  @Post('forgot-password')
+  async fotgotPassword(@Body('email') email: string){
+    return this.authService.sendPasswrodResetToken(email);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() data: { token: string, newPassword: string }) {
+    return this.authService.resetPassword(data.token, data.newPassword)
   }
 }
