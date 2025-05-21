@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, Matches, Validate } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches, Validate } from "class-validator";
 import { MatchPassword } from "src/decorators/matchPassword";
 
 export class UserDto {
@@ -30,11 +30,13 @@ export class UserDto {
 
   @ApiProperty({ example: 'Calle Falsa 123, Córdoba' })
   @IsString({ message: 'La dirección debe ser una cadena de texto.' })
+  @IsOptional()
   @Length(3, 80, { message: 'La dirección debe tener entre 3 y 80 caracteres.' })
-  address: string;
+  address?: string;
 
   @ApiProperty({ example: 'https://miapp.com/images/perfil/maria.png' })
+  @IsOptional()
   @IsString()
-  profileImage: string;
+  profileImage?: string;
 
 }

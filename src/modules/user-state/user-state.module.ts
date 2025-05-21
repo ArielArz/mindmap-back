@@ -7,8 +7,10 @@ import { UserState } from './entities/user-state.entity';
 import { Emotion } from '../emotions/entities/emotion.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), TypeOrmModule.forFeature([UserState]), TypeOrmModule.forFeature([Emotion])],
+  imports: [TypeOrmModule.forFeature([User, UserState, Emotion])],
   controllers: [UserStateController],
   providers: [UserStateService],
+  exports: [UserStateService],
+
 })
 export class UserStateModule { }

@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, Length, Matches, Validate } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches, Validate } from "class-validator";
 import { MatchPassword } from "src/decorators/matchPassword";
 
 export class SignUpDto {
@@ -22,10 +22,12 @@ export class SignUpDto {
     confirmPassword: string;
 
     @IsString({ message: 'La direccion debe ser una cadena de texto.' })
+    @IsOptional()
     @Length(3, 80, { message: 'La direccion debe tener cadena de texto.' })
-    address: string;
+    address?: string;
 
     @IsString({ message: 'La imagen de perfil debe ser una cadena de texto.' })
-    profileImage: string;
+    @IsOptional()
+    profileImage?: string;
     
 }

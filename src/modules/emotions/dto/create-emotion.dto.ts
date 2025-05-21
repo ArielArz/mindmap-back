@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateEmotionDto {
   @IsString()
@@ -8,5 +8,18 @@ export class CreateEmotionDto {
   @IsString()
   @IsNotEmpty()
   significado: string;
+
+  @IsString()
+  @IsNotEmpty()
+  emoji: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  clinicalValue: number;
+
+  @IsString()
+  @IsNotEmpty()
+  reflexion: string;
+
 
 }

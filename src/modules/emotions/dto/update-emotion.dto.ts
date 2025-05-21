@@ -1,13 +1,5 @@
 
-import { IsString, IsNotEmpty } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { CreateEmotionDto } from './create-emotion.dto';
 
-export class UpdateEmotionDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  significado: string;
-
-}
+export class UpdateEmotionDto extends PartialType(CreateEmotionDto) { }
