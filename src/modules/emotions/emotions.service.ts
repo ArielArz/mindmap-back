@@ -62,14 +62,14 @@ export class EmotionsService {
   async puntajeEmocional() {
     console.log('Entró al método puntajeEmocional');
 
-    // Traemos todos los estados del usuario, con su emoción (ya está en eager)
     const userStates = await this.userStateRepo.find();
 
     const puntajes = userStates.map(state => {
       const intensidad = state.intensidad; // Enum, que debería resolverse como número
       const clinicalValue = state.emotion.clinicalValue; // viene por eager
+      const puntajeEmocional = intensidad * clinicalValue;
 
-      return intensidad * clinicalValue;
+      return puntajeEmocional;
     });
 
     const total = puntajes.reduce((acc, val) => acc + val, 0);

@@ -39,6 +39,15 @@ export class Resource {
   @ManyToOne(() => User)
   uploadedBy: User;
 
+  @Column({ nullable: true })
+  thumbnailUrl?: string;
+
+  @Column({ nullable: true })
+  thumbnailPublicId?: string;
+
+  @Column({ default: false })
+  isMainVideo: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
