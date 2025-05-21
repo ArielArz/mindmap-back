@@ -5,12 +5,15 @@ import { seedEmotions } from "./emotion.seeder";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Emotion } from "./entities/emotion.entity";
+import { UserState } from "../user-state/entities/user-state.entity";
 
 @Injectable()
 export class EmotionsService {
   constructor(
     @InjectRepository(Emotion)
-    private readonly emotionRepo: Repository<Emotion>
+    private readonly emotionRepo: Repository<Emotion>,
+    @InjectRepository(UserState)
+    private readonly userStateRepo: Repository<UserState>
   ) { }
 
   async create(createEmotionDto: CreateEmotionDto) {
@@ -47,4 +50,29 @@ export class EmotionsService {
     await seedEmotions(this.emotionRepo);
     return { message: 'Emociones precargadas' };
   }
+
+  async puntajeEmocional() {
+    console.log('Entró al método puntajeEmocional');
+
+    // Traemos todos los estados del usuario, con su emoción (ya está en eager)
+    const userStates = await this.userStateRepo.find();
+
+    const puntajes = userStates.map(state => {
+      const intensidad = state.intensidad; // Enum, que debería resolverse como número
+      const clinicalValue = state.emotion.clinicalValue; // viene por eager
+
+      return intensidad * clinicalValue;
+    });
+
+    const total = puntajes.reduce((acc, val) => acc + val, 0);
+
+    return {
+      totalPuntajeEmocional: total,
+      detalle: puntajes
+    };
+    // Puntaje emocional = Intensidad (enum de userState) × Valor clínico (clinicalValue de emotion)
+
+  }
+
+
 }
