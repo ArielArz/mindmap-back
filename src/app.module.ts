@@ -16,6 +16,7 @@ import { MailerModule } from './modules/mailer/mailer.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ContactModule } from './modules/contact/contact.module';
 import { MercadopagoModule } from './modules/mercadopago/mercadopago.module';
+import { SubscriptionModule } from './modules/subscription/subscription.module';
 
 @Module({
   imports: [
@@ -49,8 +50,9 @@ import { MercadopagoModule } from './modules/mercadopago/mercadopago.module';
     MailerModule,
     ContactModule,
     MercadopagoModule,
+    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
