@@ -6,31 +6,40 @@ import {
   Patch,
   Param,
   Delete,
-  UploadedFile,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
-import { Express } from 'express';
 
 @Controller('resources')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file')) // 'file' debe coincidir con el key del formulario
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'file', maxCount: 1 }, // archivo principal
+      { name: 'thumbnail', maxCount: 1 }, // imagen relacionada
+    ]),
+  )
   create(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: { file?: Express.Multer.File[]; thumbnail?: Express.Multer.File[] },
     @Body() createDto: CreateResourceDto,
   ) {
-    return this.resourcesService.create(createDto, file);
+    return this.resourcesService.create(createDto, files);
   }
 
   @Get()
   findAll() {
     return this.resourcesService.findAll();
+  }
+  
+  @Get('main-video')
+  async getMainVideo() {
+    return this.resourcesService.findMainVideo();
   }
 
   @Get(':id')
@@ -46,5 +55,13 @@ export class ResourcesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.resourcesService.remove(id);
+  }
+
+  @Patch('main-video/:id')
+  async setMainVideo(@Param('id') id: string) {
+    if (id === 'none') {
+      return this.resourcesService.clearMainVideo();
+    }
+    return this.resourcesService.setMainVideo(id);
   }
 }
