@@ -33,12 +33,10 @@ export class UserDto {
   @IsOptional()
   @Length(3, 80, { message: 'La dirección debe tener entre 3 y 80 caracteres.' })
   address?: string;
-  address?: string;
 
   @ApiProperty({ example: 'https://miapp.com/images/perfil/maria.png' })
   @IsOptional()
   @IsString()
-  profileImage?: string;
   profileImage?: string;
 
 }
