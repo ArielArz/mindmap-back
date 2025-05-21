@@ -27,7 +27,15 @@ export class EmotionsService {
   }
 
   async findAll() {
-    return this.emotionRepo.find();
+    return this.emotionRepo.find({
+      select: {
+        id: true,
+        name: true,
+        emoji: true,
+        reflexion: true
+
+      }
+    });
   }
 
   async findOne(id: string) {
@@ -71,6 +79,48 @@ export class EmotionsService {
       detalle: puntajes
     };
     // Puntaje emocional = Intensidad (enum de userState) × Valor clínico (clinicalValue de emotion)
+
+  }
+
+  async EmotionalGlobalState() {
+    console.log('Entró al método Estado Emocional Global');
+    const userStates = await this.userStateRepo.find();
+
+    if (userStates.length === 0) {
+      return {
+        message: 'No hay registros de estados emocionales',
+        IEG: 0,
+      };
+    }
+
+    const puntajes = userStates.map(state => {
+      const intensidad = state.intensidad;
+      const clinicalValue = state.emotion.clinicalValue;
+      return intensidad * clinicalValue;
+    });
+
+    const sumaTotal = puntajes.reduce((acc, val) => acc + val, 0);
+    const cantidadRegistros = userStates.length;
+
+    const IEG = sumaTotal / cantidadRegistros;
+
+    return {
+      cantidadRegistros,
+      sumaTotal,
+      IEG,
+    };
+
+  }
+  // IEG = suma de todos los puntajes emocionales / cantidad total de registros
+
+
+  async analysisWeek() {
+    return console.log('Entró al método analysis semanal');
+
+  }
+
+  async analysisMonth() {
+    return console.log('Entró al método analysis mensual');
 
   }
 
