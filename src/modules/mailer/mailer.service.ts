@@ -84,14 +84,18 @@ export class MailerService {
     );
   }
 
-  async sendSubscriptionConfirmationEmail(to: string, name: string) {
+  async sendSubscriptionConfirmationEmail(
+    to: string,
+    name: string,
+    expirationDate: string,
+  ) {
     const html = `
       <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
         <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
           <h2 style="color: #4CAF50; text-align: center;">¡Suscripción exitosa, ${name}!</h2>
           <p style="font-size: 16px; color: #555555; text-align: center;">Gracias por suscribirte a Sentia Premium.</p>
           <p style="font-size: 16px; color: #555555; text-align: center;">
-            Ahora tienes acceso a todo nuestro contenido exclusivo. ¡Disfrútalo!
+            Ahora tienes acceso a todo nuestro contenido exclusivo, hasta el ${expirationDate}. ¡Disfrútalo!
           </p>
           <div style="text-align: center; margin-top: 30px;">
             <a href="" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
@@ -105,6 +109,34 @@ export class MailerService {
 
     await this.transporter.sendMail(
       this.commonMailOptions(to, 'Suscripción a Sentia Premium', html),
+    );
+  }
+
+  async sendSubscriptionRenewalEmail(
+    to: string,
+    name: string,
+    expirationDate: string,
+  ) {
+    const html = `
+    <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
+      <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
+        <h2 style="color: #4CAF50; text-align: center;">¡Gracias por renovar, ${name}!</h2>
+        <p style="font-size: 16px; color: #555555; text-align: center;">Tu suscripción a Sentia Premium ha sido renovada con éxito.</p>
+        <p style="font-size: 16px; color: #555555; text-align: center;">
+          Tu acceso continuará hasta el ${expirationDate}. ¡Nos alegra seguir contando contigo!
+        </p>
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            Ir a Sentia Premium
+          </a>
+        </div>
+        <p style="font-size: 12px; color: #aaaaaa; text-align: center; margin-top: 30px;">Gracias por seguir apoyando nuestro crecimiento.</p>
+      </div>
+    </div>
+  `;
+
+    await this.transporter.sendMail(
+      this.commonMailOptions(to, 'Renovación de Sentia Premium', html),
     );
   }
 

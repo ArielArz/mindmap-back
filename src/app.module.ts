@@ -17,6 +17,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ContactModule } from './modules/contact/contact.module';
 import { MercadopagoModule } from './modules/mercadopago/mercadopago.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
+import { StripeModule } from './modules/stripe/stripe.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { SubscriptionModule } from './modules/subscription/subscription.module';
     ContactModule,
     MercadopagoModule,
     SubscriptionModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

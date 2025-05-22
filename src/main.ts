@@ -3,16 +3,14 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { loggerDI } from './middlewares/loggerDI.middleware';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
     .setTitle('Sentia Backend API')
-    .setDescription(
-      'Proyecto Final de Full Stack Developer, Bootcamp soyHenry',
-    )
+    .setDescription('Proyecto Final de Full Stack Developer, Bootcamp soyHenry')
     .setVersion('1.0')
     .addBearerAuth()
     .addTag('users')
@@ -20,9 +18,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
-
-
 
   const PORT = process.env.PORT ?? 3000;
 
@@ -40,6 +35,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
 
   // Escuchar en 0.0.0.0 para que sea accesible desde la red
   await app.listen(PORT, '0.0.0.0');

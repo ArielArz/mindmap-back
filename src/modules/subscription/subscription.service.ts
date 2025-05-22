@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../users/entities/enum/user-role.enum';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-// import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { MailerService } from '../mailer/mailer.service';
 
 @Injectable()
 export class SubscriptionService {
@@ -14,29 +14,68 @@ export class SubscriptionService {
     private readonly subscriptionRepo: Repository<Subscription>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    private readonly mailerService: MailerService,
   ) {}
 
   async createSubscription(data: CreateSubscriptionDto) {
     const user = await this.userRepo.findOneBy({ id: data.userId });
     if (!user) throw new Error('User not found');
 
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setDate(startDate.getDate() + 30);
-
-    const subscription = this.subscriptionRepo.create({
-      user,
-      startDate,
-      endDate,
-      active: true,
+    const existingSubscription = await this.subscriptionRepo.findOne({
+      where: { userId: user.id },
     });
 
-    await this.subscriptionRepo.save(subscription);
+    const dateFormatterOptions: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    };
 
-    user.role = UserRole.PREMIUM;
-    await this.userRepo.save(user);
+    if (existingSubscription) {
+      const newEndDate = new Date(existingSubscription.endDate);
+      newEndDate.setDate(newEndDate.getDate() + 30);
+      existingSubscription.endDate = newEndDate;
+      existingSubscription.active = true;
+      await this.subscriptionRepo.save(existingSubscription);
 
-    return subscription;
+      const formattedEndDate = newEndDate.toLocaleDateString(
+        'es-ES',
+        dateFormatterOptions,
+      );
+      await this.mailerService.sendSubscriptionRenewalEmail(
+        user.email,
+        user.name,
+        formattedEndDate,
+      );
+      return `Suscripción renovada hasta el ${formattedEndDate}`;
+    } else {
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(startDate.getDate() + 37);
+
+      const newSubscription = this.subscriptionRepo.create({
+        userId: user.id,
+        startDate,
+        endDate,
+        active: true,
+      });
+
+      await this.subscriptionRepo.save(newSubscription);
+
+      user.role = UserRole.PREMIUM;
+      await this.userRepo.save(user);
+
+      const formattedEndDate = endDate.toLocaleDateString(
+        'es-ES',
+        dateFormatterOptions,
+      );
+      await this.mailerService.sendSubscriptionConfirmationEmail(
+        user.email,
+        user.name,
+        formattedEndDate,
+      );
+      return `Suscripción activa hasta el ${formattedEndDate}`;
+    }
   }
 
   async expireSubscriptions() {
@@ -56,18 +95,11 @@ export class SubscriptionService {
   }
 
   async createTrialSubscription(userId: string) {
-    const user = await this.userRepo.findOne({
-      where: { id: userId },
-      relations: ['subscriptions'],
-    });
-
+    const user = await this.userRepo.findOneBy({ id: userId });
     if (!user) throw new Error('User not found');
 
     const existingTrial = await this.subscriptionRepo.findOne({
-      where: {
-        user: { id: userId },
-        isTrial: true,
-      },
+      where: { userId },
     });
 
     if (existingTrial) throw new Error('User already had a trial subscription');
@@ -77,11 +109,10 @@ export class SubscriptionService {
     endDate.setDate(startDate.getDate() + 7);
 
     const trial = this.subscriptionRepo.create({
-      user,
+      userId,
       startDate,
       endDate,
       active: true,
-      isTrial: true,
     });
 
     await this.subscriptionRepo.save(trial);
