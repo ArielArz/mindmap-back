@@ -16,6 +16,9 @@ export class Subscription {
   @ManyToOne(() => User, (user) => user.subscriptions)
   user: User;
 
+  @Column()
+  userId: string;
+
   @Column({ type: 'timestamp' })
   startDate: Date;
 
@@ -24,9 +27,6 @@ export class Subscription {
 
   @Column({ type: 'boolean', default: true })
   active: boolean;
-
-  @Column({ type: 'boolean', default: false })
-  isTrial: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

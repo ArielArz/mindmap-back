@@ -1,6 +1,14 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches, Validate } from "class-validator";
-import { MatchPassword } from "src/decorators/matchPassword";
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+  Validate,
+} from 'class-validator';
+import { MatchPassword } from 'src/decorators/matchPassword';
 
 export class UserDto {
   @ApiProperty({ example: 'María González' })
@@ -17,10 +25,13 @@ export class UserDto {
   @ApiProperty({ example: 'ContraSegura123!' })
   @IsString({ message: 'La contraseña debe ser una cadena de texto.' })
   @IsNotEmpty({ message: 'La contraseña es obligatoria.' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/, {
-    message:
-      'La contraseña debe tener entre 8 y 20 caracteres, incluyendo una minúscula, una mayúscula, un número y un carácter especial (!@#$%&*).',
-  })
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
+    {
+      message:
+        'La contraseña debe tener entre 8 y 20 caracteres, incluyendo una minúscula, una mayúscula, un número y un carácter especial (!@#$%&*).',
+    },
+  )
   password: string;
 
   @ApiProperty({ example: 'ContraSegura123!' })
@@ -31,12 +42,13 @@ export class UserDto {
   @ApiProperty({ example: 'Calle Falsa 123, Córdoba' })
   @IsString({ message: 'La dirección debe ser una cadena de texto.' })
   @IsOptional()
-  @Length(3, 80, { message: 'La dirección debe tener entre 3 y 80 caracteres.' })
+  @Length(3, 80, {
+    message: 'La dirección debe tener entre 3 y 80 caracteres.',
+  })
   address?: string;
 
   @ApiProperty({ example: 'https://miapp.com/images/perfil/maria.png' })
   @IsOptional()
   @IsString()
   profileImage?: string;
-
 }

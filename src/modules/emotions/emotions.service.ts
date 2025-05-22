@@ -1,11 +1,12 @@
-import { DataSource, Repository } from "typeorm";
+import { Between, DataSource, Repository } from "typeorm";
 import { CreateEmotionDto } from "./dto/create-emotion.dto";
 import { UpdateEmotionDto } from "./dto/update-emotion.dto";
 import { seedEmotions } from "./emotion.seeder";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Req } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Emotion } from "./entities/emotion.entity";
 import { UserState } from "../user-state/entities/user-state.entity";
+import dayjs from "dayjs";
 
 @Injectable()
 export class EmotionsService {
@@ -13,7 +14,8 @@ export class EmotionsService {
     @InjectRepository(Emotion)
     private readonly emotionRepo: Repository<Emotion>,
     @InjectRepository(UserState)
-    private readonly userStateRepo: Repository<UserState>
+    private readonly userStateRepo: Repository<UserState>,
+
   ) { }
 
   async create(createEmotionDto: CreateEmotionDto) {
@@ -59,70 +61,75 @@ export class EmotionsService {
     return { message: 'Emociones precargadas' };
   }
 
-  async puntajeEmocional() {
-    console.log('Entró al método puntajeEmocional');
 
-    const userStates = await this.userStateRepo.find();
-
-    const puntajes = userStates.map(state => {
-      const intensidad = state.intensidad; // Enum, que debería resolverse como número
-      const clinicalValue = state.emotion.clinicalValue; // viene por eager
-      const puntajeEmocional = intensidad * clinicalValue;
-
-      return puntajeEmocional;
-    });
-
-    const total = puntajes.reduce((acc, val) => acc + val, 0);
-
-    return {
-      totalPuntajeEmocional: total,
-      detalle: puntajes
-    };
-    // Puntaje emocional = Intensidad (enum de userState) × Valor clínico (clinicalValue de emotion)
-
-  }
-
-  async EmotionalGlobalState() {
-    console.log('Entró al método Estado Emocional Global');
-    const userStates = await this.userStateRepo.find();
-
-    if (userStates.length === 0) {
-      return {
-        message: 'No hay registros de estados emocionales',
-        IEG: 0,
-      };
-    }
-
-    const puntajes = userStates.map(state => {
+  async calculaPuntajes(userStates: UserState[]): Promise<number[]> {
+    return userStates.map(state => {
       const intensidad = state.intensidad;
       const clinicalValue = state.emotion.clinicalValue;
       return intensidad * clinicalValue;
     });
+  }
 
-    const sumaTotal = puntajes.reduce((acc, val) => acc + val, 0);
-    const cantidadRegistros = userStates.length;
+  interpretarIEG(ieg: number): string {
+    if (ieg >= 1.5 && ieg <= 3.0) {
+      return 'Muy positivo, bienestar alto';
+    } else if (ieg >= 0.5 && ieg < 1.5) {
+      return 'Leve positivo, saludable';
+    } else if (ieg >= -0.5 && ieg < 0.5) {
+      return 'Neutro / estable';
+    } else if (ieg >= -1.4 && ieg < -0.5) {
+      return 'Leve malestar';
+    } else if (ieg >= -2.9 && ieg < -1.4) {
+      return 'Malestar emocional moderado';
+    } else if (ieg <= -3.0) {
+      return 'Riesgo emocional alto';
+    } else {
+      return 'Valor fuera de rango';
+    }
+  }
 
-    const IEG = sumaTotal / cantidadRegistros;
+  async puntajeEmocionalAnalisis(userId: string, dias: number = 0) {
+    if (!userId) {
+      throw new Error('userId es obligatorio');
+    }
+    const desde = new Date();
+    if (dias > 0) {
+      desde.setDate(desde.getDate() - dias);
+    } else {
+      desde.setFullYear(2000);
+    }
+    const userStates = await this.userStateRepo.find({
+      where: {
+        user: { id: userId },
+        date: Between(desde, new Date()),
+      },
+      relations: ['emotion'],
+    });
+
+    if (userStates.length === 0) {
+      return {
+        message: `No hay registros en los últimos ${dias} días`,
+        IEG: 0,
+        interpretacion: 'Sin datos',
+      };
+    }
+
+    const puntajes = await this.calculaPuntajes(userStates);
+    const total = puntajes.reduce((acc, val) => acc + val, 0);
+    const IEG = total / userStates.length;
+    const interpretacion = this.interpretarIEG(IEG);
 
     return {
-      cantidadRegistros,
-      sumaTotal,
+      puntajes,
+      desde,
+      hasta: new Date(),
+      cantidadRegistros: userStates.length,
+      total,
       IEG,
+      interpretacion,
     };
-
-  }
-  // IEG = suma de todos los puntajes emocionales / cantidad total de registros
-
-
-  async analysisWeek() {
-    return console.log('Entró al método analysis semanal');
-
   }
 
-  async analysisMonth() {
-    return console.log('Entró al método analysis mensual');
-
-  }
 
 
 }
