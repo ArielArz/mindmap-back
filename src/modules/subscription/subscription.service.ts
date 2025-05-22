@@ -38,6 +38,9 @@ export class SubscriptionService {
       existingSubscription.active = true;
       await this.subscriptionRepo.save(existingSubscription);
 
+      user.role = UserRole.PREMIUM;
+      await this.userRepo.save(user);
+
       const formattedEndDate = newEndDate.toLocaleDateString(
         'es-ES',
         dateFormatterOptions,
@@ -47,7 +50,21 @@ export class SubscriptionService {
         user.name,
         formattedEndDate,
       );
-      return `Suscripción renovada hasta el ${formattedEndDate}`;
+      const response = {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        startDate: existingSubscription.startDate.toLocaleDateString(
+          'es-ES',
+          dateFormatterOptions,
+        ),
+        endDate: existingSubscription.endDate.toLocaleDateString(
+          'es-ES',
+          dateFormatterOptions,
+        ),
+      };
+
+      return response;
     } else {
       const startDate = new Date();
       const endDate = new Date();
@@ -74,7 +91,15 @@ export class SubscriptionService {
         user.name,
         formattedEndDate,
       );
-      return `Suscripción activa hasta el ${formattedEndDate}`;
+      const response = {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
+        endDate: endDate.toLocaleDateString('es-ES', dateFormatterOptions),
+      };
+
+      return response;
     }
   }
 

@@ -7,7 +7,7 @@ export class SubscriptionCronService {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
   @Cron('0 0 * * *') // Corre todos los días a la medianoche
-  handleCron() {
-    this.subscriptionService.expireSubscriptions();
+  async handleCron() {
+    await this.subscriptionService.expireSubscriptions();
   }
 }
