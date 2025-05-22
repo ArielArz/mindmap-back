@@ -6,21 +6,16 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { MercadoPagoService } from './mercadopago.service';
-
-class CrearSuscripcionDto {
-  email: string;
-  monto: number;
-  back_url: string;
-}
+import { CreatepaymentsDto } from './dto/create-payments.dto';
 
 @Controller('payments')
 export class MercadoPagoController {
   constructor(private readonly paymentService: MercadoPagoService) {}
 
   @Post('suscripcion')
-  async crearSuscripcion(@Body() data: CrearSuscripcionDto) {
+  async crearSuscripcion(@Body() data: CreatepaymentsDto) {
     try {
-      const response = await this.paymentService.crearSuscripcion(data);
+      const response = await this.paymentService.createPayment(data);
       return {
         message: 'Suscripción creada correctamente',
         data: response,

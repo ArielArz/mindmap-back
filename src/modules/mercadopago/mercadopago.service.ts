@@ -14,7 +14,7 @@ export class MercadoPagoService {
     this.preapproval = new PreApproval(this.mp);
   }
 
-  async crearSuscripcion(data: {
+  async createPayment(data: {
     email: string;
     monto: number;
     back_url: string;

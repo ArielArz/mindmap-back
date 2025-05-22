@@ -9,18 +9,10 @@
 //   username: DB_USER,
 //   password: DB_PASSWORD,
 //   database: DB_NAME,
-//   host: DB_HOST,
-//   port: DB_PORT,
-//   username: DB_USER,
-//   password: DB_PASSWORD,
-//   database: DB_NAME,
 //   entities: ['dist/**/*.entity{.ts,.js}'],
-//   migrations: ['dist/migrations/*{.ts,.js}'],
 //   migrations: ['dist/migrations/*{.ts,.js}'],
 //   synchronize: true,
 //   dropSchema: false,
-//   ssl:
-//     process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
 //   ssl:
 //     process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
 // };
