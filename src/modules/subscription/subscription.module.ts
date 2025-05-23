@@ -6,6 +6,7 @@ import { Subscription } from './entities/subscription.entity';
 import { UsersModule } from '../users/users.module';
 import { User } from '../users/entities/user.entity';
 import { MailerModule } from '../mailer/mailer.module';
+import { SubscriptionCronService } from './subscription-cron.service';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { MailerModule } from '../mailer/mailer.module';
     MailerModule,
   ],
   controllers: [SubscriptionController],
-  providers: [SubscriptionService],
+  providers: [SubscriptionService, SubscriptionCronService],
   exports: [SubscriptionService],
 })
 export class SubscriptionModule {}

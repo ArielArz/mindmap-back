@@ -10,4 +10,9 @@ export class SubscriptionCronService {
   async handleCron() {
     await this.subscriptionService.expireSubscriptions();
   }
+
+  @Cron('0 10 * * *') // Todos los días a las 10:00 AM
+  async handleReminderCron() {
+    await this.subscriptionService.notifyUpcomingExpirations();
+  }
 }
