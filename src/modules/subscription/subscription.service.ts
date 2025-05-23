@@ -18,7 +18,7 @@ export class SubscriptionService {
     private readonly mailerService: MailerService,
   ) {}
 
-  async createSubscription(data: CreateSubscriptionDto) {
+  async createSubscription(data: CreateSubscriptionDto, days: number) {
     const user = await this.userRepo.findOneBy({ id: data.userId });
     if (!user) throw new Error('User not found');
 
@@ -34,7 +34,7 @@ export class SubscriptionService {
 
     if (existingSubscription) {
       const newEndDate = new Date(existingSubscription.endDate);
-      newEndDate.setDate(newEndDate.getDate() + 30);
+      newEndDate.setDate(newEndDate.getDate() + days);
       existingSubscription.endDate = newEndDate;
       existingSubscription.active = true;
       await this.subscriptionRepo.save(existingSubscription);
@@ -67,9 +67,12 @@ export class SubscriptionService {
 
       return response;
     } else {
+      const trialDays = 7;
+      const totalDays = days + trialDays;
+
       const startDate = new Date();
       const endDate = new Date();
-      endDate.setDate(startDate.getDate() + 37);
+      endDate.setDate(startDate.getDate() + totalDays);
 
       const newSubscription = this.subscriptionRepo.create({
         userId: user.id,

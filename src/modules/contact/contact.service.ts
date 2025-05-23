@@ -18,12 +18,12 @@ export class ContactService {
       where: { email },
     });
     if (existingUser) {
-      throw new ConflictException('El correo electronico ya esta registrado');
+      throw new ConflictException('Mensaje enviado correctamente');
     }
     const message = this.contactRepo.create(data);
     await this.contactRepo.save(message);
 
-    return { message: 'Usuario registrado correctamente' };
+    return { message: 'Mensaje enviado correctamente' };
   }
 
   findAll() {
