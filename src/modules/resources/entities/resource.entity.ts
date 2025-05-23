@@ -46,7 +46,10 @@ export class Resource {
   thumbnailPublicId?: string;
 
   @Column({ default: false })
-  isMainVideo: boolean;
+  showInCardList: boolean;
+
+  @Column({ default: false })
+  showInSection: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
