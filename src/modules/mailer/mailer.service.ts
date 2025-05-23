@@ -6,9 +6,9 @@ import * as sgTransport from 'nodemailer-sendgrid-transport';
 @Injectable()
 export class MailerService {
   private transporter: nodemailer.Transporter;
-  private readonly jwtService: JwtService;
+ 
 
-  constructor() {
+  constructor(private readonly jwtService: JwtService) {
     const options = {
       auth: {
         api_key: process.env.SENDGRID_API_KEY,
