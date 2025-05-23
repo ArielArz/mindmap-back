@@ -13,6 +13,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import { FileType } from './entities/enum/file-type.enum';
 
 @Controller('resources')
 export class ResourcesController {
@@ -37,9 +38,37 @@ export class ResourcesController {
     return this.resourcesService.findAll();
   }
   
-  @Get('main-video')
-  async getMainVideo() {
-    return this.resourcesService.findMainVideo();
+  @Patch(':id/show-in-cardlist')
+  updateCardListVisibility(
+    @Param('id') id: string,
+    @Body() body: { show: boolean }
+  ) {
+    return this.resourcesService.updateShowInCardList(id, body.show);
+  }
+
+  @Patch(':id/show-in-section/:section')
+  updateCardListSection(
+    @Param('id') id: string,
+    @Param('section') section: FileType,
+    @Body() body: { show: boolean}
+  ) {
+    return this.resourcesService.updateShowInSection(id, body.show, section);
+  }
+
+  
+  @Get('/featured')
+  getFeaturedForCardList() {
+    return this.resourcesService.findWhereShowInCardList();
+  }
+
+  @Get('/featured/section')
+  getFeaturedForSection() {
+    return this.resourcesService.findWhereShowInSection();
+  }
+
+  @Get('/featured/section/:section')
+  getFeaturedFilterSection(@Param('section') section: FileType) {
+    return this.resourcesService.findWhereFilterSection(section);
   }
 
   @Get(':id')
@@ -55,13 +84,5 @@ export class ResourcesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.resourcesService.remove(id);
-  }
-
-  @Patch('main-video/:id')
-  async setMainVideo(@Param('id') id: string) {
-    if (id === 'none') {
-      return this.resourcesService.clearMainVideo();
-    }
-    return this.resourcesService.setMainVideo(id);
   }
 }

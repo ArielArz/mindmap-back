@@ -7,6 +7,7 @@ import { UpdateResourceDto } from './dto/update-resource.dto';
 import { User } from '../users/entities/user.entity';
 import { FilesUploadRepository } from 'src/cloudinary/files-upload.repository';
 import { FileType } from './entities/enum/file-type.enum';
+// import { FileType } from './entities/enum/file-type.enum';
 
 
 @Injectable()
@@ -26,11 +27,6 @@ async create(
   files: { file?: Express.Multer.File[]; thumbnail?: Express.Multer.File[] },
 ): Promise<Resource> {
   try {
-      if (dto.isMainVideo) {
-    // Desmarcar cualquier otro recurso como principal
-        await this.resourceRepo.update({ isMainVideo: true }, { isMainVideo: false });
-      } 
-
     const file = files.file?.[0];
     const thumbnail = files.thumbnail?.[0];
 
@@ -77,10 +73,6 @@ async create(
   }
 
   async update(id: string, dto: UpdateResourceDto): Promise<Resource> {
-          if (dto.isMainVideo) {
-    // Desmarcar cualquier otro recurso como principal
-        await this.resourceRepo.update({ isMainVideo: true }, { isMainVideo: false });
-      } 
     const resource = await this.resourceRepo.preload({ id, ...dto });
     if (!resource) throw new NotFoundException('Resource not found');
     return this.resourceRepo.save(resource);
@@ -102,34 +94,39 @@ async create(
     await this.resourceRepo.remove(resource);
   }
 
-    async findMainVideo(): Promise<Resource> {
-    const mainVideo = await this.resourceRepo.findOne({
-    where: { isMainVideo: true, fileType: FileType.VIDEO },
-      relations: ['uploadedBy'],
-    });
-    if (!mainVideo) throw new NotFoundException('Main video not found');
-    return mainVideo;
-  }
-  
-  async clearMainVideo() {
-    await this.resourceRepo.update({ isMainVideo: true }, { isMainVideo: false });
-    return { message: "Recurso destacado eliminado" };
-  }
+async findWhereShowInCardList() {
+  return await this.resourceRepo.find({
+    where: { showInCardList: true },
+    order: { createdAt: 'DESC' },
+  });
+}
 
-  async setMainVideo(id: string): Promise<Resource> {
-      await this.clearMainVideo();
-      // Desmarcar todos los videos destacados
-      await this.resourceRepo.createQueryBuilder()
-        .update(Resource)
-        .set({ isMainVideo: false })
-        .where("isMainVideo = :val", { val: true })
-        .execute();
+async updateShowInCardList(id: string, show: boolean) {
+  return this.resourceRepo.update(id, { showInCardList: show });
+}
 
-      // Marcar el nuevo video principal
-      const resource = await this.resourceRepo.findOneBy({ id });
-      if (!resource) throw new NotFoundException('Resource not found');
 
-      resource.isMainVideo = true;
-      return this.resourceRepo.save(resource);
-    }
+async updateShowInSection(id: string, show: boolean, section: FileType) {
+  return this.resourceRepo.update(id, {
+    showInSection: show,
+    fileType: section,
+  });
+}
+
+async findWhereShowInSection() {
+  return await this.resourceRepo.find({
+    where: { showInSection: true },
+    order: { createdAt: 'DESC' },
+  });
+}
+
+async findWhereFilterSection(section: FileType) {
+  return this.resourceRepo.find({
+    where: {
+      showInSection: true,
+      fileType: section,
+    },
+    order: { createdAt: 'DESC' },
+  });
+}
 }

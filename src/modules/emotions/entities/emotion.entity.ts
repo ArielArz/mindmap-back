@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { IsInt, Max, Min } from 'class-validator';
+import { UserState } from 'src/modules/user-state/entities/user-state.entity';
 
 @Entity('emotions')
 export class Emotion {
@@ -24,4 +25,6 @@ export class Emotion {
   @Column({ type: 'text', nullable: false })
   reflexion: string;
 
+  @ManyToOne(() => UserState)
+  userState: UserState;
 }
