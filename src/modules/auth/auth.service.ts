@@ -33,6 +33,9 @@ export class AuthService {
 
     const user = await this.usersService.createUser(signUpDto);
 
+    // Enviar correo de bienvenida
+    await this.mailerService.sendWelcomeEmail(user.email, user.name);
+
     const payload = { sub: user.id, email: user.email, role: user.role };
     const token = this.jwtService.sign(payload);
 
@@ -72,6 +75,13 @@ export class AuthService {
       });
     }
 
+    // Enviar correo de bienvenida
+    try {
+      await this.mailerService.sendWelcomeLoginGoogle(user.email, user.name);
+    } catch (error){
+      console.warn(`No se pudo enviar el email de bienvenida a ${user.email}:`, error.message);
+    }
+
     const payload = { sub: user.id, email: user.email, role: user.role };
     const token = this.jwtService.sign(payload);
 
@@ -95,6 +105,13 @@ export class AuthService {
         address: '',
         profileImage: googleUser.profileImage || '',
       });
+    }
+
+    // Enviar correo de bienvenida
+    try {
+      await this.mailerService.sendWelcomeLoginGoogle(user.email, user.name);
+    } catch (error){
+      console.warn(`No se pudo enviar el email de bienvenida a ${user.email}:`, error.message);
     }
 
     const payload = { sub: user.id, email: user.email, role: user.role };
@@ -139,6 +156,9 @@ export class AuthService {
 
     const token = this.jwtService.sign({ email }, { secret:process.env.JWT_SECRET, expiresIn: '30m' });
 
+    //Este log te mostrará el token en la terminal
+    // console.log('Token generado para reset password:', token);
+    
     await this.mailerService.sendPasswordResetEmail(email, token);
 
     return { message: 'Enlace de restablecimiento enviado por correo' };

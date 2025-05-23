@@ -9,16 +9,21 @@ import { AuthenticationGuard } from 'src/guard/auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { SetPasswordDto } from './dto/set-password.dto';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
-  ) { }
+  ) {}
 
   @Post('signup')
+  @ApiOperation({ summary: 'Registrar nuevo usuario con email y contraseña' })
+  @ApiBody({ type: SignUpDto })
+  @ApiResponse({ status: 201, description: 'Usuario registrado correctamente.' })
   async signup(@Body() data: SignUpDto) {
     const user = await this.userRepository.findOneBy({ email: data.email })
     return await this.authService.signUp(data);
@@ -26,6 +31,9 @@ export class AuthController {
 
 
   @Post('signin')
+  @ApiOperation({ summary: 'Iniciar sesion con email y contraseña.' })
+  @ApiBody({ type: SignInDto })
+  @ApiResponse({ status: 200, description: 'Usuario autenticado correctamente. Se retorna token y satos del usuario' })
   async signin(@Body() data: SignInDto, @Res({ passthrough: true }) res: Response) {
     const { token, user } = await this.authService.signIn(data);
 
@@ -52,6 +60,19 @@ export class AuthController {
    * }
    */
   @Post('google')
+  @ApiOperation({ summary: 'Iniciar sesión con Google (datos enviados desde frontend)' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', example: 'Juan Pérez' },
+        email: { type: 'string', example: 'juan@gmail.com' },
+        profileImage: { type: 'string', example: 'https://lh3.googleusercontent.com/a/...' },
+        sub: { type: 'string', example: '115610386182944254964' },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Usuario autenticado con Google' })
   async googleManualLogin(@Body() googleUserData: any, @Res({ passthrough: true }) res: Response){
     // Validacion minima
     if(!googleUserData?.email || !googleUserData?.sub){
@@ -102,6 +123,8 @@ export class AuthController {
   // Logout: limpiar cookie
   @Get('logout')
   @UseGuards(AuthenticationGuard)
+  @ApiOperation({ summary: 'Cerrar sesion (limpia cookie)' })
+  @ApiResponse({ status: 200, description: 'Sesion cerrada correctamente' })
   async logout(@Res({ passthrough: true }) res: Response){
     res.clearCookie('token', {
       httpOnly: true,
@@ -114,16 +137,37 @@ export class AuthController {
   }
 
   @Post('set-password')
+  @ApiOperation({ summary: 'Agregar contraseña a cuenta creada con Google' })
+  @ApiBody({ type: SetPasswordDto })
+  @ApiResponse({ status: 200, description: 'Contraseña agregada correctamente' })
   async setPassword(@Body() data: SetPasswordDto){
     return this.authService.addPasswordToGoogleUser(data);
   }
 
   @Post('forgot-password')
+  @ApiOperation({ summary: 'Solicitar enlace de restablecimiento de contraseña' })
+  @ApiBody({ schema: {
+    type: 'object',
+    properties: {
+      email: {type: 'string', example: 'usuario@gmail.com' }
+    }
+  }})
+  @ApiResponse({ status: 200, description: 'Enlace de recuperacion enviado por correo' })
   async fotgotPassword(@Body('email') email: string){
     return this.authService.sendPasswrodResetToken(email);
   }
 
   @Post('reset-password')
+  @ApiOperation({ summary: 'Restablecer contraseña usando un token de recuperacion' })
+  @ApiBody({ schema:{
+    type: 'object',
+    properties: {
+      token: { type: 'string', example: 'JWT_TOKEN_AQUI' },
+      newPassword: { type: 'string', example: 'NuevaClave123!' },
+    }
+  }
+  })
+  @ApiResponse({ status: 200, description: 'Contraseña restablecida exitosamente.' })
   async resetPassword(@Body() data: { token: string, newPassword: string }) {
     return this.authService.resetPassword(data.token, data.newPassword)
   }

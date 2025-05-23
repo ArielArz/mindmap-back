@@ -1,9 +1,18 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from "class-validator";
 
 export class SetPasswordDto {
+    @ApiProperty({
+      description: 'Correo electronico del usuario registrado con Google',
+      example: 'usuario@gmail.com'
+    })  
     @IsEmail({}, { message: 'El correo electronico no tiene un formato valido' })
     email: string;
 
+    @ApiProperty({
+      description: 'Nueva contraseña segura que el usuario desea establecer',
+      example: 'MiNuevaClave123!',
+    })
     @IsNotEmpty({ message: 'La contraseña no puede estar vacia.' })
     @IsString({ message: 'La contraseña debe ser una cadena de texto.' })
     @Matches(
@@ -15,6 +24,10 @@ export class SetPasswordDto {
   )
   newPassword: string;
 
+  @ApiProperty({
+    description: 'Confirmacion exacta de la nueva contraseña',
+    example: 'MiNuevaClave123!',
+  })
   @IsNotEmpty({ message: 'La confirmacion de la contraseña es obligatoria.' })
   confirmPassword: string;
 }
