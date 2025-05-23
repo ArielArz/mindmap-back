@@ -50,29 +50,29 @@ export class EmotionsController {
     return this.emotionsService.puntajeEmocionalAnalisis(id);
   }
 
-  // @Get('/analysis/daily')
-  // @UseGuards(AuthGuard('jwt'))
-  // async analysisDay(@Req() req) {
-  //   const userId = req.user.id;
-  //   return this.emotionsService.puntajeEmocionalAnalisis(userId, 1);
-  // }
+  @Get('/analysis/daily')
+  @UseGuards(AuthGuard('jwt'))
+  async analysisDay(@Req() req) {
+    const userId = req.user.id;
+    return this.emotionsService.puntajeEmocionalAnalisis(userId, 1);
+  }
 
-  // @Get('/analysis/weekly')
-  // @UseGuards(AuthGuard('jwt'))
-  // async analysisWeek(@Req() req) {
-  //   const userId = req.user.id;
-  //   return this.emotionsService.puntajeEmocionalAnalisis(userId, 7);
-  // }
+  @Get('/analysis/weekly')
+  @UseGuards(AuthGuard('jwt'))
+  async analysisWeek0(@Req() req) {
+    const userId = req.user.id;
+    return this.emotionsService.puntajeEmocionalAnalisis(userId, 7);
+  }
 
-  // @Get('/analysis/monthly')
-  // @UseGuards(AuthGuard('jwt'))
-  // async analysisMonth(@Req() req) {
-  //   const userId = req.user.id;
-  //   return this.emotionsService.puntajeEmocionalAnalisis(userId, 30);
-  // }
+  @Get('/analysis/monthly')
+  @UseGuards(AuthGuard('jwt'))
+  async analysisMonth0(@Req() req) {
+    const userId = req.user.id;
+    return this.emotionsService.puntajeEmocionalAnalisis(userId, 30);
+  }
 
   @Get('/analysis/daily/:oid')
-  async analysisDay(@Param('oid') oid: string) {
+  async analysisDay0(@Param('oid') oid: string) {
     return this.emotionsService.puntajeEmocionalAnalisis(oid, 1);
   }
 
