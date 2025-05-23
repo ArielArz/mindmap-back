@@ -16,6 +16,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/decorators/roles.decorator';
 
+
 @ApiBearerAuth()
 @Controller('emotions')
 export class EmotionsController {
@@ -49,25 +50,40 @@ export class EmotionsController {
     return this.emotionsService.puntajeEmocionalAnalisis(id);
   }
 
-  @Get('/analysis/daily')
-  @UseGuards(AuthGuard('jwt'))
-  async analysisDay(@Req() req) {
-    const userId = req.user.id;
-    return this.emotionsService.puntajeEmocionalAnalisis(userId, 1);
+  // @Get('/analysis/daily')
+  // @UseGuards(AuthGuard('jwt'))
+  // async analysisDay(@Req() req) {
+  //   const userId = req.user.id;
+  //   return this.emotionsService.puntajeEmocionalAnalisis(userId, 1);
+  // }
+
+  // @Get('/analysis/weekly')
+  // @UseGuards(AuthGuard('jwt'))
+  // async analysisWeek(@Req() req) {
+  //   const userId = req.user.id;
+  //   return this.emotionsService.puntajeEmocionalAnalisis(userId, 7);
+  // }
+
+  // @Get('/analysis/monthly')
+  // @UseGuards(AuthGuard('jwt'))
+  // async analysisMonth(@Req() req) {
+  //   const userId = req.user.id;
+  //   return this.emotionsService.puntajeEmocionalAnalisis(userId, 30);
+  // }
+
+  @Get('/analysis/daily/:oid')
+  async analysisDay(@Param('oid') oid: string) {
+    return this.emotionsService.puntajeEmocionalAnalisis(oid, 1);
   }
 
-  @Get('/analysis/weekly')
-  @UseGuards(AuthGuard('jwt'))
-  async analysisWeek(@Req() req) {
-    const userId = req.user.id;
-    return this.emotionsService.puntajeEmocionalAnalisis(userId, 7);
+  @Get('/analysis/weekly/:oid')
+  async analysisWeek(@Param('oid') oid: string) {
+    return this.emotionsService.puntajeEmocionalAnalisis(oid, 7);
   }
 
-  @Get('/analysis/monthly')
-  @UseGuards(AuthGuard('jwt'))
-  async analysisMonth(@Req() req) {
-    const userId = req.user.id;
-    return this.emotionsService.puntajeEmocionalAnalisis(userId, 30);
+  @Get('/analysis/monthly/:oid')
+  async analysisMonth(@Param('oid') oid: string) {
+    return this.emotionsService.puntajeEmocionalAnalisis(oid, 30);
   }
 
   @Get(':id')

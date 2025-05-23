@@ -9,5 +9,7 @@ import { UserState } from '../user-state/entities/user-state.entity';
   imports: [TypeOrmModule.forFeature([Emotion, UserState])],
   controllers: [EmotionsController],
   providers: [EmotionsService],
+  exports: [TypeOrmModule]
+
 })
 export class EmotionsModule { }

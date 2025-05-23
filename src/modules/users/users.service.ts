@@ -12,6 +12,8 @@ import * as bcrypt from 'bcrypt';
 import { MailerService } from '../mailer/mailer.service';
 import { UserRole } from './entities/enum/user-role.enum';
 import { UserState } from '../user-state/entities/user-state.entity';
+import { seedUsersAndUserStates } from './users.userState.seeder';
+import { Emotion } from '../emotions/entities/emotion.entity';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +25,9 @@ export class UsersService {
 
     @InjectRepository(UserState)
     private readonly userStateRepository: Repository<UserState>,
+
+    @InjectRepository(Emotion)
+    private readonly emotionRepository: Repository<Emotion>,
   ) { }
 
 
@@ -54,7 +59,7 @@ export class UsersService {
     }
 
     let hashedPassword = '';
-    if(password){
+    if (password) {
       const saltRounds = 10;
       hashedPassword = await bcrypt.hash(password, saltRounds)
     }
@@ -69,7 +74,7 @@ export class UsersService {
     const userCreated = await this.userRepository.save(newUser);
 
     // Solo enviar si se creo con password (registro manual)
-    if(password){
+    if (password) {
       await this.mailerService.sendWelcomeEmail(email, name);
     }
 
@@ -82,14 +87,12 @@ export class UsersService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    // Eliminar estados del usuario
     await this.userStateRepository
       .createQueryBuilder()
       .delete()
       .where('userId = :id', { id })
       .execute();
 
-    // Eliminar usuario
     return await this.userRepository.delete(id);
   }
 
@@ -117,7 +120,12 @@ export class UsersService {
     return premiumUsers;
   }
 
-  async saveUser(user: User): Promise<User>{
+  async saveUser(user: User): Promise<User> {
     return await this.userRepository.save(user);
+  }
+
+  async seedUsuariosYEstados() {
+    await seedUsersAndUserStates(this.userRepository, this.userStateRepository, this.emotionRepository);
+    return { message: 'Usuarios y estados precargados' };
   }
 }
