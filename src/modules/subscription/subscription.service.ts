@@ -6,6 +6,7 @@ import { User } from '../users/entities/user.entity';
 import { UserRole } from '../users/entities/enum/user-role.enum';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { MailerService } from '../mailer/mailer.service';
+import { Between } from 'typeorm';
 
 @Injectable()
 export class SubscriptionService {
@@ -17,7 +18,7 @@ export class SubscriptionService {
     private readonly mailerService: MailerService,
   ) {}
 
-  async createSubscription(data: CreateSubscriptionDto) {
+  async createSubscription(data: CreateSubscriptionDto, days: number) {
     const user = await this.userRepo.findOneBy({ id: data.userId });
     if (!user) throw new Error('User not found');
 
@@ -33,10 +34,13 @@ export class SubscriptionService {
 
     if (existingSubscription) {
       const newEndDate = new Date(existingSubscription.endDate);
-      newEndDate.setDate(newEndDate.getDate() + 30);
+      newEndDate.setDate(newEndDate.getDate() + days);
       existingSubscription.endDate = newEndDate;
       existingSubscription.active = true;
       await this.subscriptionRepo.save(existingSubscription);
+
+      user.role = UserRole.PREMIUM;
+      await this.userRepo.save(user);
 
       const formattedEndDate = newEndDate.toLocaleDateString(
         'es-ES',
@@ -47,11 +51,28 @@ export class SubscriptionService {
         user.name,
         formattedEndDate,
       );
-      return `Suscripción renovada hasta el ${formattedEndDate}`;
+      const response = {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        startDate: existingSubscription.startDate.toLocaleDateString(
+          'es-ES',
+          dateFormatterOptions,
+        ),
+        endDate: existingSubscription.endDate.toLocaleDateString(
+          'es-ES',
+          dateFormatterOptions,
+        ),
+      };
+
+      return response;
     } else {
+      const trialDays = 7;
+      const totalDays = days + trialDays;
+
       const startDate = new Date();
       const endDate = new Date();
-      endDate.setDate(startDate.getDate() + 37);
+      endDate.setDate(startDate.getDate() + totalDays);
 
       const newSubscription = this.subscriptionRepo.create({
         userId: user.id,
@@ -74,7 +95,15 @@ export class SubscriptionService {
         user.name,
         formattedEndDate,
       );
-      return `Suscripción activa hasta el ${formattedEndDate}`;
+      const response = {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
+        endDate: endDate.toLocaleDateString('es-ES', dateFormatterOptions),
+      };
+
+      return response;
     }
   }
 
@@ -91,18 +120,30 @@ export class SubscriptionService {
 
       sub.user.role = UserRole.FREE;
       await this.userRepo.save(sub.user);
+
+      await this.mailerService.sendSubscriptionExpiredEmail(
+        sub.user.email,
+        sub.user.name,
+      );
     }
   }
 
   async createTrialSubscription(userId: string) {
     const user = await this.userRepo.findOneBy({ id: userId });
-    if (!user) throw new Error('User not found');
+    if (!user) throw new Error('Usuario no encontrado');
 
     const existingTrial = await this.subscriptionRepo.findOne({
       where: { userId },
     });
 
-    if (existingTrial) throw new Error('User already had a trial subscription');
+    if (existingTrial)
+      throw new Error('Usuario ya usó la suscripción de prueba');
+
+    const dateFormatterOptions: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    };
 
     const startDate = new Date();
     const endDate = new Date();
@@ -120,22 +161,49 @@ export class SubscriptionService {
     user.role = UserRole.PREMIUM;
     await this.userRepo.save(user);
 
-    return trial;
+    const response = {
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
+      endDate: endDate.toLocaleDateString('es-ES', dateFormatterOptions),
+    };
+    const formattedEndDate = endDate.toLocaleDateString(
+      'es-ES',
+      dateFormatterOptions,
+    );
+    await this.mailerService.sendSubscriptionTrialEmail(
+      user.email,
+      user.name,
+      formattedEndDate,
+    );
+
+    return response;
   }
 
-  findAll() {
-    return `This action returns all subscription`;
-  }
+  async notifyUpcomingExpirations() {
+    const now = new Date();
+    const twoDaysLater = new Date(now);
+    twoDaysLater.setDate(twoDaysLater.getDate() + 2);
 
-  findOne(id: number) {
-    return `This action returns a #${id} subscription`;
-  }
+    // Rango desde el inicio al final del día para más precisión
+    const startOfDay = new Date(twoDaysLater.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(twoDaysLater.setHours(23, 59, 59, 999));
 
-  // update(id: number, updateSubscriptionDto: UpdateSubscriptionDto) {
-  //   return `This action updates a #${id} subscription`;
-  // }
+    const upcomingSubs = await this.subscriptionRepo.find({
+      where: {
+        active: true,
+        endDate: Between(startOfDay, endOfDay),
+      },
+      relations: ['user'],
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} subscription`;
+    for (const sub of upcomingSubs) {
+      await this.mailerService.sendSubscriptionReminderEmail(
+        sub.user.email,
+        sub.user.name,
+        sub.endDate.toDateString(),
+      );
+    }
   }
 }

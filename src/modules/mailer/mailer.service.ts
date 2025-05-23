@@ -134,9 +134,35 @@ export class MailerService {
       </div>
     </div>
   `;
-
     await this.transporter.sendMail(
       this.commonMailOptions(to, 'Renovación de Sentia Premium', html),
+    );
+  }
+  async sendSubscriptionTrialEmail(
+    to: string,
+    name: string,
+    expirationDate: string,
+  ) {
+    const html = `
+    <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
+      <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
+        <h2 style="color: #4CAF50; text-align: center;">¡Bienvenido a tu prueba gratuita, ${name}!</h2>
+        <p style="font-size: 16px; color: #555555; text-align: center;">Has activado tu prueba de 7 días en Sentia Premium.</p>
+        <p style="font-size: 16px; color: #555555; text-align: center;">
+          Tendrás acceso completo a nuestro contenido exclusivo hasta el ${expirationDate}. ¡Aprovecha esta experiencia premium!
+        </p>
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            Explorar Sentia Premium
+          </a>
+        </div>
+        <p style="font-size: 12px; color: #aaaaaa; text-align: center; margin-top: 30px;">Esperamos que disfrutes esta prueba. ¡Gracias por unirte a Sentia!</p>
+      </div>
+    </div>
+  `;
+
+    await this.transporter.sendMail(
+      this.commonMailOptions(to, 'Tu prueba gratuita en Sentia Premium', html),
     );
   }
 
@@ -161,6 +187,34 @@ export class MailerService {
 
     await this.transporter.sendMail(
       this.commonMailOptions(to, 'Tu suscripción a Sentia ha expirado', html),
+    );
+  }
+
+  async sendSubscriptionReminderEmail(
+    to: string,
+    name: string,
+    expirationDate: string,
+  ) {
+    const html = `
+    <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
+      <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
+        <h2 style="color: #2196f3; text-align: center;">Tu suscripción a Sentia está por expirar, ${name}.</h2>
+        <p style="font-size: 16px; color: #555555; text-align: center;">Quedan 2 días para que finalice tu acceso a Sentia Premium.</p>
+        <p style="font-size: 16px; color: #555555; text-align: center;">
+          Tienes acceso hasta el ${expirationDate}. No pierdas tu contenido favorito, ¡renueva a tiempo!
+        </p>
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="" style="background-color: #2196f3; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            Renovar suscripción
+          </a>
+        </div>
+        <p style="font-size: 12px; color: #aaaaaa; text-align: center; margin-top: 30px;">Gracias por ser parte de Sentia.</p>
+      </div>
+    </div>
+  `;
+
+    await this.transporter.sendMail(
+      this.commonMailOptions(to, 'Tu suscripción está por expirar', html),
     );
   }
 

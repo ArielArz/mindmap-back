@@ -68,8 +68,8 @@ export class StripeService {
         this.logger.warn('Missing userId in session metadata');
         return;
       }
-
-      await this.subscriptionService.createSubscription({ userId });
+      const days = 30;
+      await this.subscriptionService.createSubscription({ userId }, days);
       this.logger.log(`Subscription created for user ${userId}`);
     }
   }
