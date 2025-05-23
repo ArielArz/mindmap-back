@@ -1,12 +1,16 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { SubscriptionService } from './subscription.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Subscription')
+@ApiBearerAuth()
 @Controller('subscription')
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Crear una suscripcion' })
   createSubscription(@Body() createSubscriptionDto: CreateSubscriptionDto) {
     const days = 30;
     return this.subscriptionService.createSubscription(
@@ -16,6 +20,7 @@ export class SubscriptionController {
   }
 
   @Post('extended')
+  @ApiOperation({ summary: 'Crear una suscripcion extendida' })
   createSuscriptionExtended(
     @Body() createSubscriptionDto: CreateSubscriptionDto,
   ) {
@@ -27,6 +32,7 @@ export class SubscriptionController {
   }
 
   @Post('trial')
+  @ApiOperation({ summary: 'Crear una suscripcion de prueba' })
   createTrial(@Body() createSubscriptionDto: CreateSubscriptionDto) {
     return this.subscriptionService.createTrialSubscription(
       createSubscriptionDto.userId,
