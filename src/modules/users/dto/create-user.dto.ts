@@ -11,13 +11,13 @@ import {
 import { MatchPassword } from 'src/decorators/matchPassword';
 
 export class UserDto {
-  @ApiProperty({ example: 'María González' })
+  @ApiProperty({ example: 'Rosalía Fernández' })
   @IsString({ message: 'El nombre debe ser una cadena de texto.' })
   @IsNotEmpty({ message: 'El nombre es obligatorio.' })
   @Length(3, 80, { message: 'El nombre debe tener entre 3 y 80 caracteres.' })
   name: string;
 
-  @ApiProperty({ example: 'maria@example.com' })
+  @ApiProperty({ example: 'rosalia@example.com' })
   @IsEmail({}, { message: 'El correo electrónico no tiene un formato válido.' })
   @IsNotEmpty({ message: 'El correo electrónico es obligatorio.' })
   email: string;
@@ -39,7 +39,7 @@ export class UserDto {
   @Validate(MatchPassword, ['password'])
   confirmPassword: string;
 
-  @ApiProperty({ example: 'Calle Falsa 123, Córdoba' })
+  @ApiProperty({ example: 'Av. Siempre Viva 742, Rosario' })
   @IsString({ message: 'La dirección debe ser una cadena de texto.' })
   @IsOptional()
   @Length(3, 80, {
@@ -47,8 +47,8 @@ export class UserDto {
   })
   address?: string;
 
-  @ApiProperty({ example: 'https://miapp.com/images/perfil/maria.png' })
+  @ApiProperty({ example: 'https://miapp.com/images/perfil/rosalia.png' })
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'La imagen de perfil debe ser una cadena de texto.' })
   profileImage?: string;
 }

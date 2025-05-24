@@ -13,7 +13,7 @@ async function bootstrap() {
     .setDescription('Proyecto Final de Full Stack Developer, Bootcamp soyHenry')
     .setVersion('1.0')
     .addBearerAuth()
-    .addTag('users')
+    .addTag('users', 'emotions')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
