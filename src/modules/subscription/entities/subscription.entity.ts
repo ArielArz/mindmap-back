@@ -31,6 +31,9 @@ export class Subscription {
   @Column({ nullable: true, unique: true })
   paymentSessionId: string;
 
+  @Column({ default: false })
+  isTrial: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

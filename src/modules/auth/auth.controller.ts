@@ -119,8 +119,7 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24,
     });
 
-    const { password, ...userWithoutPassword } = user;
-    return { user: userWithoutPassword, token };
+    return { user, token };
   }
 
   // Google OAuth - inicio del flujo

@@ -74,6 +74,7 @@ export class AuthService {
         role: user.role,
         subscription: user.subscriptions.map((subscription) => ({
           active: subscription.active,
+          isTrial: subscription.isTrial,
           startDate: subscription.startDate,
           endDate: subscription.endDate,
         })),
@@ -109,13 +110,27 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email, role: user.role };
     const token = this.jwtService.sign(payload);
 
-    return { token, user };
+    return {
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        subscription: user.subscriptions.map((subscription) => ({
+          active: subscription.active,
+          isTrial: subscription.isTrial,
+          startDate: subscription.startDate,
+          endDate: subscription.endDate,
+        })),
+      },
+    };
   }
 
   // Login manual con datos de Google (pruebas desde Insomnia o fronted directo)
   async googleLoginManual(googleUser: any) {
     if (!googleUser?.email || !googleUser?.sub) {
-      throw new BadRequestException('Falatan datos del usuario de Google');
+      throw new BadRequestException('Faltan datos del usuario de Google');
     }
 
     let user = await this.usersService.findOneByEmail(googleUser.email);
