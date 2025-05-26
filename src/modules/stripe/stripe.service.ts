@@ -63,13 +63,19 @@ export class StripeService {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
 
-      const userId = session.metadata?.userId;
+      const { userId, sessionId } = session.metadata as {
+        userId: string;
+        sessionId: string;
+      };
       if (!userId) {
         this.logger.warn('Missing userId in session metadata');
         return;
       }
       const days = 30;
-      await this.subscriptionService.createSubscription({ userId }, days);
+      await this.subscriptionService.createSubscription(
+        { userId, sessionId },
+        days,
+      );
       this.logger.log(`Subscription created for user ${userId}`);
     }
   }
