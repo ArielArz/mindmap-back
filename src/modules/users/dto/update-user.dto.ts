@@ -16,22 +16,6 @@ export class UpdateUserDto extends PartialType(UserDto) {
   @IsEmail({}, { message: 'El correo electrónico no tiene un formato válido.' })
   email?: string;
 
-  // @ApiProperty({ example: 'ContraSegura123!' })
-  // @IsOptional()
-  // @IsString({ message: 'La contraseña debe ser una cadena de texto.' })
-  // @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/, {
-  //   message:
-  //     'La contraseña debe tener entre 8 y 20 caracteres, incluyendo una minúscula, una mayúscula, un número y un carácter especial (!@#$%&*).',
-  // })
-  // password?: string;
-
-  // @ApiProperty({ example: 'ContraSegura123!' })
-  // @IsOptional()
-  // @Validate(MatchPassword, ['password'], {
-  //   message: 'La confirmación de la contraseña no coincide.',
-  // })
-  // confirmPassword?: string;
-
   @ApiProperty({ example: 'Av. Siempre Viva 742, Rosario' })
   @IsOptional()
   @IsString({ message: 'La dirección debe ser una cadena de texto.' })

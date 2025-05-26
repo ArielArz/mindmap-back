@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -85,6 +86,55 @@ export class UsersService {
     return userCreated;
   }
 
+
+  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const updatedUser = {
+      ...user,
+      ...updateUserDto,
+    };
+
+    return this.userRepository.save(updatedUser);
+  }
+
+
+  async updatePassword(userId: string, dto: UpdatePasswordDto) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    console.log('Received userId:', userId)
+
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado.');
+    }
+
+    console.log('Current password input:', dto.currentPassword);
+    console.log('Password hash stored:', user.password);
+
+
+    const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('La contraseña actual es incorrecta.');
+    }
+
+
+    if (dto.password !== dto.confirmPassword) {
+      throw new BadRequestException('La nueva contraseña y su confirmación no coinciden.');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(dto.password, salt);
+
+    user.password = hashedPassword;
+    await this.userRepository.save(user);
+
+    return { message: 'Contraseña actualizada con éxito.' };
+  }
+
   async remove(id: string) {
     const foundUser = await this.userRepository.findOne({ where: { id } });
     if (!foundUser) {
@@ -99,52 +149,6 @@ export class UsersService {
 
     return await this.userRepository.delete(id);
   }
-
-  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
-
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
-
-    //   async updateUser(id: string, dto: UpdateUserDto) {
-    // if (dto.password || dto.confirmPassword) {
-    //   throw new BadRequestException('No está permitido cambiar la contraseña desde este endpoint.');
-    // }
-
-    if (updateUserDto.password) {
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
-    }
-
-    const { confirmPassword, ...rest } = updateUserDto;
-
-    const updatedUser = { ...user, ...rest };
-
-    return this.userRepository.save(updatedUser);
-  }
-
-
-  async updatePassword(id: string, dto: UpdatePasswordDto) {
-    const user = await this.userRepository.findOne({ where: { id } });
-
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado.');
-    }
-
-    const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
-    if (!isMatch) {
-      throw new UnauthorizedException('La contraseña actual es incorrecta.');
-    }
-
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(dto.password, salt);
-
-    user.password = hashedPassword;
-    await this.userRepository.save(user);
-
-    return { message: 'Contraseña actualizada con éxito.' };
-  }
-
 
   async getPremiumUsers(): Promise<User[]> {
     const premiumUsers = await this.userRepository.find({
@@ -169,4 +173,6 @@ export class UsersService {
     );
     return { message: 'Usuarios y estados precargados' };
   }
+
+
 }
