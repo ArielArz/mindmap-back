@@ -14,6 +14,7 @@ import { UserRole } from './entities/enum/user-role.enum';
 import { UserState } from '../user-state/entities/user-state.entity';
 import { seedUsersAndUserStates } from './users.userState.seeder';
 import { Emotion } from '../emotions/entities/emotion.entity';
+import { UpdatePasswordDto } from './dto/update-password-dto';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +29,7 @@ export class UsersService {
 
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
-  ) {}
+  ) { }
 
   async findAll() {
     return this.userRepository.find();
@@ -106,6 +107,11 @@ export class UsersService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
+    //   async updateUser(id: string, dto: UpdateUserDto) {
+    // if (dto.password || dto.confirmPassword) {
+    //   throw new BadRequestException('No está permitido cambiar la contraseña desde este endpoint.');
+    // }
+
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
@@ -116,6 +122,29 @@ export class UsersService {
 
     return this.userRepository.save(updatedUser);
   }
+
+
+  async updatePassword(id: string, dto: UpdatePasswordDto) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado.');
+    }
+
+    const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('La contraseña actual es incorrecta.');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(dto.password, salt);
+
+    user.password = hashedPassword;
+    await this.userRepository.save(user);
+
+    return { message: 'Contraseña actualizada con éxito.' };
+  }
+
 
   async getPremiumUsers(): Promise<User[]> {
     const premiumUsers = await this.userRepository.find({

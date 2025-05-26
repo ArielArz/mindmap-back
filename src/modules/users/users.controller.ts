@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   BadRequestException,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/create-user.dto';
@@ -18,6 +19,7 @@ import { AuthenticationGuard } from 'src/guard/auth.guard';
 import { UserRole } from './entities/enum/user-role.enum';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { isUUID } from 'class-validator';
+import { UpdatePasswordDto } from './dto/update-password-dto';
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
@@ -55,6 +57,16 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Usuario actualizado correctamente.' })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDto);
+  }
+
+  @Patch('update-password')
+  @ApiOperation({ summary: 'Actualizar contraseña del usuario' })
+  updatePassword(
+    @Req() req,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    const userId = req.user.sub;
+    return this.usersService.updatePassword(userId, updatePasswordDto);
   }
 
 
