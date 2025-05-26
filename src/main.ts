@@ -4,9 +4,13 @@ import { ValidationPipe } from '@nestjs/common';
 import { loggerDI } from './middlewares/loggerDI.middleware';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as express from 'express';
+import * as cookieParser from 'cookie-parser';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
 
   const config = new DocumentBuilder()
     .setTitle('Sentia Backend API')

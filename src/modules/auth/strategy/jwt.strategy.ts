@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 interface JwtPayload {
-    sub: string;
-    email: string;
-    role: string; //Agregar el rol al payload para gestionar autorizaciones basadas en roles
+  sub: string;
+  email: string;
+  role: string; //Agregar el rol al payload para gestionar autorizaciones basadas en roles
 }
 
 
@@ -14,14 +14,22 @@ interface JwtPayload {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([(req) => req?.cookies?.token]),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),  // Primero busca en el header Authorization
+        (req) => req?.cookies?.token,               // Luego en la cookie 'token'
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET || '',
     });
   }
-  
-    validate(payload: JwtPayload): { userId: string; email: string; role:string } {
-        return { userId: payload.sub, email: payload.email, role: payload.role };
-    }
+
+  async validate(payload: any): Promise<{ id: string; email: string; role: string }> {
+    return {
+      id: payload.sub,
+      email: payload.email,
+      role: payload.role
+    };
+  }
+
 
 }

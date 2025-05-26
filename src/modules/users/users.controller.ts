@@ -9,6 +9,7 @@ import {
   UseGuards,
   BadRequestException,
   Req,
+  Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/create-user.dto';
@@ -20,6 +21,7 @@ import { UserRole } from './entities/enum/user-role.enum';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { isUUID } from 'class-validator';
 import { UpdatePasswordDto } from './dto/update-password-dto';
+import { AuthGuard } from '@nestjs/passport';
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
@@ -51,22 +53,24 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('update/password')
+  @ApiOperation({ summary: 'Actualizar contraseña del usuario' })
+  async updatePassword(
+    @Request() req,
+    @Body() dto: UpdatePasswordDto,
+  ) {
+    const userId = req.user.id;
+    return this.usersService.updatePassword(userId, dto);
+  }
+
+
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un usuario existente' })
   @UseGuards(AuthenticationGuard, RolesGuard)
   @ApiResponse({ status: 200, description: 'Usuario actualizado correctamente.' })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDto);
-  }
-
-  @Patch('update-password')
-  @ApiOperation({ summary: 'Actualizar contraseña del usuario' })
-  updatePassword(
-    @Req() req,
-    @Body() updatePasswordDto: UpdatePasswordDto,
-  ) {
-    const userId = req.user.sub;
-    return this.usersService.updatePassword(userId, updatePasswordDto);
   }
 
 

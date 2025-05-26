@@ -14,7 +14,7 @@ import { MailerModule } from '../mailer/mailer.module';
   imports: [
     TypeOrmModule.forFeature([User]),
     forwardRef(() => MailerModule),
-    UsersModule,
+    forwardRef(() => UsersModule),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -23,10 +23,11 @@ import { MailerModule } from '../mailer/mailer.module';
         signOptions: { expiresIn: process.env.JWT_EXPIRES || '1h' },
       }),
     }),
+
   ],
 
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, JwtStrategy],
   exports: [JwtModule, AuthService, UsersModule],
 })
-export class AuthModule {}
+export class AuthModule { }
