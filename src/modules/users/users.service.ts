@@ -28,15 +28,17 @@ export class UsersService {
 
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
-  ) { }
-
+  ) {}
 
   async findAll() {
     return this.userRepository.find();
   }
 
   async findOne(id: string) {
-    const foundUser = await this.userRepository.findOne({ where: { id }, relations: ['states', 'states.emotion'] });
+    const foundUser = await this.userRepository.findOne({
+      where: { id },
+      relations: ['states', 'states.emotion'],
+    });
     if (!foundUser) {
       throw new NotFoundException(`Usuario con id ${id} no encontrado`);
     }
@@ -44,7 +46,10 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string) {
-    return await this.userRepository.findOneBy({ email: email });
+    return await this.userRepository.findOne({
+      where: { email },
+      relations: ['subscriptions'],
+    });
   }
 
   async createUser(userDto: UserDto): Promise<User> {
@@ -60,7 +65,7 @@ export class UsersService {
     let hashedPassword = '';
     if (password) {
       const saltRounds = 10;
-      hashedPassword = await bcrypt.hash(password, saltRounds)
+      hashedPassword = await bcrypt.hash(password, saltRounds);
     }
 
     const newUser = this.userRepository.create({
@@ -112,7 +117,6 @@ export class UsersService {
     return this.userRepository.save(updatedUser);
   }
 
-
   async getPremiumUsers(): Promise<User[]> {
     const premiumUsers = await this.userRepository.find({
       where: { role: UserRole.PREMIUM },
@@ -129,7 +133,11 @@ export class UsersService {
   }
 
   async seedUsuariosYEstados() {
-    await seedUsersAndUserStates(this.userRepository, this.userStateRepository, this.emotionRepository);
+    await seedUsersAndUserStates(
+      this.userRepository,
+      this.userStateRepository,
+      this.emotionRepository,
+    );
     return { message: 'Usuarios y estados precargados' };
   }
 }
