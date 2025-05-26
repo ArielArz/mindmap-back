@@ -18,7 +18,6 @@ import { Repository } from 'typeorm';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import { AuthenticationGuard } from 'src/guard/auth.guard';
-import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { SetPasswordDto } from './dto/set-password.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -30,7 +29,7 @@ export class AuthController {
     private readonly authService: AuthService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   @Post('signup')
   @ApiOperation({ summary: 'Registrar nuevo usuario con email y contraseña' })
@@ -124,14 +123,14 @@ export class AuthController {
 
   // Google OAuth - inicio del flujo
   // @Get('google')
-  // @UseGuards(AuthGuard('google'))
+  // @UseGuards( d('google'))
   // async googleAuth(){
   //   // Passport intercepta y redirige
   // }
 
   // // Google Oauth - redireccion
   // @Get('google/redirect')
-  // @UseGuards(AuthGuard('google'))
+  // @UseGuards( d('google'))
   // async googleAuthRedirect(@Req() req: any,@Res({ passthrough: true }) res: Response) {
   //   const { user, token } = await this.authService.validateGoogleUser(req.user);
 
