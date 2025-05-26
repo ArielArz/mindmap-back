@@ -7,7 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('User State')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @Controller('user_state')
 export class UserStateController {
   constructor(private readonly userStateService: UserStateService) { }

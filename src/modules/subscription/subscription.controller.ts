@@ -6,7 +6,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Subscription')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @Controller('subscription')
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) { }
