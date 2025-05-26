@@ -75,6 +75,7 @@ export class SubscriptionService {
         'es-ES',
         dateFormatterOptions,
       );
+
       await this.mailerService.sendSubscriptionRenewalEmail(
         user.email,
         user.name,
@@ -91,45 +92,57 @@ export class SubscriptionService {
         ),
         endDate: formattedEndDate,
       };
-    } else {
-      const trialDays = 7;
-      const totalDays = days + trialDays;
-
-      const startDate = new Date();
-      const endDate = new Date();
-      endDate.setDate(startDate.getDate() + totalDays);
-
-      const newSubscription = this.subscriptionRepo.create({
-        userId: user.id,
-        startDate,
-        endDate,
-        active: true,
-        paymentSessionId: sessionId,
-      });
-
-      await this.subscriptionRepo.save(newSubscription);
-
-      user.role = UserRole.PREMIUM;
-      await this.userRepo.save(user);
-
-      const formattedEndDate = endDate.toLocaleDateString(
-        'es-ES',
-        dateFormatterOptions,
-      );
-      await this.mailerService.sendSubscriptionConfirmationEmail(
-        user.email,
-        user.name,
-        formattedEndDate,
-      );
-
-      return {
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
-        endDate: formattedEndDate,
-      };
     }
+
+    const startDate = new Date();
+    const endDate = new Date();
+
+    const trialUsed = await this.subscriptionRepo.findOne({
+      where: { userId: user.id, isTrial: true },
+    });
+
+    let totalDays = days;
+    let isTrial = false;
+
+    if (!trialUsed) {
+      totalDays += 7;
+      isTrial = true;
+    }
+
+    endDate.setDate(startDate.getDate() + totalDays);
+
+    const newSubscription = this.subscriptionRepo.create({
+      userId: user.id,
+      startDate,
+      endDate,
+      active: true,
+      paymentSessionId: sessionId,
+      isTrial,
+    });
+
+    await this.subscriptionRepo.save(newSubscription);
+
+    user.role = UserRole.PREMIUM;
+    await this.userRepo.save(user);
+
+    const formattedEndDate = endDate.toLocaleDateString(
+      'es-ES',
+      dateFormatterOptions,
+    );
+
+    await this.mailerService.sendSubscriptionConfirmationEmail(
+      user.email,
+      user.name,
+      formattedEndDate,
+    );
+
+    return {
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
+      endDate: formattedEndDate,
+    };
   }
 
   async expireSubscriptions() {
@@ -179,6 +192,7 @@ export class SubscriptionService {
       startDate,
       endDate,
       active: true,
+      isTrial: true,
     });
 
     await this.subscriptionRepo.save(trial);
