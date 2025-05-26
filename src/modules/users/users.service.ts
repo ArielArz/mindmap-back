@@ -59,7 +59,6 @@ export class UsersService {
       where: { email },
     });
     if (existingUser) {
-      // si existe, devolver directamente para evitar error en OAuth
       return existingUser;
     }
 
@@ -72,13 +71,12 @@ export class UsersService {
     const newUser = this.userRepository.create({
       name,
       email,
-      password: hashedPassword, // Queda vacio si es OAuth
+      password: hashedPassword,
       address,
       profileImage,
     });
     const userCreated = await this.userRepository.save(newUser);
 
-    // Solo enviar si se creo con password (registro manual)
     if (password) {
       await this.mailerService.sendWelcomeEmail(email, name);
     }
@@ -108,7 +106,13 @@ export class UsersService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    const updatedUser = { ...user, ...updateUserDto };
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+    }
+
+    const { confirmPassword, ...rest } = updateUserDto;
+
+    const updatedUser = { ...user, ...rest };
 
     return this.userRepository.save(updatedUser);
   }
