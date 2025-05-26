@@ -7,6 +7,7 @@ import { UserRole } from '../users/entities/enum/user-role.enum';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { MailerService } from '../mailer/mailer.service';
 import { Between } from 'typeorm';
+import Stripe from 'stripe';
 
 @Injectable()
 export class SubscriptionService {
@@ -19,8 +20,34 @@ export class SubscriptionService {
   ) {}
 
   async createSubscription(data: CreateSubscriptionDto, days: number) {
-    const user = await this.userRepo.findOneBy({ id: data.userId });
-    if (!user) throw new Error('User not found');
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeSecretKey) {
+      throw new Error(
+        'STRIPE_SECRET_KEY no está definido en las variables de entorno',
+      );
+    }
+
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2022-11-15',
+    });
+
+    const { userId, sessionId } = data;
+
+    const user = await this.userRepo.findOneBy({ id: userId });
+    if (!user) throw new Error('Usuario no encontrado');
+
+    const sessionExists = await this.subscriptionRepo.findOne({
+      where: { paymentSessionId: sessionId },
+    });
+
+    if (sessionExists) {
+      throw new Error('Esta sesión de pago ya fue procesada');
+    }
+
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (!session || session.payment_status !== 'paid') {
+      throw new Error('El pago no se ha completado correctamente');
+    }
 
     const existingSubscription = await this.subscriptionRepo.findOne({
       where: { userId: user.id },
@@ -37,6 +64,8 @@ export class SubscriptionService {
       newEndDate.setDate(newEndDate.getDate() + days);
       existingSubscription.endDate = newEndDate;
       existingSubscription.active = true;
+      existingSubscription.paymentSessionId = sessionId;
+
       await this.subscriptionRepo.save(existingSubscription);
 
       user.role = UserRole.PREMIUM;
@@ -51,7 +80,8 @@ export class SubscriptionService {
         user.name,
         formattedEndDate,
       );
-      const response = {
+
+      return {
         email: user.email,
         name: user.name,
         role: user.role,
@@ -59,13 +89,8 @@ export class SubscriptionService {
           'es-ES',
           dateFormatterOptions,
         ),
-        endDate: existingSubscription.endDate.toLocaleDateString(
-          'es-ES',
-          dateFormatterOptions,
-        ),
+        endDate: formattedEndDate,
       };
-
-      return response;
     } else {
       const trialDays = 7;
       const totalDays = days + trialDays;
@@ -79,6 +104,7 @@ export class SubscriptionService {
         startDate,
         endDate,
         active: true,
+        paymentSessionId: sessionId,
       });
 
       await this.subscriptionRepo.save(newSubscription);
@@ -95,15 +121,14 @@ export class SubscriptionService {
         user.name,
         formattedEndDate,
       );
-      const response = {
+
+      return {
         email: user.email,
         name: user.name,
         role: user.role,
         startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
-        endDate: endDate.toLocaleDateString('es-ES', dateFormatterOptions),
+        endDate: formattedEndDate,
       };
-
-      return response;
     }
   }
 
@@ -198,11 +223,17 @@ export class SubscriptionService {
       relations: ['user'],
     });
 
+    const dateFormatterOptions: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    };
+
     for (const sub of upcomingSubs) {
       await this.mailerService.sendSubscriptionReminderEmail(
         sub.user.email,
         sub.user.name,
-        sub.endDate.toDateString(),
+        sub.endDate.toLocaleDateString('es-ES', dateFormatterOptions),
       );
     }
   }

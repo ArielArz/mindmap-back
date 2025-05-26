@@ -6,7 +6,6 @@ import * as sgTransport from 'nodemailer-sendgrid-transport';
 @Injectable()
 export class MailerService {
   private transporter: nodemailer.Transporter;
- 
 
   constructor(private readonly jwtService: JwtService) {
     const options = {
@@ -37,6 +36,7 @@ export class MailerService {
   }
 
   async sendWelcomeEmail(to: string, name: string) {
+    const link = `${process.env.FRONTEND_URL}/login`;
     const html = `
       <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
         <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
@@ -46,7 +46,7 @@ export class MailerService {
             Comienza tu camino hacia la serenidad con nuestras meditaciones, reflexiones y contenido especialmente diseñado para ti.
           </p>
           <div style="text-align: center; margin-top: 30px;">
-            <a href="" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            <a href="${link}" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
               Ir a Sentia
             </a>
           </div>
@@ -89,6 +89,7 @@ export class MailerService {
     name: string,
     expirationDate: string,
   ) {
+    const link = `${process.env.FRONTEND_URL}/profile`;
     const html = `
       <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
         <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
@@ -98,7 +99,7 @@ export class MailerService {
             Ahora tienes acceso a todo nuestro contenido exclusivo, hasta el ${expirationDate}. ¡Disfrútalo!
           </p>
           <div style="text-align: center; margin-top: 30px;">
-            <a href="" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            <a href="${link}" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
               Ir a Sentia Premium
             </a>
           </div>
@@ -117,6 +118,7 @@ export class MailerService {
     name: string,
     expirationDate: string,
   ) {
+    const link = `${process.env.FRONTEND_URL}/profile`;
     const html = `
     <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
       <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
@@ -126,7 +128,7 @@ export class MailerService {
           Tu acceso continuará hasta el ${expirationDate}. ¡Nos alegra seguir contando contigo!
         </p>
         <div style="text-align: center; margin-top: 30px;">
-          <a href="" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+          <a href="${link}" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
             Ir a Sentia Premium
           </a>
         </div>
@@ -167,6 +169,7 @@ export class MailerService {
   }
 
   async sendSubscriptionExpiredEmail(to: string, name: string) {
+    const link = `${process.env.FRONTEND_URL}/`;
     const html = `
       <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
         <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
@@ -176,7 +179,7 @@ export class MailerService {
             Para seguir disfrutando de todo nuestro contenido exclusivo, renueva tu suscripción.
           </p>
           <div style="text-align: center; margin-top: 30px;">
-            <a href="" style="background-color: #ff9800; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            <a href="${link}" style="background-color: #ff9800; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
               Renovar suscripción
             </a>
           </div>
@@ -195,6 +198,7 @@ export class MailerService {
     name: string,
     expirationDate: string,
   ) {
+    const link = `${process.env.FRONTEND_URL}/`;
     const html = `
     <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
       <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
@@ -204,7 +208,7 @@ export class MailerService {
           Tienes acceso hasta el ${expirationDate}. No pierdas tu contenido favorito, ¡renueva a tiempo!
         </p>
         <div style="text-align: center; margin-top: 30px;">
-          <a href="" style="background-color: #2196f3; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+          <a href="${link}" style="background-color: #2196f3; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
             Renovar suscripción
           </a>
         </div>

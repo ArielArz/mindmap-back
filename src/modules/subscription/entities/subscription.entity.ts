@@ -28,6 +28,9 @@ export class Subscription {
   @Column({ type: 'boolean', default: true })
   active: boolean;
 
+  @Column({ nullable: true, unique: true })
+  paymentSessionId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
