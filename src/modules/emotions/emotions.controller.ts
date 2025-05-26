@@ -13,12 +13,11 @@ import { EmotionsService } from './emotions.service';
 import { CreateEmotionDto } from './dto/create-emotion.dto';
 import { UpdateEmotionDto } from './dto/update-emotion.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { Roles } from 'src/decorators/roles.decorator';
+import { AuthenticationGuard } from 'src/guard/auth.guard';
 
 @ApiTags('emotions')
 @ApiBearerAuth()
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthenticationGuard)
 @Controller('emotions')
 export class EmotionsController {
   constructor(private readonly emotionsService: EmotionsService) { }
@@ -48,7 +47,6 @@ export class EmotionsController {
   @Get('/puntaje')
   @ApiOperation({ summary: 'Obtener puntaje emocional del usuario autenticado' })
   @ApiResponse({ status: 200, description: 'Puntaje emocional obtenido' })
-  // @UseGuards(AuthGuard('jwt'))
   async puntajeAnalisis(@Req() req) {
     const userId = req.user.id;
     return this.emotionsService.puntajeEmocionalAnalisis(userId);
@@ -62,7 +60,6 @@ export class EmotionsController {
   }
 
   @Get('/analysis/daily')
-  // @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Análisis emocional diario del usuario autenticado' })
   async analysisDay(@Req() req) {
     const userId = req.user.id;
@@ -70,7 +67,6 @@ export class EmotionsController {
   }
 
   @Get('/analysis/weekly')
-  // @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Análisis emocional semanal del usuario autenticado' })
   async analysisWeek0(@Req() req) {
     const userId = req.user.id;
@@ -78,7 +74,6 @@ export class EmotionsController {
   }
 
   @Get('/analysis/monthly')
-  // @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Análisis emocional mensual del usuario autenticado' })
   async analysisMonth0(@Req() req) {
     const userId = req.user.id;

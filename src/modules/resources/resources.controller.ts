@@ -16,19 +16,14 @@ import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { FileType } from './entities/enum/file-type.enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/guard/roles.guard';
-import { UserRole } from '../users/entities/enum/user-role.enum';
-import { Roles } from 'src/decorators/roles.decorator';
+
 
 @ApiBearerAuth()
-// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('resources')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) { }
 
   @Post()
-  // @Roles(UserRole.ADMIN)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'file', maxCount: 1 }, // archivo principal
@@ -43,13 +38,11 @@ export class ResourcesController {
   }
 
   @Get()
-  // @Roles(UserRole.ADMIN)
   findAll() {
     return this.resourcesService.findAll();
   }
 
   @Patch(':id/show-in-cardlist')
-  // @Roles(UserRole.ADMIN)
   updateCardListVisibility(
     @Param('id') id: string,
     @Body() body: { show: boolean }
@@ -58,7 +51,6 @@ export class ResourcesController {
   }
 
   @Patch(':id/show-in-section/:section')
-  // @Roles(UserRole.ADMIN)
   updateCardListSection(
     @Param('id') id: string,
     @Param('section') section: FileType,

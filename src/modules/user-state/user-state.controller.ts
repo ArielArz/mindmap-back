@@ -3,11 +3,12 @@ import { UserStateService } from './user-state.service';
 import { CreateUserStateDto } from './dto/create-user-state.dto';
 import { UpdateUserStateDto } from './dto/update-user-state.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthenticationGuard } from 'src/guard/auth.guard';
 
 @ApiTags('User State')
 @ApiBearerAuth()
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthenticationGuard)
+
 @Controller('user_state')
 export class UserStateController {
   constructor(private readonly userStateService: UserStateService) { }
