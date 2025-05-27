@@ -9,7 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from '../users/entities/user.entity';
 import { SetPasswordDto } from './dto/set-password.dto';
 import { MailerService } from '../mailer/mailer.service';
 
@@ -19,7 +18,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
-  ) {}
+  ) { }
 
   async signUp(signUpDto: SignUpDto) {
     const { email, password } = signUpDto;

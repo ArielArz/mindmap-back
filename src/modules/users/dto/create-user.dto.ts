@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -39,7 +39,7 @@ export class UserDto {
   @Validate(MatchPassword, ['password'])
   confirmPassword: string;
 
-  @ApiProperty({ example: 'Av. Siempre Viva 742, Rosario' })
+  @ApiPropertyOptional({ example: 'Av. Siempre Viva 742, Rosario' })
   @IsString({ message: 'La dirección debe ser una cadena de texto.' })
   @IsOptional()
   @Length(3, 80, {
@@ -47,7 +47,7 @@ export class UserDto {
   })
   address?: string;
 
-  @ApiProperty({ example: 'https://miapp.com/images/perfil/rosalia.png' })
+  @ApiPropertyOptional({ example: 'https://miapp.com/images/perfil/rosalia.png' })
   @IsOptional()
   @IsString({ message: 'La imagen de perfil debe ser una cadena de texto.' })
   profileImage?: string;
