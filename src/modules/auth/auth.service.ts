@@ -72,6 +72,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        address: user.address,
         profileImage: user.profileImage,
         subscription: user.subscriptions.map((subscription) => ({
           active: subscription.active,
@@ -118,6 +119,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        address: user.address,
         profileImage: user.profileImage,
         subscription: user.subscriptions.map((subscription) => ({
           active: subscription.active,
