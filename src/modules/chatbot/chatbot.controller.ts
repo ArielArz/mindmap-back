@@ -2,12 +2,12 @@ import { Controller, Post, Body, BadRequestException, UseGuards, Res, HttpExcept
 import { ChatbotService } from './chatbot.service';
 import { MessageLimiterGuard } from 'src/modules/chatbot/middlewares/message-limit.middleware';
 import { MessageDto } from './dto/message.dto';
+@UseGuards(MessageLimiterGuard)
 
 @Controller('chatbot')
 export class ChatbotController {
   constructor(private readonly chatbotService: ChatbotService) { }
 
-  @UseGuards(MessageLimiterGuard)
 
   @Post()
   async handleWebChatbotMessage(
