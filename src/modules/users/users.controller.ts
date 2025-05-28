@@ -27,6 +27,7 @@ import { UserRole } from './entities/enum/user-role.enum';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { isUUID } from 'class-validator';
 import { UpdatePasswordDto } from './dto/update-password-dto';
+import { AuthGuard } from '@nestjs/passport';
 import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
 @ApiTags('users')
 @ApiBearerAuth()
@@ -85,6 +86,7 @@ export class UsersController {
 
   @Patch('update/password')
   @UseGuards(AuthenticationGuard)
+  // @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Actualizar contraseña del usuario' })
   async updatePassword(@Request() req, @Body() dto: UpdatePasswordDto) {
     const userId = req.user.id;

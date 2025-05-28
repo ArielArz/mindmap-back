@@ -8,8 +8,6 @@ interface JwtPayload {
   role: string; //Agregar el rol al payload para gestionar autorizaciones basadas en roles
 }
 
-
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {

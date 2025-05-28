@@ -22,15 +22,25 @@ export class AuthenticationGuard implements CanActivate {
     try {
       const secret = this.configService.get<string>('JWT_SECRET');
 
-      if(!secret) {
+      if (!secret) {
         throw new UnauthorizedException('JWT_SECRET no configurado');
       }
 
-      const user = this.jwtService.verify(token, { secret });
+      const payload = this.jwtService.verify(token, { secret });
+
+      const user = {
+        id: payload.sub,
+        email: payload.email,
+        role: payload.role,
+      };
+
       request.user = user;
       return true;
     } catch (error) {
       throw new UnauthorizedException('Token invalido o expirado')
     }
+
+
+
   }
 }

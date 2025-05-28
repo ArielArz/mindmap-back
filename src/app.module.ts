@@ -5,12 +5,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { EmotionsModule } from './modules/emotions/emotions.module';
 import { ResourcesModule } from './modules/resources/resources.module';
 import { UsersModule } from './modules/users/users.module';
-import { LocationModule } from './modules/location/location.module';
+import { HelppointsModule } from './modules/helppoints/helppoints.module';
 import { UserStateModule } from './modules/user-state/user-state.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataSourceOptions } from 'typeorm';
-import { JwtModule } from '@nestjs/jwt';
 import typeormConfig from './config/typeorm.config';
 import { MailerModule } from './modules/mailer/mailer.module';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -18,6 +17,7 @@ import { ContactModule } from './modules/contact/contact.module';
 import { MercadopagoModule } from './modules/mercadopago/mercadopago.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { StripeModule } from './modules/stripe/stripe.module';
+import { ChatbotModule } from './modules/chatbot/chatbot.module';
 
 @Module({
   imports: [
@@ -46,15 +46,16 @@ import { StripeModule } from './modules/stripe/stripe.module';
     EmotionsModule,
     ResourcesModule,
     UsersModule,
-    LocationModule,
+    HelppointsModule,
     UserStateModule,
     MailerModule,
     ContactModule,
     MercadopagoModule,
     SubscriptionModule,
     StripeModule,
+    ChatbotModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
