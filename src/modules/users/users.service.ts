@@ -17,9 +17,11 @@ import { seedUsersAndUserStates } from './users.userState.seeder';
 import { Emotion } from '../emotions/entities/emotion.entity';
 import { UpdatePasswordDto } from './dto/update-password-dto';
 import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
+import { ChangeRoleDto } from './dto/update-role.dto';
 
 @Injectable()
 export class UsersService {
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -31,7 +33,7 @@ export class UsersService {
 
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
-  ) {}
+  ) { }
 
   async findAll(dto: PaginationAndFilterDto) {
     const {
@@ -192,6 +194,24 @@ export class UsersService {
       throw new NotFoundException(`No son usuarios premium`);
     }
     return premiumUsers;
+  }
+
+  async changeRole({ userId, newRole }: ChangeRoleDto): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    if (user.role === newRole) {
+      throw new BadRequestException('El usuario ya tiene ese rol.');
+    }
+
+    user.role = newRole;
+    return await this.userRepository.save(user);
   }
 
   async saveUser(user: User): Promise<User> {

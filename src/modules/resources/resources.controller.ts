@@ -16,7 +16,12 @@ import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { FileType } from './entities/enum/file-type.enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
+import { RolesGuard } from 'src/guard/roles.guard';
+import { UserRole } from '../users/entities/enum/user-role.enum';
 
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN)
 
 @ApiBearerAuth()
 @Controller('resources')

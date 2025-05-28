@@ -1,4 +1,3 @@
-// src/common/guards/message-limit.guard.ts
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { RedisService } from 'src/modules/redis/redis.service';
 

@@ -29,11 +29,12 @@ import { isUUID } from 'class-validator';
 import { UpdatePasswordDto } from './dto/update-password-dto';
 import { AuthGuard } from '@nestjs/passport';
 import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
+import { ChangeRoleDto } from './dto/update-role.dto';
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
@@ -104,6 +105,16 @@ export class UsersController {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
+
+  @Patch('change/role')
+  @ApiOperation({ summary: 'Cambiar rol de usuario' })
+  @UseGuards(AuthenticationGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiResponse({ status: 200, description: 'Rol cambiado correctamente.' })
+  async changeUserRole(@Body() changeRoleDto: ChangeRoleDto) {
+    return this.usersService.changeRole(changeRoleDto);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un usuario existente' })
   @UseGuards(AuthenticationGuard, RolesGuard)
@@ -122,4 +133,5 @@ export class UsersController {
   addUsuariosYEstados() {
     return this.usersService.seedUsuariosYEstados();
   }
+
 }

@@ -71,18 +71,34 @@ export class EmotionsService {
   }
 
   interpretarIEG(ieg: number): string {
-    if (ieg >= 1.5 && ieg <= 3.0) {
-      return 'Muy positivo, bienestar alto';
-    } else if (ieg >= 0.5 && ieg < 1.5) {
-      return 'Leve positivo, saludable';
-    } else if (ieg >= -0.5 && ieg < 0.5) {
+    if (ieg >= 13 && ieg <= 15) {
+      return 'Estado óptimo, euforia o bienestar excepcional';
+    } else if (ieg >= 11 && ieg < 13) {
+      return 'Muy positivo, energía emocional elevada';
+    } else if (ieg >= 9 && ieg < 11) {
+      return 'Bienestar alto, emociones muy favorables';
+    } else if (ieg >= 7 && ieg < 9) {
+      return 'Positivo, emociones saludables estables';
+    } else if (ieg >= 5 && ieg < 7) {
+      return 'Buen ánimo, tendencia emocional favorable';
+    } else if (ieg >= 3 && ieg < 5) {
+      return 'Leve positivo, salud emocional funcional';
+    } else if (ieg >= 1 && ieg < 3) {
+      return 'Estado positivo leve, estable pero mejorable';
+    } else if (ieg > -1 && ieg < 1) {
       return 'Neutro / estable';
-    } else if (ieg >= -1.4 && ieg < -0.5) {
-      return 'Leve malestar';
-    } else if (ieg >= -2.9 && ieg < -1.4) {
-      return 'Malestar emocional moderado';
-    } else if (ieg <= -3.0) {
-      return 'Riesgo emocional alto';
+    } else if (ieg >= -3 && ieg <= -1) {
+      return 'Leve malestar, sin riesgo inmediato';
+    } else if (ieg >= -5 && ieg < -3) {
+      return 'Malestar moderado, revisar emociones';
+    } else if (ieg >= -7 && ieg < -5) {
+      return 'Malestar notable, posible afectación emocional';
+    } else if (ieg >= -9 && ieg < -7) {
+      return 'Malestar importante, atención recomendada';
+    } else if (ieg >= -11 && ieg < -9) {
+      return 'Malestar grave, posible desregulación emocional';
+    } else if (ieg >= -15 && ieg < -11) {
+      return 'Riesgo emocional severo, intervención urgente';
     } else {
       return 'Valor fuera de rango';
     }
@@ -118,6 +134,7 @@ export class EmotionsService {
     const total = puntajes.reduce((acc, val) => acc + val, 0);
     const IEG = total / userStates.length;
     const interpretacion = this.interpretarIEG(IEG);
+    const consejo = interpretacion.includes('malestar') || interpretacion.includes('riesgo')
 
     return {
       puntajes,
@@ -127,6 +144,7 @@ export class EmotionsService {
       total,
       IEG,
       interpretacion,
+      consejo,
     };
   }
 
