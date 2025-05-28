@@ -67,8 +67,8 @@ export class UsersController {
     example: 'premium',
   })
   @ApiQuery({ name: 'search', required: false, type: String, example: 'juan' })
-  @UseGuards(AuthenticationGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  // @UseGuards(AuthenticationGuard, RolesGuard)
+  // @Roles(UserRole.ADMIN)
   findAll(@Query() paginationDto: PaginationAndFilterDto) {
     return this.usersService.findAll(paginationDto);
   }
