@@ -9,6 +9,7 @@ import {
 import { UserRole } from './enum/user-role.enum';
 import { UserState } from 'src/modules/user-state/entities/user-state.entity';
 import { Subscription } from '../../subscription/entities/subscription.entity';
+import { UserStatus } from './enum/user-status.enum';
 
 @Entity('users')
 export class User {
@@ -32,6 +33,9 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.FREE })
   role: UserRole;
+
+  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
+  status: UserStatus;
 
   @OneToMany(() => UserState, (userState) => userState.user)
   states: UserState[];

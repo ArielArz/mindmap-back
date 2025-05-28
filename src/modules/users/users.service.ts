@@ -18,10 +18,11 @@ import { Emotion } from '../emotions/entities/emotion.entity';
 import { UpdatePasswordDto } from './dto/update-password-dto';
 import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
 import { ChangeRoleDto } from './dto/update-role.dto';
+import { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import { UserStatus } from './entities/enum/user-status.enum';
 
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -33,7 +34,7 @@ export class UsersService {
 
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
-  ) { }
+  ) {}
 
   async findAll(dto: PaginationAndFilterDto) {
     const {
@@ -43,6 +44,7 @@ export class UsersService {
       sortDirection = 'ASC',
       search,
       role,
+      status,
     } = dto;
 
     const skip = (page - 1) * limit;
@@ -58,12 +60,29 @@ export class UsersService {
       where.push({ role });
     }
 
+    if (status) {
+      const normalizedStatus = Object.values(UserStatus).find(
+        (val) => val.toLowerCase() === status.toLowerCase(),
+      );
+      if (normalizedStatus) {
+        where.push({ status: normalizedStatus });
+      }
+    }
+
     const [users, total] = await this.userRepository.findAndCount({
       where: where.length > 0 ? where : undefined,
       take: limit,
       skip,
       order: { [sortBy]: sortDirection },
-      select: ['id', 'name', 'email', 'role', 'profileImage', 'address'],
+      select: [
+        'id',
+        'name',
+        'email',
+        'role',
+        'status',
+        'profileImage',
+        'address',
+      ],
     });
 
     return {
@@ -170,19 +189,17 @@ export class UsersService {
     return { message: 'Contraseña actualizada con éxito.' };
   }
 
-  async remove(id: string) {
-    const foundUser = await this.userRepository.findOne({ where: { id } });
-    if (!foundUser) {
+  async desactivate(id: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    await this.userStateRepository
-      .createQueryBuilder()
-      .delete()
-      .where('userId = :id', { id })
-      .execute();
+    user.status = UserStatus.INACTIVE;
+    await this.userRepository.save(user);
 
-    return await this.userRepository.delete(id);
+    return { message: 'Usuario desactivado correctamente' };
   }
 
   async getPremiumUsers(): Promise<User[]> {
@@ -200,7 +217,6 @@ export class UsersService {
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
-
 
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
@@ -225,5 +241,17 @@ export class UsersService {
       this.emotionRepository,
     );
     return { message: 'Usuarios y estados precargados' };
+  }
+
+  async updateStatus(dto: UpdateUserStatusDto): Promise<void> {
+    const { id, status } = dto;
+
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.status = status;
+    await this.userRepository.save(user);
   }
 }

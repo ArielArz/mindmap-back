@@ -30,11 +30,13 @@ import { UpdatePasswordDto } from './dto/update-password-dto';
 import { AuthGuard } from '@nestjs/passport';
 import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
 import { ChangeRoleDto } from './dto/update-role.dto';
+import { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import { UserStatus } from './entities/enum/user-status.enum';
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
@@ -68,6 +70,12 @@ export class UsersController {
     example: 'premium',
   })
   @ApiQuery({ name: 'search', required: false, type: String, example: 'juan' })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: UserStatus,
+    example: 'Activo',
+  })
   // @UseGuards(AuthenticationGuard, RolesGuard)
   // @Roles(UserRole.ADMIN)
   findAll(@Query() paginationDto: PaginationAndFilterDto) {
@@ -105,7 +113,6 @@ export class UsersController {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
-
   @Patch('change/role')
   @ApiOperation({ summary: 'Cambiar rol de usuario' })
   @UseGuards(AuthenticationGuard, RolesGuard)
@@ -116,12 +123,16 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar un usuario existente' })
+  @ApiOperation({ summary: 'Desactivar (no eliminar) un usuario existente' })
   @UseGuards(AuthenticationGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  @ApiResponse({ status: 200, description: 'Usuario eliminado correctamente.' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario desactivado correctamente.',
+  })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  async remove(@Param('id') id: string) {
+    return this.usersService.desactivate(id);
   }
 
   @Get('seed/users')
@@ -134,4 +145,20 @@ export class UsersController {
     return this.usersService.seedUsuariosYEstados();
   }
 
+  @Patch('status')
+  @ApiOperation({
+    summary: 'Actualizar el estado de un usuario (ACTIVE, INACTIVE, BANNED)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado actualizado correctamente.',
+  })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  // @UseGuards(AuthenticationGuard, RolesGuard)
+  // @Roles(UserRole.ADMIN)
+  updateStatus(
+    @Body() updateUserStatusDto: UpdateUserStatusDto,
+  ): Promise<void> {
+    return this.usersService.updateStatus(updateUserStatusDto);
+  }
 }
