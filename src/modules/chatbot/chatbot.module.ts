@@ -1,0 +1,12 @@
+import { Module } from '@nestjs/common';
+import { ChatbotController } from './chatbot.controller';
+import { ChatbotService } from './chatbot.service';
+import { RedisModule } from 'src/modules/redis/redis.module';
+
+@Module({
+  imports: [RedisModule],
+
+  controllers: [ChatbotController],
+  providers: [ChatbotService]
+})
+export class ChatbotModule { }
