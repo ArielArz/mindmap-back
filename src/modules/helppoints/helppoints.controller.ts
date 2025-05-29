@@ -52,6 +52,16 @@ findAll(
     );
   }
 
+  @Get('count')
+  countAll() {
+    return this.helppointsService.countAll();
+  }
+
+  @Get('count/last-week')
+  countLasteWeek(){
+    return this.helppointsService.countLastWeek();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.helppointsService.findOne(id);
@@ -61,6 +71,8 @@ findAll(
   update(@Param('id') id: string, @Body() updateHelppointDto: UpdateHelppointDto) {
     return this.helppointsService.update(id, updateHelppointDto);
   }
+
+  
 
   @Delete(':id')
   remove(@Param('id') id: string) {

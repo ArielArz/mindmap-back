@@ -42,6 +42,16 @@ export class ResourcesController {
     return this.resourcesService.findAll();
   }
 
+  @Get('/count/by-type/total')
+countTotalByType() {
+  return this.resourcesService.countAllByFiletype();
+}
+
+@Get('/count/by-type/last-7-days')
+countLast7DaysByType() {
+  return this.resourcesService.countLast7DaysByFile();
+}
+
   @Patch(':id/show-in-cardlist')
   updateCardListVisibility(
     @Param('id') id: string,
