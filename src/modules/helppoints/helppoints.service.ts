@@ -57,4 +57,18 @@ export class HelppointsService {
       )
       .getMany();
   }
+
+  async countAll(){
+    return this.helpPointRepo.count();
+  }
+
+  async countLastWeek(){
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    return this.helpPointRepo
+      .createQueryBuilder('helppoint')
+      .where('helppoint.createdAt >= :date', { date: oneWeekAgo.toISOString() })
+      .getCount();
+  }
 }

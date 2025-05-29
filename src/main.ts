@@ -45,6 +45,18 @@ async function bootstrap() {
   await app.listen(PORT, '0.0.0.0');
 
   console.log(`Server running on port ${PORT}`);
+
+  // Monitoreo de uso de memoria
+  setInterval(() => {
+    const mem = process.memoryUsage();
+    console.log(`--- RAM USAGE @ ${new Date().toISOString()} ---`);
+    console.log(`rss: ${(mem.rss / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`heapTotal: ${(mem.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`heapUsed: ${(mem.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`external: ${(mem.external / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`arrayBuffers: ${(mem.arrayBuffers / 1024 / 1024).toFixed(2)} MB`);
+    console.log('--- RAM USAGE ---');
+  }, 10000);
 }
 
 bootstrap().catch((error) => {
