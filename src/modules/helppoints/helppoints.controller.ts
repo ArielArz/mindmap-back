@@ -52,6 +52,16 @@ findAll(
     );
   }
 
+  @Get('count')
+  countAll() {
+    return this.helppointsService.countAll();
+  }
+
+  @Get('count/last-week')
+  countLasteWeek(){
+    return this.helppointsService.countLastWeek();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.helppointsService.findOne(id);
