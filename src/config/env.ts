@@ -8,3 +8,5 @@ export const DB_PASSWORD: string = process.env.DB_PASSWORD || 'admin';
 export const DB_HOST: string = process.env.DB_HOST || 'localhost';
 export const DB_PORT: number = Number(process.env.DB_PORT) || 5432;
 export const JWT_SECRET: string = process.env.JWT_SECRET || 'secret';
+export const GEMINI_API_KEY: string = process.env.GEMINI_API_KEY || 'geminisecreta';
+
