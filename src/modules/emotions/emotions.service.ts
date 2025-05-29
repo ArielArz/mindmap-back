@@ -34,8 +34,9 @@ export class EmotionsService {
         id: true,
         name: true,
         emoji: true,
+        clinicalValue: true,
+        significado: true,
         reflexion: true
-
       }
     });
   }

@@ -16,6 +16,7 @@ import { UserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -27,16 +28,15 @@ import { UserRole } from './entities/enum/user-role.enum';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { isUUID } from 'class-validator';
 import { UpdatePasswordDto } from './dto/update-password-dto';
-import { AuthGuard } from '@nestjs/passport';
 import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
-import { ChangeRoleDto } from './dto/update-role.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { UserStatus } from './entities/enum/user-status.enum';
+import { ChangeAdminDto } from './dto/update-admin.dto';
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
@@ -113,14 +113,21 @@ export class UsersController {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
-  @Patch('change/role')
-  @ApiOperation({ summary: 'Cambiar rol de usuario' })
+  @Patch('change/admin')
+  @ApiOperation({ summary: 'Actualizar datos de usuario (rol, estado, email, etc)' })
   @UseGuards(AuthenticationGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  @ApiResponse({ status: 200, description: 'Rol cambiado correctamente.' })
-  async changeUserRole(@Body() changeRoleDto: ChangeRoleDto) {
-    return this.usersService.changeRole(changeRoleDto);
+  @ApiResponse({ status: 200, description: 'Usuario actualizado correctamente.' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  @ApiResponse({ status: 400, description: 'No se realizaron cambios en el usuario.' })
+  @ApiBody({
+    description: 'Datos a actualizar del usuario',
+    type: ChangeAdminDto,
+  })
+  async changeUserRole(@Body() changeAdminDto: ChangeAdminDto) {
+    return this.usersService.changeAdmin(changeAdminDto);
   }
+
 
   @Delete(':id')
   @ApiOperation({ summary: 'Desactivar (no eliminar) un usuario existente' })
