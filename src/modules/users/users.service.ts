@@ -8,7 +8,7 @@ import { UserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { MailerService } from '../mailer/mailer.service';
 import { UserRole } from './entities/enum/user-role.enum';
@@ -16,6 +16,10 @@ import { UserState } from '../user-state/entities/user-state.entity';
 import { seedUsersAndUserStates } from './users.userState.seeder';
 import { Emotion } from '../emotions/entities/emotion.entity';
 import { UpdatePasswordDto } from './dto/update-password-dto';
+import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
+import { ChangeRoleDto } from './dto/update-role.dto';
+import { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import { UserStatus } from './entities/enum/user-status.enum';
 
 @Injectable()
 export class UsersService {
@@ -30,10 +34,63 @@ export class UsersService {
 
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
-  ) { }
+  ) {}
 
-  async findAll() {
-    return this.userRepository.find();
+  async findAll(dto: PaginationAndFilterDto) {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'name',
+      sortDirection = 'ASC',
+      search,
+      role,
+      status,
+    } = dto;
+
+    const skip = (page - 1) * limit;
+
+    const where: FindOptionsWhere<User>[] = [];
+
+    if (search) {
+      where.push({ name: ILike(`%${search}%`) });
+      where.push({ email: ILike(`%${search}%`) });
+    }
+
+    if (role) {
+      where.push({ role });
+    }
+
+    if (status) {
+      const normalizedStatus = Object.values(UserStatus).find(
+        (val) => val.toLowerCase() === status.toLowerCase(),
+      );
+      if (normalizedStatus) {
+        where.push({ status: normalizedStatus });
+      }
+    }
+
+    const [users, total] = await this.userRepository.findAndCount({
+      where: where.length > 0 ? where : undefined,
+      take: limit,
+      skip,
+      order: { [sortBy]: sortDirection },
+      select: [
+        'id',
+        'name',
+        'email',
+        'role',
+        'status',
+        'profileImage',
+        'address',
+      ],
+    });
+
+    return {
+      data: users,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: string) {
@@ -86,7 +143,6 @@ export class UsersService {
     return userCreated;
   }
 
-
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
 
@@ -102,11 +158,9 @@ export class UsersService {
     return this.userRepository.save(updatedUser);
   }
 
-
   async updatePassword(userId: string, dto: UpdatePasswordDto) {
     const user = await this.userRepository.findOneBy({ id: userId });
-    console.log('Received userId:', userId)
-
+    console.log('Received userId:', userId);
 
     if (!user) {
       throw new NotFoundException('Usuario no encontrado.');
@@ -115,15 +169,15 @@ export class UsersService {
     console.log('Current password input:', dto.currentPassword);
     console.log('Password hash stored:', user.password);
 
-
     const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
     if (!isMatch) {
       throw new UnauthorizedException('La contraseña actual es incorrecta.');
     }
 
-
     if (dto.password !== dto.confirmPassword) {
-      throw new BadRequestException('La nueva contraseña y su confirmación no coinciden.');
+      throw new BadRequestException(
+        'La nueva contraseña y su confirmación no coinciden.',
+      );
     }
 
     const salt = await bcrypt.genSalt();
@@ -135,19 +189,17 @@ export class UsersService {
     return { message: 'Contraseña actualizada con éxito.' };
   }
 
-  async remove(id: string) {
-    const foundUser = await this.userRepository.findOne({ where: { id } });
-    if (!foundUser) {
+  async desactivate(id: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    await this.userStateRepository
-      .createQueryBuilder()
-      .delete()
-      .where('userId = :id', { id })
-      .execute();
+    user.status = UserStatus.INACTIVE;
+    await this.userRepository.save(user);
 
-    return await this.userRepository.delete(id);
+    return { message: 'Usuario desactivado correctamente' };
   }
 
   async getPremiumUsers(): Promise<User[]> {
@@ -159,6 +211,23 @@ export class UsersService {
       throw new NotFoundException(`No son usuarios premium`);
     }
     return premiumUsers;
+  }
+
+  async changeRole({ userId, newRole }: ChangeRoleDto): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    if (user.role === newRole) {
+      throw new BadRequestException('El usuario ya tiene ese rol.');
+    }
+
+    user.role = newRole;
+    return await this.userRepository.save(user);
   }
 
   async saveUser(user: User): Promise<User> {
@@ -174,5 +243,15 @@ export class UsersService {
     return { message: 'Usuarios y estados precargados' };
   }
 
+  async updateStatus(dto: UpdateUserStatusDto): Promise<void> {
+    const { id, status } = dto;
 
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.status = status;
+    await this.userRepository.save(user);
+  }
 }

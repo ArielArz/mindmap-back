@@ -14,7 +14,6 @@ import typeormConfig from './config/typeorm.config';
 import { MailerModule } from './modules/mailer/mailer.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ContactModule } from './modules/contact/contact.module';
-import { MercadopagoModule } from './modules/mercadopago/mercadopago.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { StripeModule } from './modules/stripe/stripe.module';
 
@@ -49,7 +48,6 @@ import { StripeModule } from './modules/stripe/stripe.module';
     UserStateModule,
     MailerModule,
     ContactModule,
-    MercadopagoModule,
     SubscriptionModule,
     StripeModule,
   ],

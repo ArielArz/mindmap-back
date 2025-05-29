@@ -23,8 +23,8 @@ export class EmotionsController {
   constructor(private readonly emotionsService: EmotionsService) { }
 
   @Post()
-  @ApiOperation({ summary: 'Crear un estado emocional' })
-  @ApiResponse({ status: 201, description: 'Estado emocional creado' })
+  @ApiOperation({ summary: 'Crear una emocion' })
+  @ApiResponse({ status: 201, description: 'Emocion creada' })
   create(@Body() createEmotionDto: CreateEmotionDto) {
     return this.emotionsService.create(createEmotionDto);
   }

@@ -17,11 +17,10 @@ import { UpdateResourceDto } from './dto/update-resource.dto';
 import { FileType } from './entities/enum/file-type.enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
-
 @ApiBearerAuth()
 @Controller('resources')
 export class ResourcesController {
-  constructor(private readonly resourcesService: ResourcesService) { }
+  constructor(private readonly resourcesService: ResourcesService) {}
 
   @Post()
   @UseInterceptors(
@@ -31,7 +30,8 @@ export class ResourcesController {
     ]),
   )
   create(
-    @UploadedFiles() files: { file?: Express.Multer.File[]; thumbnail?: Express.Multer.File[] },
+    @UploadedFiles()
+    files: { file?: Express.Multer.File[]; thumbnail?: Express.Multer.File[] },
     @Body() createDto: CreateResourceDto,
   ) {
     return this.resourcesService.create(createDto, files);
@@ -45,7 +45,7 @@ export class ResourcesController {
   @Patch(':id/show-in-cardlist')
   updateCardListVisibility(
     @Param('id') id: string,
-    @Body() body: { show: boolean }
+    @Body() body: { show: boolean },
   ) {
     return this.resourcesService.updateShowInCardList(id, body.show);
   }
@@ -54,11 +54,10 @@ export class ResourcesController {
   updateCardListSection(
     @Param('id') id: string,
     @Param('section') section: FileType,
-    @Body() body: { show: boolean }
+    @Body() body: { show: boolean },
   ) {
     return this.resourcesService.updateShowInSection(id, body.show, section);
   }
-
 
   @Get('/featured')
   getFeaturedForCardList() {
