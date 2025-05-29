@@ -82,6 +82,18 @@ export class UsersController {
     return this.usersService.findAll(paginationDto);
   }
 
+  @Get('count/total')
+  @ApiOperation({ summary: 'Cantidad total de usuarios registrados' })
+  countTotalUsers(){
+    return this.usersService.countTotalUsers();
+  }
+
+  @Get('count/last-7-days')
+  @ApiOperation({ summary: 'Cantidad de usuarios registrados en los ultimos 7 dias' })
+  countUserLast7Days(){
+    return this.usersService.countUserLast7Days();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Buscar un usuario por ID' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado.' })

@@ -8,7 +8,7 @@ import { UserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, MoreThan, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { MailerService } from '../mailer/mailer.service';
 import { UserRole } from './entities/enum/user-role.enum';
@@ -253,5 +253,25 @@ export class UsersService {
 
     user.status = status;
     await this.userRepository.save(user);
+  }
+
+  // contar usuarios totales
+  async countTotalUsers(): Promise<{ total: number }> {
+    const total = await this.userRepository.count();
+    return { total };
+  }
+
+  //Contar usuarios creados en los ultimos 7 dias
+  async countUserLast7Days(): Promise<{ last7Days: number }> {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const count =await this.userRepository.count({
+      where: {
+        createdAt: MoreThan(sevenDaysAgo),
+      },
+    });
+
+    return { last7Days: count };
   }
 }
