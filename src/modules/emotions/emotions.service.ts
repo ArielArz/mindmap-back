@@ -1,4 +1,4 @@
-import { Between, DataSource, Repository } from "typeorm";
+import { Between, Repository } from "typeorm";
 import { CreateEmotionDto } from "./dto/create-emotion.dto";
 import { UpdateEmotionDto } from "./dto/update-emotion.dto";
 import { seedEmotions } from "./emotion.seeder";
@@ -6,7 +6,7 @@ import { Injectable, Req } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Emotion } from "./entities/emotion.entity";
 import { UserState } from "../user-state/entities/user-state.entity";
-import dayjs from "dayjs";
+import { rangosIEG } from "./dto/rango-ieg.interface";
 
 @Injectable()
 export class EmotionsService {
@@ -61,7 +61,6 @@ export class EmotionsService {
     return { message: 'Emociones precargadas' };
   }
 
-
   async calculaPuntajes(userStates: UserState[]): Promise<number[]> {
     return userStates.map(state => {
       const intensidad = state.intensidad;
@@ -70,38 +69,37 @@ export class EmotionsService {
     });
   }
 
-  interpretarIEG(ieg: number): string {
-    if (ieg >= 13 && ieg <= 15) {
-      return 'Estado óptimo, euforia o bienestar excepcional';
-    } else if (ieg >= 11 && ieg < 13) {
-      return 'Muy positivo, energía emocional elevada';
-    } else if (ieg >= 9 && ieg < 11) {
-      return 'Bienestar alto, emociones muy favorables';
-    } else if (ieg >= 7 && ieg < 9) {
-      return 'Positivo, emociones saludables estables';
-    } else if (ieg >= 5 && ieg < 7) {
-      return 'Buen ánimo, tendencia emocional favorable';
-    } else if (ieg >= 3 && ieg < 5) {
-      return 'Leve positivo, salud emocional funcional';
-    } else if (ieg >= 1 && ieg < 3) {
-      return 'Estado positivo leve, estable pero mejorable';
-    } else if (ieg > -1 && ieg < 1) {
-      return 'Neutro / estable';
-    } else if (ieg >= -3 && ieg <= -1) {
-      return 'Leve malestar, sin riesgo inmediato';
-    } else if (ieg >= -5 && ieg < -3) {
-      return 'Malestar moderado, revisar emociones';
-    } else if (ieg >= -7 && ieg < -5) {
-      return 'Malestar notable, posible afectación emocional';
-    } else if (ieg >= -9 && ieg < -7) {
-      return 'Malestar importante, atención recomendada';
-    } else if (ieg >= -11 && ieg < -9) {
-      return 'Malestar grave, posible desregulación emocional';
-    } else if (ieg >= -15 && ieg < -11) {
-      return 'Riesgo emocional severo, intervención urgente';
-    } else {
-      return 'Valor fuera de rango';
+  private elegirAleatorio<T>(lista: T[]): T {
+    const indice = Math.floor(Math.random() * lista.length);
+    return lista[indice];
+  }
+
+  private analizarIEG(ieg: number): {
+    min: number;
+    max: number;
+    interpretacion: string;
+    consejo: string;
+    accion: string | null;
+  } {
+    const resultado = rangosIEG.find(r => ieg >= r.min && ieg <= r.max);
+
+    if (!resultado) {
+      return {
+        min: -100,
+        max: 100,
+        interpretacion: 'Valor fuera de rango',
+        consejo: 'No se pudo analizar el estado emocional. Verificá tus registros.',
+        accion: null
+      };
     }
+
+    return {
+      min: resultado.min,
+      max: resultado.max,
+      interpretacion: resultado.interpretacion,
+      consejo: this.elegirAleatorio(resultado.consejos),
+      accion: resultado.acciones.length > 0 ? this.elegirAleatorio(resultado.acciones) : null
+    };
   }
 
   async puntajeEmocionalAnalisis(userId: string, dias: number = 0) {
@@ -133,8 +131,7 @@ export class EmotionsService {
     const puntajes = await this.calculaPuntajes(userStates);
     const total = puntajes.reduce((acc, val) => acc + val, 0);
     const IEG = total / userStates.length;
-    const interpretacion = this.interpretarIEG(IEG);
-    const consejo = interpretacion.includes('malestar') || interpretacion.includes('riesgo')
+    const resultado = this.analizarIEG(IEG);
 
     return {
       puntajes,
@@ -143,11 +140,9 @@ export class EmotionsService {
       cantidadRegistros: userStates.length,
       total,
       IEG,
-      interpretacion,
-      consejo,
+      interpretacion: resultado.interpretacion,
+      consejo: resultado.consejo,
+      accion: resultado.accion
     };
   }
-
-
-
 }
