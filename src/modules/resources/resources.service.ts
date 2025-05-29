@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Resource } from './entities/resource.entity';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
@@ -128,5 +128,38 @@ async findWhereFilterSection(section: FileType) {
     },
     order: { createdAt: 'DESC' },
   });
+}
+
+async countAllByFiletype(){
+  const fileTypes = Object.values(FileType);
+
+  const count = await Promise.all(
+    fileTypes.map(async (type) => {
+      const total = await this.resourceRepo.count({ where: { fileType: type } });
+      return { [type]: total };
+    }),
+  );
+
+  return Object.assign({}, ...count);
+}
+
+async countLast7DaysByFile(){
+  const fileTypes = Object.values(FileType);
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const counts = await Promise.all(
+    fileTypes.map(async (type) => {
+      const count = await this.resourceRepo.count({
+        where: {
+          fileType: type,
+          createdAt: MoreThan(sevenDaysAgo),
+        },
+      });
+      return { [type]: count };
+    }),
+  );
+
+  return Object.assign({}, ...counts);
 }
 }
