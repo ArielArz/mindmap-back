@@ -22,7 +22,7 @@
 
 import { registerAs } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './env';
+// import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER } from './env';
 
 const isProd = process.env.NODE_ENV === 'developer';
 
@@ -32,11 +32,11 @@ const config: DataSourceOptions = {
   ssl: {
     rejectUnauthorized: false,
   },
-  host: DB_HOST,
-  port: DB_PORT,
-  username: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_NAME,
+  // host: DB_HOST,
+  // port: DB_PORT,
+  // username: DB_USER,
+  // password: DB_PASSWORD,
+  // database: DB_NAME,
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: [],
   subscribers: [],
