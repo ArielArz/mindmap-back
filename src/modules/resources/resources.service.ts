@@ -143,23 +143,11 @@ async countAllByFiletype(){
   return Object.assign({}, ...count);
 }
 
-async countLast7DaysByFile(){
-  const fileTypes = Object.values(FileType);
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-  const counts = await Promise.all(
-    fileTypes.map(async (type) => {
-      const count = await this.resourceRepo.count({
-        where: {
-          fileType: type,
-          createdAt: MoreThan(sevenDaysAgo),
-        },
-      });
-      return { [type]: count };
-    }),
-  );
-
-  return Object.assign({}, ...counts);
+// 5 ultimos archivos en lugar de 7 dias de total de recursos
+async getLast5UploadedResorces() {
+  return this.resourceRepo.find({
+    order: { createdAt: 'DESC' },
+    take: 5,
+  });
 }
 }
