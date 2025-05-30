@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { LessThan, Repository } from 'typeorm';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { LessThan, Repository, Between } from 'typeorm';
 import { Subscription } from './entities/subscription.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { UserRole } from '../users/entities/enum/user-role.enum';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { MailerService } from '../mailer/mailer.service';
-import { Between } from 'typeorm';
 import Stripe from 'stripe';
 
 @Injectable()
@@ -22,7 +26,7 @@ export class SubscriptionService {
   async createSubscription(data: CreateSubscriptionDto, days: number) {
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
-      throw new Error(
+      throw new InternalServerErrorException(
         'STRIPE_SECRET_KEY no está definido en las variables de entorno',
       );
     }
@@ -34,19 +38,21 @@ export class SubscriptionService {
     const { userId, sessionId } = data;
 
     const user = await this.userRepo.findOneBy({ id: userId });
-    if (!user) throw new Error('Usuario no encontrado');
+    if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const sessionExists = await this.subscriptionRepo.findOne({
       where: { paymentSessionId: sessionId },
     });
 
     if (sessionExists) {
-      throw new Error('Esta sesión de pago ya fue procesada');
+      throw new BadRequestException('Esta sesión de pago ya fue procesada');
     }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     if (!session || session.payment_status !== 'paid') {
-      throw new Error('El pago no se ha completado correctamente');
+      throw new BadRequestException(
+        'El pago no se ha completado correctamente',
+      );
     }
 
     const existingSubscription = await this.subscriptionRepo.findOne({
@@ -168,20 +174,14 @@ export class SubscriptionService {
 
   async createTrialSubscription(userId: string) {
     const user = await this.userRepo.findOneBy({ id: userId });
-    if (!user) throw new Error('Usuario no encontrado');
+    if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const existingTrial = await this.subscriptionRepo.findOne({
       where: { userId },
     });
 
     if (existingTrial)
-      throw new Error('Usuario ya usó la suscripción de prueba');
-
-    const dateFormatterOptions: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    };
+      throw new BadRequestException('Usuario ya usó la suscripción de prueba');
 
     const startDate = new Date();
     const endDate = new Date();
@@ -200,6 +200,12 @@ export class SubscriptionService {
     user.role = UserRole.PREMIUM;
     await this.userRepo.save(user);
 
+    const dateFormatterOptions: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    };
+
     const response = {
       email: user.email,
       name: user.name,
@@ -207,10 +213,12 @@ export class SubscriptionService {
       startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
       endDate: endDate.toLocaleDateString('es-ES', dateFormatterOptions),
     };
+
     const formattedEndDate = endDate.toLocaleDateString(
       'es-ES',
       dateFormatterOptions,
     );
+
     await this.mailerService.sendSubscriptionTrialEmail(
       user.email,
       user.name,
@@ -225,7 +233,6 @@ export class SubscriptionService {
     const twoDaysLater = new Date(now);
     twoDaysLater.setDate(twoDaysLater.getDate() + 2);
 
-    // Rango desde el inicio al final del día para más precisión
     const startOfDay = new Date(twoDaysLater.setHours(0, 0, 0, 0));
     const endOfDay = new Date(twoDaysLater.setHours(23, 59, 59, 999));
 
