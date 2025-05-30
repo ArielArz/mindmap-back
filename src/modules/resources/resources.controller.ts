@@ -15,7 +15,7 @@ import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { FileType } from './entities/enum/file-type.enum';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 @ApiBearerAuth()
 @Controller('resources')
@@ -47,9 +47,10 @@ export class ResourcesController {
     return this.resourcesService.countAllByFiletype();
   }
 
-  @Get('/count/by-type/last-7-days')
-  countLast7DaysByType() {
-    return this.resourcesService.countLast7DaysByFile();
+  @Get('latest')
+  @ApiOperation({ summary: 'Obtener los ultimos 5 archivos subidos' })
+  getLast5Resources(){
+    return this.resourcesService.getLast5UploadedResorces();
   }
 
   @Patch(':id/show-in-cardlist')
