@@ -55,6 +55,12 @@ export class EmotionsService {
     return { message: 'Emoción eliminada' };
   }
 
+  async removeAll() {
+    const allEmotions = await this.emotionRepo.find();
+    await this.emotionRepo.remove(allEmotions);
+    return { message: 'Todas las emociones fueron eliminadas' };
+  }
+
   async addEmotions() {
     console.log('Entró al método addEmotions');
 
