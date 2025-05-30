@@ -17,9 +17,9 @@ import { seedUsersAndUserStates } from './users.userState.seeder';
 import { Emotion } from '../emotions/entities/emotion.entity';
 import { UpdatePasswordDto } from './dto/update-password-dto';
 import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
-import { ChangeRoleDto } from './dto/update-role.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { UserStatus } from './entities/enum/user-status.enum';
+import { ChangeAdminDto } from './dto/update-admin.dto';
 
 @Injectable()
 export class UsersService {
@@ -34,7 +34,7 @@ export class UsersService {
 
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
-  ) {}
+  ) { }
 
   async findAll(dto: PaginationAndFilterDto) {
     const {
@@ -213,22 +213,64 @@ export class UsersService {
     return premiumUsers;
   }
 
-  async changeRole({ userId, newRole }: ChangeRoleDto): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
+  async changeAdmin({
+    userId,
+    role,
+    status,
+    name,
+    email,
+    address,
+    profileImage,
+  }: ChangeAdminDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    if (user.role === newRole) {
-      throw new BadRequestException('El usuario ya tiene ese rol.');
+    let hasChanges = false;
+
+    if (role && user.role !== role) {
+      user.role = role;
+      hasChanges = true;
     }
 
-    user.role = newRole;
+    if (status && user.status !== status) {
+      user.status = status;
+      hasChanges = true;
+    }
+
+    if (name && user.name !== name) {
+      user.name = name;
+      hasChanges = true;
+    }
+
+    if (email && user.email !== email) {
+      const existing = await this.userRepository.findOne({ where: { email } });
+      if (existing && existing.id !== user.id) {
+        throw new BadRequestException('El correo ya está en uso por otro usuario.');
+      }
+      user.email = email;
+      hasChanges = true;
+    }
+
+    if (address && user.address !== address) {
+      user.address = address;
+      hasChanges = true;
+    }
+
+    if (profileImage && user.profileImage !== profileImage) {
+      user.profileImage = profileImage;
+      hasChanges = true;
+    }
+
+    if (!hasChanges) {
+      throw new BadRequestException('No se realizaron cambios en el usuario.');
+    }
+
     return await this.userRepository.save(user);
   }
+
 
   async saveUser(user: User): Promise<User> {
     return await this.userRepository.save(user);

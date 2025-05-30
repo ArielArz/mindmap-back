@@ -50,8 +50,9 @@ import { StripeModule } from './modules/stripe/stripe.module';
     ContactModule,
     SubscriptionModule,
     StripeModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
