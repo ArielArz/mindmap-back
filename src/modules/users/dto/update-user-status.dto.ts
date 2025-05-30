@@ -13,10 +13,10 @@ export class UpdateUserStatusDto {
   @ApiProperty({
     example: UserStatus.BANNED,
     enum: UserStatus,
-    description: 'Nuevo estado del usuario (ACTIVE, INACTIVE, BANNED)',
+    description: 'Nuevo estado del usuario (Activo, Inactivo, Baneado)',
   })
   @IsEnum(UserStatus, {
-    message: 'El estado debe ser ACTIVE, INACTIVE o BANNED.',
+    message: 'El estado debe ser Activo, Inactivo o Baneado.',
   })
   status: UserStatus;
 }

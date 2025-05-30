@@ -10,6 +10,8 @@ import {
   BadRequestException,
   Request,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/create-user.dto';
@@ -32,11 +34,13 @@ import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { UserStatus } from './entities/enum/user-status.enum';
 import { ChangeAdminDto } from './dto/update-admin.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateUserByAdminDto } from './dto/create-user-by-admin.dto';
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
@@ -84,13 +88,15 @@ export class UsersController {
 
   @Get('count/total')
   @ApiOperation({ summary: 'Cantidad total de usuarios registrados' })
-  countTotalUsers(){
+  countTotalUsers() {
     return this.usersService.countTotalUsers();
   }
 
   @Get('count/last-7-days')
-  @ApiOperation({ summary: 'Cantidad de usuarios registrados en los ultimos 7 dias' })
-  countUserLast7Days(){
+  @ApiOperation({
+    summary: 'Cantidad de usuarios registrados en los ultimos 7 dias',
+  })
+  countUserLast7Days() {
     return this.usersService.countUserLast7Days();
   }
 
@@ -103,6 +109,24 @@ export class UsersController {
       throw new BadRequestException('Invalid UUID format');
     }
     return this.usersService.findOne(id);
+  }
+
+  @Patch('status')
+  @ApiOperation({
+    summary: 'Actualizar el estado de un usuario (ACTIVE, INACTIVE, BANNED)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado actualizado correctamente.',
+  })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  @UseGuards(AuthenticationGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  updateStatus(
+    @Body() updateUserStatusDto: UpdateUserStatusDto,
+  ): Promise<{ message: string }> {
+    console.log('DTO recibido:', updateUserStatusDto);
+    return this.usersService.updateStatus(updateUserStatusDto);
   }
 
   @Patch('update/password')
@@ -126,12 +150,20 @@ export class UsersController {
   }
 
   @Patch('change/admin')
-  @ApiOperation({ summary: 'Actualizar datos de usuario (rol, estado, email, etc)' })
+  @ApiOperation({
+    summary: 'Actualizar datos de usuario (rol, estado, email, etc)',
+  })
   @UseGuards(AuthenticationGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  @ApiResponse({ status: 200, description: 'Usuario actualizado correctamente.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario actualizado correctamente.',
+  })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  @ApiResponse({ status: 400, description: 'No se realizaron cambios en el usuario.' })
+  @ApiResponse({
+    status: 400,
+    description: 'No se realizaron cambios en el usuario.',
+  })
   @ApiBody({
     description: 'Datos a actualizar del usuario',
     type: ChangeAdminDto,
@@ -139,7 +171,6 @@ export class UsersController {
   async changeUserRole(@Body() changeAdminDto: ChangeAdminDto) {
     return this.usersService.changeAdmin(changeAdminDto);
   }
-
 
   @Delete(':id')
   @ApiOperation({ summary: 'Desactivar (no eliminar) un usuario existente' })
@@ -164,20 +195,39 @@ export class UsersController {
     return this.usersService.seedUsuariosYEstados();
   }
 
-  @Patch('status')
-  @ApiOperation({
-    summary: 'Actualizar el estado de un usuario (ACTIVE, INACTIVE, BANNED)',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Estado actualizado correctamente.',
-  })
-  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  // @UseGuards(AuthenticationGuard, RolesGuard)
-  // @Roles(UserRole.ADMIN)
-  updateStatus(
-    @Body() updateUserStatusDto: UpdateUserStatusDto,
-  ): Promise<void> {
-    return this.usersService.updateStatus(updateUserStatusDto);
+  @Post('admin-create')
+  @UseGuards(AuthenticationGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('profileImage'))
+  async createByAdmin(
+    @Body() dto: CreateUserByAdminDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    if (file) {
+      const allowedMimeTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/jpg',
+        'image/webp',
+        'image/svg+xml',
+      ];
+      const maxSize = 300 * 1024; // 300 KB
+
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException(
+          'Formato de imagen no válido. Los formatos permitidos son: jpg, jpeg, png, webp, svg.',
+        );
+      }
+
+      if (file.size > maxSize) {
+        throw new BadRequestException('La imagen no debe superar los 300KB.');
+      }
+    }
+
+    try {
+      return await this.usersService.createByAdmin(dto, file);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

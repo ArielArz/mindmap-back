@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmotionsModule } from '../emotions/emotions.module';
 import { AuthModule } from '../auth/auth.module';
+import { FilesUploadRepository } from 'src/cloudinary/files-upload.repository';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { AuthModule } from '../auth/auth.module';
     forwardRef(() => AuthModule),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, FilesUploadRepository],
   exports: [UsersService, JwtModule],
 })
-export class UsersModule { }
+export class UsersModule {}
