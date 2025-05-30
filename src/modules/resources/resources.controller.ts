@@ -47,6 +47,11 @@ export class ResourcesController {
     return this.resourcesService.countAllByFiletype();
   }
 
+  @Get('/count/by-type/last-7-days')
+  countLast7DaysByType() {
+    return this.resourcesService.countLast7DaysByFileType();
+  }
+
   @Get('latest')
   @ApiOperation({ summary: 'Obtener los ultimos 5 archivos subidos' })
   getLast5Resources(){
