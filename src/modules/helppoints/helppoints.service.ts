@@ -57,4 +57,43 @@ export class HelppointsService {
       )
       .getMany();
   }
+
+  async countAll(){
+    return this.helpPointRepo.count();
+  }
+
+  async countLastWeek(){
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    return this.helpPointRepo
+      .createQueryBuilder('helppoint')
+      .where('helppoint.createdAt >= :date', { date: oneWeekAgo.toISOString() })
+      .getCount();
+  }
+
+  async findNearbyWithCategory(
+  lat: number,
+  lng: number,
+  radius: number = 10000,
+  category?: string,
+) {
+  const query = this.helpPointRepo
+    .createQueryBuilder('helppoint')
+    .where(
+      `ST_DWithin(
+        helppoint.coordinates,
+        ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
+        :radius
+      )`,
+      { lat, lng, radius },
+    );
+
+  if (category) {
+    query.andWhere('helppoint.category = :category', { category });
+  }
+
+  return query.getMany();
+}
+
 }

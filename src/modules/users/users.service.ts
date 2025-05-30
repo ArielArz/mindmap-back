@@ -6,23 +6,23 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOptionsWhere, ILike } from 'typeorm';
+import { Repository, FindOptionsWhere, ILike, MoreThan } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { UserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { MailerService } from '../mailer/mailer.service';
+import { UserRole } from './entities/enum/user-role.enum';
+import { UserState } from '../user-state/entities/user-state.entity';
+import { seedUsersAndUserStates } from './users.userState.seeder';
+import { Emotion } from '../emotions/entities/emotion.entity';
 import { UpdatePasswordDto } from './dto/update-password-dto';
+import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
 import { ChangeRoleDto } from './dto/update-role.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
-import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
-
-import { MailerService } from '../mailer/mailer.service';
-import { UserState } from '../user-state/entities/user-state.entity';
-import { Emotion } from '../emotions/entities/emotion.entity';
 import { UserStatus } from './entities/enum/user-status.enum';
-import { UserRole } from './entities/enum/user-role.enum';
-import { seedUsersAndUserStates } from './users.userState.seeder';
+import { ChangeAdminDto } from './dto/update-admin.dto';
 import { CreateUserByAdminDto } from './dto/create-user-by-admin.dto';
 import { FilesUploadRepository } from 'src/cloudinary/files-upload.repository';
 
@@ -39,7 +39,6 @@ export class UsersService {
 
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
-
     private readonly fileUpload: FilesUploadRepository,
   ) {}
 
@@ -241,15 +240,73 @@ export class UsersService {
       );
     }
   }
-
-  async changeRole({ userId, newRole }: ChangeRoleDto): Promise<User> {
+  async changeAdmin({
+    userId,
+    role,
+    status,
+    name,
+    email,
+    address,
+    profileImage,
+  }: ChangeAdminDto): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    if (user.role === newRole) {
-      throw new BadRequestException('El usuario ya tiene ese rol.');
+    let hasChanges = false;
+
+    if (role && user.role !== role) {
+      user.role = role;
+      hasChanges = true;
+    }
+
+    if (status && user.status !== status) {
+      user.status = status;
+      hasChanges = true;
+    }
+
+    if (name && user.name !== name) {
+      user.name = name;
+      hasChanges = true;
+    }
+
+    if (email && user.email !== email) {
+      const existing = await this.userRepository.findOne({ where: { email } });
+      if (existing && existing.id !== user.id) {
+        throw new BadRequestException(
+          'El correo ya está en uso por otro usuario.',
+        );
+      }
+      user.email = email;
+      hasChanges = true;
+    }
+
+    if (address && user.address !== address) {
+      user.address = address;
+      hasChanges = true;
+    }
+
+    if (profileImage && user.profileImage !== profileImage) {
+      user.profileImage = profileImage;
+      hasChanges = true;
+    }
+
+    if (!hasChanges) {
+      throw new BadRequestException('No se realizaron cambios en el usuario.');
+    }
+
+    try {
+      return await this.userRepository.save(user);
+    } catch {
+      throw new InternalServerErrorException('Error al actualizar el usuario.');
+    }
+  }
+
+  async changeRole({ userId, newRole }: ChangeRoleDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
     }
 
     try {
@@ -285,25 +342,6 @@ export class UsersService {
     }
   }
 
-  async updateStatus(dto: UpdateUserStatusDto): Promise<{ message: string }> {
-    const { id, status } = dto;
-
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
-
-    try {
-      user.status = status;
-      await this.userRepository.save(user);
-    } catch {
-      throw new InternalServerErrorException(
-        'Error al actualizar el estado del usuario',
-      );
-    }
-    return { message: `El usuario cambio a el estado ${status}` };
-  }
-
   async createByAdmin(dto: CreateUserByAdminDto, file?: Express.Multer.File) {
     const hashedPassword = await bcrypt.hash('Sentia123*', 10);
 
@@ -336,5 +374,44 @@ export class UsersService {
       role: user.role,
       status: user.status,
     };
+  }
+
+  async updateStatus(dto: UpdateUserStatusDto): Promise<{ message: string }> {
+    const { id, status } = dto;
+
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    try {
+      user.status = status;
+      await this.userRepository.save(user);
+    } catch {
+      throw new InternalServerErrorException(
+        'Error al actualizar el estado del usuario',
+      );
+    }
+    return { message: `El usuario cambio a el estado ${status}` };
+  }
+
+  // contar usuarios totales
+  async countTotalUsers(): Promise<{ total: number }> {
+    const total = await this.userRepository.count();
+    return { total };
+  }
+
+  //Contar usuarios creados en los ultimos 7 dias
+  async countUserLast7Days(): Promise<{ last7Days: number }> {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const count = await this.userRepository.count({
+      where: {
+        createdAt: MoreThan(sevenDaysAgo),
+      },
+    });
+
+    return { last7Days: count };
   }
 }

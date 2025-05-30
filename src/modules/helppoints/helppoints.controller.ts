@@ -12,13 +12,32 @@ export class HelppointsController {
     return this.helppointsService.create(createHelppointDto);
   }
 
-  @Get()
-  findAll(@Query('category') category?: string) {
-    if (category) {
-      return this.helppointsService.findByCategory(category);
-    }
-    return this.helppointsService.findAll();
+@Get()
+findAll(
+  @Query('category') category?: string,
+  @Query('lat') lat?: string,
+  @Query('lng') lng?: string,
+  @Query('radius') radius?: string,
+) {
+  const latNum = lat ? parseFloat(lat) : undefined;
+  const lngNum = lng ? parseFloat(lng) : undefined;
+  const radiusNum = radius ? parseInt(radius) : 10000;
+
+  if (latNum !== undefined && lngNum !== undefined) {
+    return this.helppointsService.findNearbyWithCategory(
+      latNum,
+      lngNum,
+      radiusNum,
+      category,
+    );
   }
+
+  if (category) {
+    return this.helppointsService.findByCategory(category);
+  }
+
+  return this.helppointsService.findAll();
+}
 
   @Get('nearby')
   findNearby(
@@ -31,6 +50,16 @@ export class HelppointsController {
       parseFloat(lng),
       radius ? parseInt(radius) : 10000,
     );
+  }
+
+  @Get('count')
+  countAll() {
+    return this.helppointsService.countAll();
+  }
+
+  @Get('count/last-week')
+  countLasteWeek(){
+    return this.helppointsService.countLastWeek();
   }
 
   @Get(':id')

@@ -11,6 +11,7 @@ import { SignInDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
 import { SetPasswordDto } from './dto/set-password.dto';
 import { MailerService } from '../mailer/mailer.service';
+import { UserStatus } from '../users/entities/enum/user-status.enum';
 
 @Injectable()
 export class AuthService {
@@ -57,6 +58,11 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException('Credenciales invalidas - E');
 
+    // validar que el usuario este activo
+    if(user.status !== UserStatus.ACTIVE){
+      throw new UnauthorizedException('Este usuario ha sido inhabilitado y no puede iniciar sesion');
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
       throw new UnauthorizedException('Credenciales invalidas -BCR');
@@ -86,6 +92,11 @@ export class AuthService {
   // Autenticacion con Google OAuth
   async validateGoogleUser(googleUser: any) {
     let user = await this.usersService.findOneByEmail(googleUser.email);
+
+    //Validar que el usuario este activo
+    if(user && user.status !== UserStatus.ACTIVE){
+      throw new UnauthorizedException('Este usuario ha sido unhabilitado y no puede iniciar sesion');
+    }
 
     if (!user) {
       user = await this.usersService.createUser({
@@ -138,6 +149,11 @@ export class AuthService {
 
     let user = await this.usersService.findOneByEmail(googleUser.email);
 
+    // validar que el usuario este activo
+    if(user && user.status !== UserStatus.ACTIVE) {
+      throw new UnauthorizedException('Este usuario ha sido inhabilitado y no puede iniciar sesion');
+    }
+    
     if (!user) {
       user = await this.usersService.createUser({
         name: googleUser.name,
