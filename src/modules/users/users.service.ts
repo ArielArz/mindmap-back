@@ -19,7 +19,7 @@ import { seedUsersAndUserStates } from './users.userState.seeder';
 import { Emotion } from '../emotions/entities/emotion.entity';
 import { UpdatePasswordDto } from './dto/update-password-dto';
 import { PaginationAndFilterDto } from './dto/pagination-and-filter.dto';
-import { ChangeRoleDto } from './dto/update-role.dto';
+import { ChangeRoleDto } from './dto/change-role.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { UserStatus } from './entities/enum/user-status.enum';
 import { ChangeAdminDto } from './dto/update-admin.dto';
@@ -343,6 +343,12 @@ export class UsersService {
   }
 
   async createByAdmin(dto: CreateUserByAdminDto, file?: Express.Multer.File) {
+    const existingUser = await this.userRepository.findOne({
+      where: { email: dto.email },
+    });
+    if (existingUser) {
+      throw new BadRequestException('Correo ya registrado');
+    }
     const hashedPassword = await bcrypt.hash('Sentia123*', 10);
 
     const user = this.userRepository.create({
