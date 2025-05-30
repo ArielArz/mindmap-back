@@ -140,4 +140,10 @@ export class EmotionsController {
   remove(@Param('id') id: string) {
     return this.emotionsService.remove(id);
   }
+
+  @Delete()
+  @ApiOperation({ summary: 'Eliminar todas las emociones' })
+  removeAll() {
+    return this.emotionsService.removeAll();
+  }
 }

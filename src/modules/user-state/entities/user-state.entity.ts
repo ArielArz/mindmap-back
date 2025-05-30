@@ -20,7 +20,7 @@ export class UserState {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Emotion, { eager: true, nullable: false })
+  @ManyToOne(() => Emotion, { eager: true, nullable: false, onDelete: 'CASCADE' })
   emotion: Emotion;
 
 
