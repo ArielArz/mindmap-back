@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { EmotionsService } from './emotions.service';
 import { CreateEmotionDto } from './dto/create-emotion.dto';
@@ -22,6 +23,7 @@ import { AuthenticationGuard } from 'src/guard/auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from '../users/entities/enum/user-role.enum';
 import { RolesGuard } from 'src/guard/roles.guard';
+import { SearchEmotionsDto } from './dto/search-emotions.dto';
 
 @ApiTags('emotions')
 @ApiBearerAuth()
@@ -49,8 +51,8 @@ export class EmotionsController {
   @Get()
   @ApiOperation({ summary: 'Obtener todas las emociones' })
   @ApiResponse({ status: 200, description: 'Lista de emociones obtenida' })
-  findAll() {
-    return this.emotionsService.findAll();
+  findAll(@Query() searchDto: SearchEmotionsDto) {
+    return this.emotionsService.findAll(searchDto);
   }
 
   @Get('/puntaje')

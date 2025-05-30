@@ -1,12 +1,13 @@
-import { Between, Repository } from "typeorm";
-import { CreateEmotionDto } from "./dto/create-emotion.dto";
-import { UpdateEmotionDto } from "./dto/update-emotion.dto";
-import { seedEmotions } from "./emotion.seeder";
-import { Injectable, Req } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Emotion } from "./entities/emotion.entity";
-import { UserState } from "../user-state/entities/user-state.entity";
-import { rangosIEG } from "./dto/rango-ieg.interface";
+import { Between, ILike, Repository } from 'typeorm';
+import { CreateEmotionDto } from './dto/create-emotion.dto';
+import { UpdateEmotionDto } from './dto/update-emotion.dto';
+import { seedEmotions } from './emotion.seeder';
+import { Injectable, Req } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Emotion } from './entities/emotion.entity';
+import { UserState } from '../user-state/entities/user-state.entity';
+import { rangosIEG } from './dto/rango-ieg.interface';
+import { SearchEmotionsDto } from './dto/search-emotions.dto';
 
 @Injectable()
 export class EmotionsService {
@@ -15,12 +16,12 @@ export class EmotionsService {
     private readonly emotionRepo: Repository<Emotion>,
     @InjectRepository(UserState)
     private readonly userStateRepo: Repository<UserState>,
-
-  ) { }
+  ) {}
 
   async create(createEmotionDto: CreateEmotionDto) {
-
-    const existing = await this.emotionRepo.findOneBy({ name: createEmotionDto.name });
+    const existing = await this.emotionRepo.findOneBy({
+      name: createEmotionDto.name,
+    });
     if (existing) {
       return { message: 'La emoción ya existe en la base de datos' };
     }
@@ -28,17 +29,27 @@ export class EmotionsService {
     return this.emotionRepo.save(newEmotion);
   }
 
-  async findAll() {
-    return this.emotionRepo.find({
-      select: {
-        id: true,
-        name: true,
-        emoji: true,
-        clinicalValue: true,
-        significado: true,
-        reflexion: true
-      }
-    });
+  async findAll(data?: SearchEmotionsDto) {
+    const query = this.emotionRepo
+      .createQueryBuilder('emotion')
+      .select([
+        'emotion.id',
+        'emotion.name',
+        'emotion.emoji',
+        'emotion.clinicalValue',
+        'emotion.significado',
+        'emotion.reflexion',
+      ]);
+
+    if (data) {
+      query
+        .where('emotion.name ILIKE :search', { search: `%${data.search}%` })
+        .orWhere('CAST(emotion.clinicalValue AS TEXT) ILIKE :search', {
+          search: `%${data.search}%`,
+        });
+    }
+
+    return query.getMany();
   }
 
   async findOne(id: string) {
@@ -69,7 +80,7 @@ export class EmotionsService {
   }
 
   async calculaPuntajes(userStates: UserState[]): Promise<number[]> {
-    return userStates.map(state => {
+    return userStates.map((state) => {
       const intensidad = state.intensidad;
       const clinicalValue = state.emotion.clinicalValue;
       return intensidad * clinicalValue;
@@ -88,15 +99,16 @@ export class EmotionsService {
     consejo: string;
     accion: string | null;
   } {
-    const resultado = rangosIEG.find(r => ieg >= r.min && ieg <= r.max);
+    const resultado = rangosIEG.find((r) => ieg >= r.min && ieg <= r.max);
 
     if (!resultado) {
       return {
         min: -100,
         max: 100,
         interpretacion: 'Valor fuera de rango',
-        consejo: 'No se pudo analizar el estado emocional. Verificá tus registros.',
-        accion: null
+        consejo:
+          'No se pudo analizar el estado emocional. Verificá tus registros.',
+        accion: null,
       };
     }
 
@@ -105,7 +117,10 @@ export class EmotionsService {
       max: resultado.max,
       interpretacion: resultado.interpretacion,
       consejo: this.elegirAleatorio(resultado.consejos),
-      accion: resultado.acciones.length > 0 ? this.elegirAleatorio(resultado.acciones) : null
+      accion:
+        resultado.acciones.length > 0
+          ? this.elegirAleatorio(resultado.acciones)
+          : null,
     };
   }
 
@@ -149,7 +164,7 @@ export class EmotionsService {
       IEG,
       interpretacion: resultado.interpretacion,
       consejo: resultado.consejo,
-      accion: resultado.accion
+      accion: resultado.accion,
     };
   }
 }
