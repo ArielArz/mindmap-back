@@ -246,6 +246,38 @@ export class MailerService {
     );
   }
 
+  async sendGeneratedPasswordEmail(to: string, name: string, password: string) {
+    const changePasswordLink = `${process.env.FRONTEND_URL}/profile`;
+    const html = `
+      <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
+        <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
+          <h2 style="color: #4CAF50; text-align: center;">¡Bienvenido a Sentia, ${name}!</h2>
+          <p style="font-size: 16px; color: #555555; text-align: center;">Te registraste con tu cuenta de Google.</p>
+          <p style="font-size: 16px; color: #555555; text-align: center;">
+            Para mayor comodidad, hemos generado una contraseña para ti:
+          </p>
+          <p style="font-size: 20px; color: #4CAF50; font-weight: bold; text-align: center;">${password}</p>
+          <p style="font-size: 16px; color: #555555; text-align: center;">
+            Puedes usarla para iniciar sesión manualmente. Te recomendamos cambiarla desde tu perfil.
+          </p>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="${changePasswordLink}" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+              Cambiar mi contraseña
+            </a>
+          </div>
+          <p style="font-size: 12px; color: #aaaaaa; text-align: center; margin-top: 30px;">
+            Este mensaje fue enviado automáticamente. No respondas a este correo.
+          </p>
+        </div>
+      </div>
+    `;
+
+    await this.transporter.sendMail(
+      this.commonMailOptions(to, 'Tu contraseña para iniciar sesión en Sentia', html),
+    );
+  }
+
+
   async sendWelcomeLoginGoogle(to: string, name: string) {
     const token = this.jwtService.sign(
       { email: to },

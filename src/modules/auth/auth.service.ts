@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { SetPasswordDto } from './dto/set-password.dto';
 import { MailerService } from '../mailer/mailer.service';
 import { UserStatus } from '../users/entities/enum/user-status.enum';
@@ -98,15 +99,27 @@ export class AuthService {
       throw new UnauthorizedException('Este usuario ha sido unhabilitado y no puede iniciar sesion');
     }
 
+    // Genera contraseña aleatoria
+    const randomPassword = crypto.randomBytes(10).toString('base64url'); // por ejemplo, 10 bytes → ~14 caracteres
+    
     if (!user) {
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
       user = await this.usersService.createUser({
         name: googleUser.name,
         email: googleUser.email,
-        password: '', // No se necesita para Google
-        confirmPassword: '',
+        password: hashedPassword, 
+        confirmPassword: hashedPassword,
         address: '',
         profileImage: googleUser.profileImage || '',
       });
+    }
+
+    //Enviar correo con la contraseña generada
+    try {
+      await this.mailerService.sendGeneratedPasswordEmail(user.email, user.name, randomPassword);
+    } catch (error) {
+      console.warn(`No se pudo enviar el email con la contraseña a ${user.email}:`, error.message);
     }
 
     // Enviar correo de bienvenida
