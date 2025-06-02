@@ -363,6 +363,7 @@ export class UsersService {
         const result = await this.fileUpload.uploadFile(file);
         savedUser.profileImage = result.secure_url;
         await this.userRepository.save(savedUser);
+        await this.mailerService.sendWelcomeEmail(user.email, user.name);
       } catch (err) {
         console.log(err);
         throw new InternalServerErrorException(
