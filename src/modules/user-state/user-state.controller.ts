@@ -3,11 +3,11 @@ import { UserStateService } from './user-state.service';
 import { CreateUserStateDto } from './dto/create-user-state.dto';
 import { UpdateUserStateDto } from './dto/update-user-state.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthenticationGuard } from 'src/guard/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('User State')
 @ApiBearerAuth()
-@UseGuards(AuthenticationGuard)
+@UseGuards(AuthGuard('jwt'))
 
 @Controller('user_state')
 export class UserStateController {
@@ -20,7 +20,6 @@ export class UserStateController {
   create(@Body() createUserStateDto: CreateUserStateDto) {
     return this.userStateService.create(createUserStateDto);
   }
-  // GET /user_state: obtener emociones del usuario (por fecha o rango)
 
   @Get()
   @ApiOperation({ summary: 'Obtener todos los estados emocionales del usuario' })

@@ -8,10 +8,11 @@ export class ChangeAdminDto {
   userId: string;
 
   @IsEnum(UserRole)
-  role: UserRole;
+  role?: UserRole;
 
+  @IsOptional()
   @IsEnum(UserStatus)
-  status: UserStatus;
+  status?: UserStatus;
 
   @ApiProperty({ example: 'Rosalía Fernández' })
   @IsOptional()

@@ -16,7 +16,7 @@ export class EmotionsService {
     private readonly emotionRepo: Repository<Emotion>,
     @InjectRepository(UserState)
     private readonly userStateRepo: Repository<UserState>,
-  ) {}
+  ) { }
 
   async create(createEmotionDto: CreateEmotionDto) {
     const existing = await this.emotionRepo.findOneBy({
@@ -41,7 +41,7 @@ export class EmotionsService {
         'emotion.reflexion',
       ]);
 
-    if (data) {
+    if (data?.search && data.search.trim() !== '') {
       query
         .where('emotion.name ILIKE :search', { search: `%${data.search}%` })
         .orWhere('CAST(emotion.clinicalValue AS TEXT) ILIKE :search', {
