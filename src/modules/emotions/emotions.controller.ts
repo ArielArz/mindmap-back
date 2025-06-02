@@ -42,6 +42,8 @@ export class EmotionsController {
   }
 
   @Get('seeder')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Cargar emociones base en la BD' })
   @ApiResponse({ status: 201, description: 'Emociones creadas correctamente' })
   addEmotions() {
