@@ -11,28 +11,18 @@ export const rangosIEG: RangoIEG[] = [
     max: 15,
     interpretacion: 'Estado óptimo, euforia o bienestar excepcional',
     consejos: [
-      'Disfrutá este momento de plenitud. Reconocé lo que lo genera.',
-      'Registrá tus emociones para recordarlas en otros momentos.',
-      'Compartí tu alegría con alguien cercano.',
-      'Usá esta energía para avanzar en proyectos personales.',
-      'Celebrá tus logros, grandes o pequeños.',
-      'Conectate con lo que te apasiona.',
-      'Reflexioná sobre las cosas que están funcionando en tu vida.',
-      'Aprovechá este impulso para cultivar hábitos positivos.',
-      'Guardá este momento como ancla emocional.',
-      'Permitite sentirte bien sin culpa.'
+      'Preguntate qué elementos internos y externos contribuyen a este bienestar, y cómo podés sostenerlos en el tiempo. No des por hecho esta sensación; comprendé su origen para fortalecerla.',
+      'Observá cómo reacciona tu entorno a tu estado emocional positivo y qué te revela eso sobre tus vínculos. A veces, la alegría propia ilumina u opaca dinámicas importantes.',
+      'Pensá cómo este estado puede convertirse en una guía emocional, no como meta constante, sino como referencia interna. Este momento puede enseñarte cómo se siente estar en sintonía con vos mismo.',
+
     ],
     acciones: [
-      'Escribir una entrada positiva en tu diario',
-      'Hacer algo creativo',
-      'Disfrutar una salida',
-      'Llamar a alguien que querés',
-      'Crear una lista de gratitud',
-      'Escuchar música alegre',
-      'Hacer actividad física',
-      'Tomar una foto de este momento',
-      'Anotar ideas inspiradoras',
-      'Hacer una pausa para saborear el presente'
+      'Disfrutar plenamente del momento presente → Te permite saborear y consolidar esta experiencia de bienestar.',
+      'Registrar qué situaciones o pensamientos generaron esta euforia → Ayuda a identificar patrones que puedas recrear en el futuro.',
+      'Compartir tu alegría con alguien de confianza → Fortalece tus relaciones y amplifica el impacto positivo.',
+      'Canalizar esta energía para avanzar en proyectos personales o metas → Convierte tu entusiasmo en progreso concreto y motivación sostenida.',
+      'Practicar la autoconciencia para mantener el equilibrio emocional → Evita caer en excesos y favorece la estabilidad a largo plazo.',
+
     ]
   },
   {
@@ -40,28 +30,18 @@ export const rangosIEG: RangoIEG[] = [
     max: 12.99,
     interpretacion: 'Muy positivo, energía emocional elevada',
     consejos: [
-      'Canalizá esta energía hacia actividades significativas.',
-      'Prestá atención a lo que alimenta este estado.',
-      'Es un buen momento para iniciar algo nuevo.',
-      'Aprovechá para conectar con otras personas desde lo positivo.',
-      'Escuchá a tu cuerpo y descansá si lo necesitás.',
-      'Celebrá este buen momento.',
-      'Fijate si hay patrones que puedas repetir.',
-      'Mantené tu bienestar con prácticas regulares.',
-      'Permitite disfrutar sin exigencias.',
-      'Registrá este estado para recordar qué lo genera.'
+      'Reconocé cómo esta energía se manifiesta en tu cuerpo y mente, y qué la alimenta.Entender tu propio motor emocional te permite recargarlo conscientemente.',
+      'Preguntate hacia dónde estás canalizando esta intensidad emocional: ¿es productiva, compartida o contenida? La dirección que le das a tu energía define su impacto. Reflexioná si este estado surge como resultado de una conexión interna o de factores externos.',
+      'Reflexioná si este estado surge como resultado de una conexión interna o de factores externos. Saberlo te ayuda a distinguir qué depende de vos y qué no.',
+
     ],
     acciones: [
-      'Empezar una actividad nueva',
-      'Compartir un momento con amigos',
-      'Escribir ideas motivadoras',
-      'Meditar unos minutos',
-      'Hacer una lista de lo que disfrutás',
-      'Mover el cuerpo con música',
-      'Visualizar un objetivo personal',
-      'Contarle a alguien cómo te sentís',
-      'Revisar logros recientes',
-      'Darte un premio simbólico'
+      'Canalizar tu energía en actividades creativas o productivas → Te ayuda a aprovechar al máximo este impulso y a generar resultados valiosos.',
+      'Compartir tu entusiasmo con personas cercanas → Refuerza vínculos y contagia bienestar a tu entorno.',
+      'Practicar la gratitud por este estado emocional → Aumenta tu resiliencia y capacidad para mantener emociones positivas.',
+      'Tomarte momentos para respirar y mantener la estabilidad emocional → Previene posibles sobrecargas y ayuda a conservar el equilibrio.',
+      'Reflexionar sobre las causas que te llevan a este estado → Facilita identificar y potenciar las fuentes de tu bienestar.',
+
     ]
   },
   {
@@ -69,28 +49,17 @@ export const rangosIEG: RangoIEG[] = [
     max: 10.99,
     interpretacion: 'Bienestar alto, emociones muy favorables',
     consejos: [
-      'Estás en un buen momento emocional, disfrutalo con conciencia.',
-      'Reforzá las rutinas que te hacen bien.',
-      'Identificá qué personas o espacios te hacen sentir así.',
-      'Disfrutá lo simple.',
-      'Hacé una pausa para reconocer tu estado.',
-      'Registrá este bienestar para recordarlo.',
-      'Mantené el foco en lo que funciona.',
-      'Seguís consolidando tu estabilidad emocional.',
-      'Es un buen momento para agradecer.',
-      'Podés compartir este estado con quienes te rodean.'
+      'Observá qué aspectos de tu vida están alineados para generar este bienestar. Identificar esos elementos te ayuda a mantenerlos y cultivarlos.',
+      'Reflexioná si estás disfrutando el presente o proyectando esta sensación hacia el futuro. Valorar el ahora fortalece tu equilibrio emocional.',
+      'Preguntate cómo podés extender este estado a otras áreas de tu vida o compartirlo con quienes te rodean. El bienestar compartido se multiplica y genera vínculos más profundos.',
     ],
     acciones: [
-      'Registrar el día con una foto o nota',
-      'Cocinar algo que te guste',
-      'Salir al aire libre',
-      'Escuchar una playlist favorita',
-      'Hacer una llamada positiva',
-      'Preparar un plan que te motive',
-      'Tener un momento de autocuidado',
-      'Desconectarte del celular 1 hora',
-      'Disfrutar el presente sin planear tanto',
-      'Leer algo inspirador'
+      'Disfrutar conscientemente del momento presente → Permite anclar esta sensación de bienestar para recurrir a ella cuando la necesites.',
+      'Reconocer y agradecer las fuentes de tu bienestar → Fortalece la percepción positiva y genera un ciclo de emociones saludables.',
+      'Compartir tu energía positiva con quienes te rodean → Multiplica el impacto positivo y fortalece relaciones afectivas.',
+      'Aprovechar esta energía para avanzar en proyectos personales  Potencia tu crecimiento y la satisfacción personal.',
+      'Reflexionar sobre lo que está funcionando bien en tu vida → Favorece la autoconciencia y el mantenimiento de hábitos positivos.',
+
     ]
   },
   {
@@ -98,28 +67,16 @@ export const rangosIEG: RangoIEG[] = [
     max: 8.99,
     interpretacion: 'Positivo, emociones saludables estables',
     consejos: [
-      'Estás en un buen punto de equilibrio emocional.',
-      'Seguí reforzando las prácticas que te ayudan.',
-      'Permitite reconocer tu esfuerzo.',
-      'Notá qué cosas están equilibradas hoy.',
-      'Mantené este estado con hábitos sostenibles.',
-      'Podés pensar en un pequeño objetivo nuevo.',
-      'Validá tu estabilidad emocional.',
-      'Sumá una práctica que mejore tu día aún más.',
-      'Estás gestionando bien tus emociones.',
-      'Conectá con lo que te hace sentir en paz.'
+      'Reconocé la estabilidad emocional como un logro, no como algo dado.Estar bien de forma sostenida es fruto de hábitos, decisiones y autocuidado.',
+      'Preguntate qué prácticas o relaciones están contribuyendo a este equilibrio.Ser consciente de ellas te permite fortalecerlas y priorizarlas.',
+      'Reflexioná sobre cómo podés sostener esta armonía incluso en momentos de cambio.La estabilidad no es rigidez, sino adaptación consciente desde un lugar de bienestar.',
     ],
     acciones: [
-      'Revisar rutinas saludables',
-      'Hacer journaling de gratitud',
-      'Compartir un momento tranquilo',
-      'Preparar tu día con calma',
-      'Disfrutar una comida sin distracciones',
-      'Escuchar un podcast de bienestar',
-      'Cuidar tu descanso',
-      'Reorganizar tu espacio personal',
-      'Ver algo que te inspire',
-      'Crear una playlist para este estado'
+      'Mantener hábitos que fomenten tu bienestar emocional → Esto ayuda a consolidar una base sólida para tu salud mental.',
+      'Expresar gratitud regularmente → Potencia emociones positivas y fortalece tu resiliencia.',
+      'Compartir tus emociones positivas con personas de confianza → Refuerza vínculos y amplifica la experiencia de bienestar.',
+      'Practicar técnicas de relajación y mindfulness → Favorece la estabilidad emocional y reduce el estrés.',
+      'Establecer pequeños retos personales para crecer → Mantiene la motivación y promueve un desarrollo emocional saludable.',
     ]
   },
   {
@@ -127,28 +84,17 @@ export const rangosIEG: RangoIEG[] = [
     max: 6.99,
     interpretacion: 'Buen ánimo, tendencia emocional favorable',
     consejos: [
-      'Estás en una etapa favorable, con espacio para seguir creciendo.',
-      'Mantené hábitos que potencien este buen estado.',
-      'Reflexioná sobre qué ayudó a que hoy estés así.',
-      'Este es un buen momento para construir confianza.',
-      'Date permiso para disfrutar sin exigencia.',
-      'Podés invertir energía en vínculos o proyectos.',
-      'Reforzá lo positivo con pequeños rituales.',
-      'Elegí enfocarte en lo que te hace bien.',
-      'Tu ánimo es estable y funcional, cuidalo.',
-      'Chequeá si hay algo que puedas celebrar hoy.'
+      'Observá qué pensamientos o acciones están alimentando este buen ánimo. Reconocer su origen te permite replicarlo con intención.',
+      'Aprovechá esta energía emocional para avanzar en lo que venías postergando. El bienestar es una gran plataforma para la acción.',
+      'Reflexioná sobre cómo responderías ante desafíos desde este estado positivo. Imaginarlo fortalece tu capacidad de afrontamiento futura.',
+
     ],
     acciones: [
-      'Escribir una reflexión breve',
-      'Elegir una acción placentera',
-      'Tener un momento de silencio',
-      'Desconectarte de redes sociales',
-      'Cuidar tu alimentación',
-      'Estirarte o moverte suavemente',
-      'Hablar con alguien querido',
-      'Escuchar música sin distracciones',
-      'Crear algo con tus manos',
-      'Apagar notificaciones por una hora'
+      'Reconocer y agradecer los momentos positivos → Potencia la conciencia de bienestar y fortalece la estabilidad emocional.',
+      'Seguir cultivando relaciones que te hagan sentir bien → Refuerza tu red de apoyo y mantiene el ánimo elevado.',
+      'Dedicar tiempo a actividades que te apasionan → Favorece la motivación y alimenta emociones saludables.',
+      'Practicar la autoobservación para detectar cambios emocionales → Ayuda a mantener el equilibrio y actuar a tiempo si surge algún malestar.',
+      'Establecer metas realistas para mantener el impulso positivo → Canaliza tu energía hacia logros concretos que refuercen tu buen ánimo.',
     ]
   },
   {
@@ -156,28 +102,18 @@ export const rangosIEG: RangoIEG[] = [
     max: 4.99,
     interpretacion: 'Leve positivo, salud emocional funcional',
     consejos: [
-      'Tu estado es estable, aunque hay espacio para sentirte mejor.',
-      'Buscá momentos pequeños de disfrute.',
-      'Chequeá si algo puede estar restándote energía.',
-      'Mantené el ritmo sin exigencias.',
-      'Una pequeña mejora puede marcar la diferencia.',
-      'Prestá atención a lo que estás necesitando hoy.',
-      'Puede ser útil renovar una rutina o cambiar de ambiente.',
-      'Registrá lo que te ayuda a mantener el equilibrio.',
-      'Dale lugar a actividades que te conecten con vos.',
-      'Revisá si podés soltar alguna presión.'
+      'Reconocé que incluso la calma cotidiana es un signo de equilibrio interno. Apreciar lo sutil también es cultivar bienestar.',
+      'Preguntate qué pequeños hábitos están favoreciendo este estado. A veces lo que funciona pasa desapercibido.',
+      'Considerá cómo sostener esta estabilidad sin necesidad de euforia. El bienestar no siempre se siente intenso, pero sigue siendo valioso.',
+
     ],
     acciones: [
-      'Tomarte un recreo consciente',
-      'Cuidar tu postura y respiración',
-      'Caminar sin rumbo 10 minutos',
-      'Escribir lo que te descarga',
-      'Mirar por la ventana en silencio',
-      'Hacer una pausa sin hacer nada',
-      'Desconectarte 15 minutos',
-      'Acomodar tu espacio personal',
-      'Tomar agua con atención',
-      'Pedir un abrazo o dar uno'
+      'Celebrar pequeñas victorias del día → Refuerza tu bienestar y motiva a mantener un estado emocional saludable.',
+      'Mantener contacto con personas que te apoyan → Fortalece tu red de soporte y ayuda a sostener emociones positivas.',
+      'Incorporar hábitos simples de autocuidado → Promueve el equilibrio emocional y previene malestares futuros.',
+      'Reflexionar sobre lo que te aporta satisfacción → Te ayuda a identificar fuentes de bienestar para potenciar.',
+      'Permitir espacio para la expresión emocional sincera → Facilita la gestión emocional y mantiene la salud emocional funcional.',
+
     ]
   },
   {
@@ -185,28 +121,16 @@ export const rangosIEG: RangoIEG[] = [
     max: 2.99,
     interpretacion: 'Estado positivo leve, estable pero mejorable',
     consejos: [
-      'Tu estado es funcional, pero podés sentirte mejor.',
-      'Fijate si estás necesitando un cambio de ritmo.',
-      'Una pequeña acción puede ayudarte a mejorar el día.',
-      'Permitite revisar tus emociones sin juicio.',
-      'No te exijas demasiado, pero mantenete en movimiento.',
-      'Conectá con algo que te inspire o motive.',
-      'Registrá lo que hoy te dio un poco de bienestar.',
-      'Mirá con amabilidad lo que estás atravesando.',
-      'Dale lugar a lo que sentís.',
-      'Acompañate con prácticas de autocuidado.'
+      'Observá qué áreas podrían sumar un poco más de entusiasmo o motivación. El crecimiento emocional empieza con una pregunta honesta.',
+      'Valorá la estabilidad, pero no te conformes si sabés que podés sentirte mejor. Aceptar no es lo mismo que estancarse.',
+      'Preguntate qué te impide dar un paso más hacia tu bienestar pleno. A veces la barrera es tan sutil como una duda no revisada.',
     ],
     acciones: [
-      'Respirar profundo 3 veces',
-      'Estirarte lentamente',
-      'Anotar una cosa que te hizo bien hoy',
-      'Tomar un té o mate con calma',
-      'Escribir un microdiario',
-      'Cerrar los ojos 1 minuto',
-      'Poner una canción suave',
-      'Moverte al ritmo de la música',
-      'Tomar contacto con naturaleza',
-      'Hacer una pausa sin celular'
+      'Reconocer y valorar lo que está funcionando bien en tu día → Esto fortalece la sensación de bienestar y crea una base sólida para seguir mejorando.',
+      'Plantear un pequeño objetivo emocional o personal para el día → Te invita a avanzar con intención, potenciando la estabilidad hacia un estado más positivo.',
+      'Practicar una breve pausa consciente para conectar contigo mismo → Ayuda a mantener la estabilidad emocional y a identificar áreas de mejora.',
+      'Buscar actividades que te generen placer o tranquilidad → Refuerza emociones positivas y mejora el ánimo sin exigencias.',
+      'Observar tus pensamientos sin juzgarlos, permitiendo soltarlos si son negativos → Facilita la gestión emocional y evita que pequeños malestares crezcan.',
     ]
   },
   {
@@ -214,28 +138,17 @@ export const rangosIEG: RangoIEG[] = [
     max: 0.99,
     interpretacion: 'Neutro / estable',
     consejos: [
-      'Estás en una zona neutra, donde podés tomar impulso.',
-      'Podés observar sin juzgar cómo te sentís.',
-      'Aprovechá este momento de calma para decidir cómo avanzar.',
-      'El equilibrio también es valioso, aunque no sea intenso.',
-      'Chequeá si necesitás activar algo que te motive.',
-      'Este estado puede ser base para subir emocionalmente.',
-      'Tomá conciencia de lo que te rodea sin presión.',
-      'Explorá qué te gustaría mejorar sin urgencias.',
-      'Mantené hábitos suaves pero constantes.',
-      'Revisá si necesitás descansar o movilizarte.'
+      'Reconocé la calma como una base sólida para el cambio. Estar en equilibrio es un buen punto de partida, no un límite.',
+      'Identificá si hay áreas donde te gustaría sentir más energía o alegría. La neutralidad puede ser la oportunidad para sembrar nuevas emociones.',
+      'Permitite observar sin juzgar cómo te sentís realmente en este momento. La conciencia plena abre caminos hacia un bienestar más profundo.',
     ],
     acciones: [
-      'Observar tu entorno con atención plena',
-      'Meditar 2 minutos',
-      'Escribir cómo te sentís sin filtros',
-      'Moverte suavemente',
-      'Estar en silencio 5 minutos',
-      'Elegir una actividad simple',
-      'Cuidar tu hidratación',
-      'Estirar el cuerpo conscientemente',
-      'Anotar pensamientos que aparecen',
-      'Desconectar de pantallas un rato'
+      'Hacer un chequeo interno: “¿Cómo estoy realmente?” → Estar neutro puede ocultar emociones no reconocidas; revisarlas te permite mayor autoconciencia.',
+      'Agradecer una pequeña cosa de tu día → Introduce una mirada positiva sin forzar la emoción, ayudando a elevar el estado anímico.',
+      'Estar presente en una actividad simple (tomar algo, caminar, respirar) → Refuerza la conexión con el aquí y ahora, manteniendo la estabilidad emocional.',
+      'Observar tu cuerpo: ¿hay tensión, cansancio o comodidad? → Identificar cómo se siente el cuerpo puede revelar señales emocionales sutiles.',
+      'Elegir una acción que potencie tu bienestar, aunque sea mínima → Desde este estado, podés construir hacia emociones más positivas con decisiones pequeñas y conscientes.',
+
     ]
   },
   {
@@ -243,28 +156,17 @@ export const rangosIEG: RangoIEG[] = [
     max: -1.01,
     interpretacion: 'Leve malestar, sin riesgo inmediato',
     consejos: [
-      'Estás atravesando una leve incomodidad emocional. Observá sin juzgar.',
-      'Chequeá si algo externo está afectando tu ánimo.',
-      'Tomate un momento para registrar lo que sentís.',
-      'Podés priorizar el descanso o el autocuidado.',
-      'Buscá pequeñas cosas que puedan mejorar tu ánimo.',
-      'No estás solo/a, podés pedir apoyo si lo necesitás.',
-      'Reflexioná sobre lo que necesitás hoy.',
-      'Permitite frenar sin sentir culpa.',
-      'Podés poner límites suaves si algo te incomoda.',
-      'Date permiso para bajar el ritmo.'
+      'Observá qué pequeños detalles pueden estar generando incomodidad. A veces, reconocer las señales leves nos permite actuar antes de que crezcan.',
+      'Permitite sentir ese malestar sin evitarlo ni dramatizarlo. Aceptar la incomodidad es un paso para entender qué necesitás realmente.',
+      'Pensá en acciones sencillas que puedan mejorar tu bienestar diario. Pequeños ajustes pueden tener un gran impacto en tu equilibrio emocional.',
+
     ],
     acciones: [
-      'Registrar la emoción dominante',
-      'Escribir una frase de descarga emocional',
-      'Tomar distancia de situaciones demandantes',
-      'Practicar respiración consciente',
-      'Tomarte una pausa sin obligaciones',
-      'Hacer contacto con algo que te guste',
-      'Hablar con alguien que te escuche',
-      'Mover el cuerpo suavemente',
-      'Descansar 10 minutos',
-      'Escuchar música reconfortante'
+      'Tomarte unos minutos para respirar profundo y pausadamente → Ayuda a reducir la tensión y a reconectar con el momento presente.',
+      'Detectar si hay alguna incomodidad ignorada o acumulada → El leve malestar puede ser una señal temprana de algo que merece atención.',
+      'Anotar lo que sentís sin juzgarte → Poner en palabras tus emociones puede darte claridad y alivio.',
+      'Moverte suavemente (estirarte, caminar, cambiar de ambiente) → El movimiento físico ayuda a desbloquear emociones leves retenidas.',
+      'Hacer una pausa para escuchar música que te calme o inspire → Estimula estados emocionales más positivos sin forzar un cambio abrupto.',
     ]
   },
   {
@@ -272,28 +174,17 @@ export const rangosIEG: RangoIEG[] = [
     max: -3.01,
     interpretacion: 'Malestar moderado, revisar emociones',
     consejos: [
-      'Estás en un estado de malestar emocional, revisá tus necesidades.',
-      'Podés registrar lo que sentís sin presionarte a resolverlo ya.',
-      'El descanso y la contención son importantes ahora.',
-      'No minimices cómo te sentís.',
-      'Validá tus emociones y buscá maneras seguras de expresarlas.',
-      'Tomate el tiempo necesario para cuidar tu bienestar.',
-      'Evitá sobrecargas si es posible.',
-      'Buscá apoyo si sentís que lo necesitás.',
-      'Revisá si hay algo que puedas cambiar hoy.',
-      'Permitite estar mal sin sentir culpa.'
+      'Tomate un momento para identificar qué emociones están generando tensión. La conciencia es clave para entender lo que realmente te afecta.',
+      'Cuestioná si hay pensamientos o creencias que intensifican ese malestar. A veces, nuestro diálogo interno puede amplificar emociones negativas.',
+      'Considerá qué cambios o acciones podrían aliviar esta incomodidad emocional. Revisar y ajustar lo que está a tu alcance puede ayudarte a recuperar el equilibrio.',
+
     ],
     acciones: [
-      'Pedir ayuda o hablar con alguien de confianza',
-      'Anotar lo que te está pesando',
-      'Tomar un descanso profundo',
-      'Llorar si lo necesitás',
-      'Respirar con una mano en el pecho',
-      'Aislarte de lo que te sobrecarga',
-      'Buscar una actividad que te calme',
-      'Limitar estímulos digitales',
-      'Estar en un espacio seguro',
-      'Pedir compañía tranquila'
+      'Identificar qué pensamiento o situación activó el malestar → Comprender el origen de la emoción te permite abordarla en lugar de evitarla.',
+      'Nombrar la emoción específica que sentís (ej. frustración, tristeza, enojo) → Ponerle nombre reduce su intensidad y mejora tu capacidad para gestionarla.',
+      'Evaluar si tus necesidades emocionales están siendo satisfechas → El malestar suele ser una señal de que algo importante para vos no está siendo atendido.',
+      'Expresarte de forma creativa (escritura, dibujo, música) → Canalizar lo que sentís a través del arte puede transformar la emoción en algo más manejable.',
+      'Agendar un momento para cuidar de vos mismo/a (descanso, paseo, charla) → Mostrarte cuidado es una forma concreta de regular tu estado emocional.',
     ]
   },
   {
@@ -301,28 +192,19 @@ export const rangosIEG: RangoIEG[] = [
     max: -5.01,
     interpretacion: 'Malestar notable, posible afectación emocional',
     consejos: [
-      'Estás en un punto de malestar importante. Necesitás contención emocional.',
-      'Buscá con quién hablar o descargarte con seguridad.',
-      'No tenés que atravesar esto solo/a.',
-      'Validá lo que estás sintiendo, sin juzgarte.',
-      'Descansá, incluso emocionalmente.',
-      'Organizá tu día con el mínimo de exigencia.',
-      'Priorizá actividades que te den calma.',
-      'Si podés, postergá decisiones importantes.',
-      'Podés registrar cómo evoluciona este estado.',
-      'Poné límites a lo que te haga mal ahora mismo.'
+      'Reconocé y aceptá que el malestar es válido y merece atención.Ignorar las emociones puede profundizar el impacto; validarlas es el primer paso para sanarlas.',
+      'Analizá qué situaciones o pensamientos están intensificando este malestar. Entender los detonantes te permitirá comenzar a manejar mejor tus emociones.',
+      'Reflexioná sobre qué apoyos o recursos podés buscar para atravesar este momento. Pedir ayuda o buscar herramientas adecuadas no es signo de debilidad, sino de autocuidado.',
+
+
     ],
     acciones: [
-      'Contactar a alguien de confianza',
-      'Escribir sin censura',
-      'Dormir una siesta',
-      'Desconectarte del entorno',
-      'Tomar contacto con naturaleza',
-      'Llorar o respirar profundamente',
-      'Consultar un profesional',
-      'Dibujar lo que sentís',
-      'Evitar pantallas por un rato',
-      'Pedir compañía o silencio'
+      'Escribir lo que estás sintiendo, sin juzgarte → Poner en palabras tus emociones ayuda a liberar tensión y a clarificar tu estado interno.',
+      'Evitar tomar decisiones importantes en este momento → Cuando hay malestar emocional, la percepción puede distorsionarse. Esperar te protege de arrepentimientos.',
+      'Realizar una pausa consciente (respiración profunda o meditación breve) → Frenar el ritmo permite que el sistema nervioso se regule y te devuelva algo de claridad.',
+      'Contactar a alguien que pueda escucharte sin apurar ni minimizar lo que sentís → Sentirse escuchado valida tu experiencia y puede aliviar la carga emocional.',
+      'Observar si este malestar es parte de un patrón que se repite → Reconocer ciclos emocionales es el primer paso para intervenirlos con más conciencia.',
+
     ]
   },
   {
@@ -330,23 +212,17 @@ export const rangosIEG: RangoIEG[] = [
     max: -7.01,
     interpretacion: 'Malestar importante, atención recomendada',
     consejos: [
-      'Tu estado emocional requiere atención. Considerá hablar con alguien.',
-      'No estás solo/a. Hay formas de transitar esto.',
-      'Buscá espacios de calma o contención.',
-      'Prioritizá tu cuidado emocional.',
-      'Registrá pensamientos o emociones que te sobrepasan.',
-      'Intentá hacer foco en lo que sí podés controlar.',
-      'Limitá las exigencias por hoy.',
-      'Permitite llorar, descargar o pausar.',
-      'Revisá si este estado se repite frecuentemente.',
-      'Dale prioridad a tu salud mental.'
+      'Reconocé que este estado emocional requiere cuidado activo. No minimizar lo que sentís es un acto de responsabilidad hacia vos mismo.',
+      'Preguntate con honestidad: ¿Qué parte de mi vida está pidiendo ser escuchada? A veces el malestar es una señal clara de necesidades no atendidas.',
+      'Considerá la posibilidad de apoyarte en alguien de confianza o un profesional. Pedir ayuda es una forma valiente de comenzar a sanar.',
+
     ],
     acciones: [
-      'Contactar un profesional de salud mental',
-      'Pedir ayuda concreta',
-      'Llamar a un amigo',
-      'Respirar conscientemente',
-      'Desconectarte de lo urgente',
+      'Registrar lo que estás sintiendo y cuándo comenzó → Identificar patrones o detonantes te ayuda a entender mejor el origen del malestar y cómo manejarlo.',
+      'Limitar la exposición a estímulos que te alteren (noticias, redes, discusiones) → Proteger tu mente de sobrecargas emocionales favorece la autorregulación.',
+      'Elegir una actividad tranquila que te ayude a calmarte (leer, escuchar música suave, respirar profundo) → Conectar con algo que te brinde serenidad puede estabilizar tu estado emocional.',
+      'Contarle a una persona de confianza lo que estás atravesando → Compartir lo que sentís permite descargar la tensión interna y recibir contención.',
+      'Agendar un espacio de ayuda profesional o comunitaria con Sentia → Reconocer que necesitás apoyo es un paso clave para recuperar tu bienestar.',
       'Descargar escribiendo',
       'Dormir o descansar',
       'Evitar decisiones impulsivas',
@@ -359,28 +235,17 @@ export const rangosIEG: RangoIEG[] = [
     max: -9.01,
     interpretacion: 'Malestar grave, posible desregulación emocional',
     consejos: [
-      'Este nivel de malestar puede requerir apoyo profesional.',
-      'No estás solo/a. Pedí ayuda.',
-      'Validá este momento como difícil sin culpa.',
-      'Es importante que te priorices hoy.',
-      'Buscá contención con urgencia si sentís que no podés solo/a.',
-      'Limitá lo que te genera sobrecarga.',
-      'Tomate un respiro emocional.',
-      'Identificá señales de agotamiento o desesperanza.',
-      'No minimices cómo te sentís.',
-      'Anotá o contale a alguien cómo estás.'
+      'Reconocé que estás atravesando un momento crítico y que eso merece atención inmediata. No estás solo; validar tu dolor es el primer paso hacia el alivio.',
+      'Observá si tus emociones están afectando tu forma de pensar, actuar o vincularte. Identificar estos patrones puede ayudarte a recuperar el equilibrio.',
+      'Dale prioridad a tu bienestar: hablá con alguien, pedí ayuda o frená lo que te sobrecarga. Buscar contención es una decisión sabia, no una debilidad.',
+
     ],
     acciones: [
-      'Hablar con un terapeuta',
-      'Avisar a alguien de confianza',
-      'Hacer una lista de cosas mínimas por hacer',
-      'Pedir ayuda para tareas básicas',
-      'Aislarte de lo tóxico',
-      'Llorar o respirar hondo con conciencia',
-      'Apagar el celular si abruma',
-      'Hacer una siesta larga',
-      'Buscar atención profesional',
-      'Anotar cómo evoluciona tu estado'
+      'Escribir lo que estás sintiendo → Poner en palabras tus emociones ayuda a ordenar tus pensamientos y a identificar qué te está afectando realmente.',
+      'Contactar a alguien de confianza → Hablar con una persona cercana puede aliviar la carga emocional y darte una perspectiva más clara y contenida.',
+      'Evitar el aislamiento → Permanecer en contacto con otros previene que el malestar se intensifique y promueve una sensación de pertenencia.',
+      'Realizar una actividad que te conecte con el cuerpo (caminar, respirar profundo, estirarte) → Te ayuda a volver al presente y regular emociones intensas bajando la activación física.',
+      'Planificar una consulta con un profesional de salud mental con Sentia → Buscar apoyo terapéutico te brinda herramientas concretas para recuperar estabilidad emocional de forma segura.',
     ]
   },
   {
@@ -388,28 +253,17 @@ export const rangosIEG: RangoIEG[] = [
     max: -11.01,
     interpretacion: 'Riesgo emocional severo, intervención urgente',
     consejos: [
-      'Tu salud emocional está en riesgo. Buscá ayuda de inmediato.',
-      'Pedí contención a un profesional o alguien de confianza.',
-      'No estás solo/a, hay recursos para ayudarte.',
-      'Este es un momento para priorizar tu vida y bienestar.',
-      'Evitá el aislamiento. Hablá con alguien ahora.',
-      'El primer paso puede ser solo contar lo que sentís.',
-      'No tomes decisiones importantes en este estado.',
-      'Cuidarte hoy puede cambiar todo.',
-      'Permitite recibir ayuda sin sentir culpa.',
-      'Tu vida importa. Pedí ayuda.'
+      'Este es un llamado urgente a cuidarte: lo que sentís importa y necesita atención inmediata. Reconocer la gravedad de tu estado es un acto de valentía y amor propio.',
+      'Buscá ayuda profesional o apoyo cercano sin demora. No estás solo, y merecés que alguien te escuche y te acompañe con respeto.',
+      'Enfocate en lo esencial: detener el daño, respirar y permitirte ser contenido. A veces el primer paso es simplemente sostenerte hasta que vuelva la calma.',
+
     ],
     acciones: [
-      'Llamar a una línea de ayuda (como el 135)',
-      'Hablar con un profesional de salud mental',
-      'Pedir compañía inmediata',
-      'Evitar quedarte solo/a',
-      'Desconectar de redes sociales',
-      'No tomar decisiones drásticas',
-      'Buscar un espacio seguro',
-      'Pedir contención en tu entorno',
-      'Hacer una consulta médica urgente',
-      'Guardar objetos con los que podés lastimarte'
+      'Llamar a una línea de ayuda (Centros de Apoyo) → Te conecta con personas capacitadas para escucharte y asistirte en momentos críticos, ofreciéndote contención inmediata y profesional.',
+      'Hablar con un profesional de salud mental → Un terapeuta o psiquiatra puede ayudarte a entender lo que estás sintiendo, contener el malestar y construir un plan para salir del estado de crisis.',
+      'Pedir compañía inmediata → Estar con alguien de confianza puede brindarte calma, seguridad y evitar que tomes decisiones impulsivas en soledad.',
+      'Evitar quedarte solo/a → La compañía física reduce la sensación de vacío y permite que tu mente tenga un ancla emocional concreta en el presente.',
+      'Guardar objetos con los que podés lastimarte → Eliminar accesos a medios de autolesión protege tu integridad física mientras se estabiliza tu estado emocional.',
     ]
   }
 ];
