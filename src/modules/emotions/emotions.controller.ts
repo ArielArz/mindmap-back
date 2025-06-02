@@ -19,21 +19,21 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthenticationGuard } from 'src/guard/auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from '../users/entities/enum/user-role.enum';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { SearchEmotionsDto } from './dto/search-emotions.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('emotions')
 @ApiBearerAuth()
-@UseGuards(AuthenticationGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller('emotions')
 export class EmotionsController {
-  constructor(private readonly emotionsService: EmotionsService) {}
+  constructor(private readonly emotionsService: EmotionsService) { }
 
   @Post()
-  @UseGuards(AuthenticationGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Crear una emocion' })
   @ApiResponse({ status: 201, description: 'Emocion creada' })
@@ -56,9 +56,7 @@ export class EmotionsController {
   }
 
   @Get('/puntaje')
-  @ApiOperation({
-    summary: 'Obtener puntaje emocional del usuario autenticado',
-  })
+  @ApiOperation({ summary: 'Obtener puntaje emocional del usuario autenticado', })
   @ApiResponse({ status: 200, description: 'Puntaje emocional obtenido' })
   async puntajeAnalisis(@Req() req) {
     const userId = req.user.id;
@@ -67,18 +65,13 @@ export class EmotionsController {
 
   @Get('/puntaje/:id')
   @ApiOperation({ summary: 'Obtener puntaje emocional por ID de usuario' })
-  @ApiResponse({
-    status: 200,
-    description: 'Puntaje emocional del usuario obtenido',
-  })
+  @ApiResponse({ status: 200, description: 'Puntaje emocional del usuario obtenido', })
   async puntajePorId(@Param('id') id: string) {
     return this.emotionsService.puntajeEmocionalAnalisis(id);
   }
 
   @Get('/analysis/daily')
-  @ApiOperation({
-    summary: 'Análisis emocional diario del usuario autenticado',
-  })
+  @ApiOperation({ summary: 'Análisis emocional diario del usuario autenticado', })
   async analysisDay(@Req() req) {
     const userId = req.user.id;
     return this.emotionsService.puntajeEmocionalAnalisis(userId, 1);
@@ -94,31 +87,29 @@ export class EmotionsController {
   }
 
   @Get('/analysis/monthly')
-  @ApiOperation({
-    summary: 'Análisis emocional mensual del usuario autenticado',
-  })
+  @ApiOperation({ summary: 'Análisis emocional mensual del usuario autenticado', })
   async analysisMonth0(@Req() req) {
     const userId = req.user.id;
     return this.emotionsService.puntajeEmocionalAnalisis(userId, 30);
   }
 
-  @Get('/analysis/daily/:oid')
-  @ApiOperation({ summary: 'Análisis emocional diario de un usuario por ID' })
-  async analysisDay0(@Param('oid') oid: string) {
-    return this.emotionsService.puntajeEmocionalAnalisis(oid, 1);
-  }
+  // @Get('/analysis/daily/:oid')
+  // @ApiOperation({ summary: 'Análisis emocional diario de un usuario por ID' })
+  // async analysisDay0(@Param('oid') oid: string) {
+  //   return this.emotionsService.puntajeEmocionalAnalisis(oid, 1);
+  // }
 
-  @Get('/analysis/weekly/:oid')
-  @ApiOperation({ summary: 'Análisis emocional semanal de un usuario por ID' })
-  async analysisWeek(@Param('oid') oid: string) {
-    return this.emotionsService.puntajeEmocionalAnalisis(oid, 7);
-  }
+  // @Get('/analysis/weekly/:oid')
+  // @ApiOperation({ summary: 'Análisis emocional semanal de un usuario por ID' })
+  // async analysisWeek(@Param('oid') oid: string) {
+  //   return this.emotionsService.puntajeEmocionalAnalisis(oid, 7);
+  // }
 
-  @Get('/analysis/monthly/:oid')
-  @ApiOperation({ summary: 'Análisis emocional mensual de un usuario por ID' })
-  async analysisMonth(@Param('oid') oid: string) {
-    return this.emotionsService.puntajeEmocionalAnalisis(oid, 30);
-  }
+  // @Get('/analysis/monthly/:oid')
+  // @ApiOperation({ summary: 'Análisis emocional mensual de un usuario por ID' })
+  // async analysisMonth(@Param('oid') oid: string) {
+  //   return this.emotionsService.puntajeEmocionalAnalisis(oid, 30);
+  // }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una emoción por ID' })
@@ -126,7 +117,7 @@ export class EmotionsController {
     return this.emotionsService.findOne(id);
   }
   @Patch(':id')
-  @UseGuards(AuthenticationGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Actualizar un estado emocional por ID' })
   update(@Param('id') id: string, @Body() updateEmotionDto: UpdateEmotionDto) {
@@ -134,7 +125,7 @@ export class EmotionsController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthenticationGuard, RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Eliminar un estado emocional por ID' })
   remove(@Param('id') id: string) {

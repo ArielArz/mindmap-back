@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserStateDto } from './dto/create-user-state.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserState } from './entities/user-state.entity';
 import { User } from '../users/entities/user.entity';
 import { Emotion } from '../emotions/entities/emotion.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { UpdateUserStateDto } from './dto/update-user-state.dto';
 
 @Injectable()
@@ -28,6 +28,20 @@ export class UserStateService {
 
     const emotion = await this.emotionRepository.findOne({ where: { id: emotionId } });
     if (!emotion) throw new NotFoundException(`Emoción con ID ${emotionId} no encontrada`);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const existingToday = await this.userStateRepository.findOne({
+      where: {
+        user: { id: userId },
+        date: MoreThan(today),
+      },
+    });
+
+    if (existingToday) {
+      throw new BadRequestException('Ya existe un estado para este usuario en el día de hoy');
+    }
 
     const newUserState = this.userStateRepository.create({
       user,
