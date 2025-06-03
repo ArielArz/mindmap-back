@@ -40,25 +40,56 @@ import { AuthGuard } from '@nestjs/passport';
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
   @ApiResponse({ status: 201, description: 'Usuario creado correctamente.' })
-  create(@Body() createUserDto: UserDto) {
-    return this.usersService.createUser(createUserDto);
+  async create(@Body() createUserDto: UserDto) {
+    const user = await this.usersService.createUser(createUserDto);
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+      profileImage: user.profileImage,
+      address: user.address,
+    };
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los usuarios con paginación, filtros y búsqueda', })
-  @ApiResponse({ status: 200, description: 'Lista de usuarios obtenida con éxito.', })
+  @ApiOperation({
+    summary: 'Obtener todos los usuarios con paginación, filtros y búsqueda',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de usuarios obtenida con éxito.',
+  })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
   @ApiQuery({ name: 'sortBy', required: false, type: String, example: 'name' })
-  @ApiQuery({ name: 'sortDirection', required: false, type: String, enum: ['ASC', 'DESC'], example: 'ASC', })
-  @ApiQuery({ name: 'role', required: false, enum: UserRole, example: 'premium', })
+  @ApiQuery({
+    name: 'sortDirection',
+    required: false,
+    type: String,
+    enum: ['ASC', 'DESC'],
+    example: 'ASC',
+  })
+  @ApiQuery({
+    name: 'role',
+    required: false,
+    enum: UserRole,
+    example: 'premium',
+  })
   @ApiQuery({ name: 'search', required: false, type: String, example: 'juan' })
-  @ApiQuery({ name: 'status', required: false, enum: UserStatus, example: 'Activo', })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: UserStatus,
+    example: 'Activo',
+  })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   findAll(@Query() paginationDto: PaginationAndFilterDto) {
@@ -74,7 +105,9 @@ export class UsersController {
   }
 
   @Get('count/last-7-days')
-  @ApiOperation({ summary: 'Cantidad de usuarios registrados en los ultimos 7 dias', })
+  @ApiOperation({
+    summary: 'Cantidad de usuarios registrados en los ultimos 7 dias',
+  })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   countUserLast7Days() {
@@ -94,8 +127,13 @@ export class UsersController {
   }
 
   @Patch('status')
-  @ApiOperation({ summary: 'Actualizar el estado de un usuario (ACTIVE, INACTIVE, BANNED)', })
-  @ApiResponse({ status: 200, description: 'Estado actualizado correctamente.', })
+  @ApiOperation({
+    summary: 'Actualizar el estado de un usuario (ACTIVE, INACTIVE, BANNED)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado actualizado correctamente.',
+  })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
@@ -117,19 +155,33 @@ export class UsersController {
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un usuario existente' })
   @UseGuards(AuthGuard('jwt'))
-  @ApiResponse({ status: 200, description: 'Usuario actualizado correctamente.', })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario actualizado correctamente.',
+  })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
   @Patch('change/admin')
-  @ApiOperation({ summary: 'Actualizar datos de usuario (rol, estado, email, etc)', })
-  @ApiResponse({ status: 200, description: 'Usuario actualizado correctamente.', })
+  @ApiOperation({
+    summary: 'Actualizar datos de usuario (rol, estado, email, etc)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario actualizado correctamente.',
+  })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
-  @ApiResponse({ status: 400, description: 'No se realizaron cambios en el usuario.', })
+  @ApiResponse({
+    status: 400,
+    description: 'No se realizaron cambios en el usuario.',
+  })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
-  @ApiBody({ description: 'Datos a actualizar del usuario', type: ChangeAdminDto, })
+  @ApiBody({
+    description: 'Datos a actualizar del usuario',
+    type: ChangeAdminDto,
+  })
   async changeAdmin(@Body() changeAdminDto: ChangeAdminDto) {
     return this.usersService.changeAdmin(changeAdminDto);
   }
@@ -138,7 +190,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Desactivar (no eliminar) un usuario existente' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
-  @ApiResponse({ status: 200, description: 'Usuario desactivado correctamente.', })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario desactivado correctamente.',
+  })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
   async remove(@Param('id') id: string) {
     return this.usersService.desactivate(id);
@@ -146,7 +201,10 @@ export class UsersController {
 
   @Get('seed/users')
   @ApiOperation({ summary: 'Cargar usuarios y estados' })
-  @ApiResponse({ status: 201, description: 'Usuarios y estados creados correctamente.', })
+  @ApiResponse({
+    status: 201,
+    description: 'Usuarios y estados creados correctamente.',
+  })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   addUsuariosYEstados() {
