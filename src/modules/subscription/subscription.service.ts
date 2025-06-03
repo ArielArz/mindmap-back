@@ -107,15 +107,13 @@ export class SubscriptionService {
       where: { userId: user.id, isTrial: true },
     });
 
-    let totalDays = days;
     let isTrial = false;
 
     if (!trialUsed) {
-      totalDays += 7;
       isTrial = true;
     }
 
-    endDate.setDate(startDate.getDate() + totalDays);
+    endDate.setDate(startDate.getDate() + days);
 
     const newSubscription = this.subscriptionRepo.create({
       userId: user.id,
