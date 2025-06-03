@@ -22,55 +22,48 @@ export class ChatbotService {
 
     const contextKey = `chatbot:context:${userId}`;
     const contextList = await this.redisService.lRange(contextKey, 0, -1);
-    const fullMessage = [...contextList, `Usuario: ${message}`].join('\n');
+    const parsedList = contextList.map(item => JSON.parse(item));
 
-    const maxContextLength = 1000;
-    const truncatedContext = fullMessage.slice(-maxContextLength);
+    const historyAsText = parsedList.map(entry => entry.text);
+    historyAsText.push(message);
+
+    const fullMessage = historyAsText.join('\n');
+
 
     const systemPrompt = `
-Eres un asistente emocional para una aplicación web de bienestar que lleva un registro de emociones 
-en una bitacora y ofrece recursos multimedia acordes al analisis diario, semanal y mensual.
-
-Sigue estas reglas:
-1. Responde entre 2 y 3 oraciones breves
-2. Usa emojis relevantes
-3. Detecta si el mensaje expresa bienestar o malestar
-4. Para bienestar: celebra logros y refuerza lo positivo
-5. Para malestar: valida emociones y ofrece apoyo práctico
-6. Mantén un tono cálido, sin muchas preguntas, como mensajes de WhatsApp con un amigo
-7. Evita consejos médicos
-8. Sugerir actividades simples y cotidianas
-9. Fomenta la expresión y el autocuidado
-10. No uses lenguaje técnico o explicaciones largas
-
-Ejemplos de respuestas:
-- "¡Qué bueno que te sientes así! 😊 Mucha gente usa actividades que les gusten hacer para mantener esta energía, podríamos probar pensar en alguna"
-- "Lamento que estés pasando por esto 🫂. Quizas compartiendome lo que sentis podemos encontrar juntos una forma de solucionarlo"
-
-Ahora responde a esto: "${message}"
+Eres un asistente emocional que responde de forma breve pero completa. 
+Usa emojis relevantes. Detecta emociones, da consejos si te lo piden.
+Evita saludar en cada mensaje. Sé claro y cálido.
+Segui el flujo de la conversacion. Fomenta la expresión y el autocuidado.
+"${fullMessage}"
 `;
 
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     const result = await model.generateContent(systemPrompt);
     let response = result.response.text();
 
-
+    function removeInitialGreeting(text: string): string {
+      return text.replace(/^(Hola[!¡]?|Hola! 😊|¡Hola! 😊)[\s,]*/i, '').trim();
+    }
     response = this.postProcessResponse(response);
+    response = removeInitialGreeting(response);
+
 
     if (isUnsafeResponse(response)) {
       return "No puedo responder a eso por seguridad.";
     }
+    await this.redisService.rPush(contextKey, JSON.stringify({ role: 'user', text: message }));
+    await this.redisService.rPush(contextKey, JSON.stringify({ role: 'assistant', text: response }));
 
-    await this.redisService.rPush(contextKey, `Usuario: ${message}`);
-    await this.redisService.rPush(contextKey, `Asistente: ${response}`);
-    await this.redisService.lTrim(contextKey, -10, -1);
-    await this.redisService.expire(contextKey, 900);
+
+    await this.redisService.lTrim(contextKey, -60, -1);
+    await this.redisService.expire(contextKey, 1800);
 
     return response;
   }
 
   private postProcessResponse(response: string): string {
-    const maxLength = 220;
+    const maxLength = 400;
     if (response.length <= maxLength) return response;
 
     const lastSentenceEnd = response.lastIndexOf('.', maxLength);
