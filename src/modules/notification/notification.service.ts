@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { MailerService } from '../mailer/mailer.service';
 import { UsersService } from '../users/users.service';
 
@@ -10,11 +9,10 @@ export class NotificationService {
     private readonly userService: UsersService,
   ) {}
 
-  @Cron(CronExpression.EVERY_WEEKDAY)
-  async sendEmailsUsers() {
-    const premiumUsers = await this.userService.getPremiumUsers();
+  async weeklyNotification() {
+    const notificationsUsers = await this.userService.getNotificationUsers();
 
-    for (const user of premiumUsers) {
+    for (const user of notificationsUsers) {
       try {
         await this.mailerService.sendWeeklyEmail(user.email, user.name);
         console.log(`Correo enviado a ${user.email}`);

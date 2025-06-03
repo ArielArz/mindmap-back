@@ -37,6 +37,9 @@ export class User {
   @Column({ type: 'enum', enum: UserStatus, default: UserStatus.ACTIVE })
   status: UserStatus;
 
+  @Column({ type: 'boolean', nullable: true, default: false })
+  notifications: boolean;
+
   @OneToMany(() => UserState, (userState) => userState.user)
   states: UserState[];
 

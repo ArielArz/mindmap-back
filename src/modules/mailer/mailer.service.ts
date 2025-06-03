@@ -61,16 +61,17 @@ export class MailerService {
   }
 
   async sendWeeklyEmail(to: string, name: string) {
+    const link = `${process.env.FRONTEND_URL}/recomendaciones`;
     const html = `
       <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
         <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
           <h2 style="color: #4CAF50; text-align: center;">Hola ${name},</h2>
-          <p style="font-size: 16px; color: #555555; text-align: center;">Gracias por ser parte de Sentia Premium.</p>
+          <p style="font-size: 16px; color: #555555; text-align: center;">Gracias por ser parte de Sentia.</p>
           <p style="font-size: 16px; color: #555555; text-align: center;">
             Aquí tienes tu resumen semanal con lo más visto y recomendado por nuestra comunidad.
           </p>
           <div style="text-align: center; margin-top: 20px;">
-            <a href="" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            <a href="${link}" style="background-color: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
               Ver mi resumen
             </a>
           </div>
@@ -273,10 +274,13 @@ export class MailerService {
     `;
 
     await this.transporter.sendMail(
-      this.commonMailOptions(to, 'Tu contraseña para iniciar sesión en Sentia', html),
+      this.commonMailOptions(
+        to,
+        'Tu contraseña para iniciar sesión en Sentia',
+        html,
+      ),
     );
   }
-
 
   async sendWelcomeLoginGoogle(to: string, name: string) {
     const token = this.jwtService.sign(

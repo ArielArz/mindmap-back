@@ -17,6 +17,7 @@ import { ContactModule } from './modules/contact/contact.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { StripeModule } from './modules/stripe/stripe.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -51,10 +52,10 @@ import { ChatbotModule } from './modules/chatbot/chatbot.module';
     ContactModule,
     SubscriptionModule,
     StripeModule,
-    ChatbotModule
-
+    ChatbotModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

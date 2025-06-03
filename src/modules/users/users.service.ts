@@ -421,4 +421,22 @@ export class UsersService {
 
     return { last7Days: count };
   }
+
+  async getNotificationUsers(): Promise<User[]> {
+    try {
+      const users = await this.userRepository.find({
+        where: { notifications: true },
+      });
+      if (!users || users.length === 0) {
+        throw new NotFoundException(
+          'No hay usuarios que quieran notidicaciones',
+        );
+      }
+      return users;
+    } catch {
+      throw new InternalServerErrorException(
+        'Error al obtener los usuarios que quieran notificaciones',
+      );
+    }
+  }
 }
