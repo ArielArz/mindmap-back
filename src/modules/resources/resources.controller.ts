@@ -15,18 +15,21 @@ import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
 import { FileType } from './entities/enum/file-type.enum';
-import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from '../users/entities/enum/user-role.enum';
 
 @ApiBearerAuth()
+@ApiTags('resources')
 @Controller('resources')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) { }
 
   @Post()
+  @ApiOperation({ summary: 'Subir un nuevo recurso con archivo y thumbnail' })
+  @ApiResponse({ status: 201, description: 'Recurso creado correctamente' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(
@@ -44,12 +47,15 @@ export class ResourcesController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Listar todos los recursos.' })
+  @ApiResponse({ status: 200, description: 'Lista de recursos.' })
   @UseGuards(AuthGuard('jwt'))
   findAll() {
     return this.resourcesService.findAll();
   }
 
   @Get('/count/by-type/total')
+  @ApiOperation({ summary: 'Contar todos los recursos agrupados por tipo de archivo' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   countTotalByType() {
@@ -57,6 +63,7 @@ export class ResourcesController {
   }
 
   @Get('/count/by-type/last-7-days')
+  @ApiOperation({ summary: 'Contar recursos subidos en los ultimos 7 dias por tipo de archivo.' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   countLast7DaysByType() {
@@ -64,6 +71,7 @@ export class ResourcesController {
   }
 
   @Get('latest')
+  @ApiOperation({ summary: 'Obtener los ultimos 5 archivos subidos.' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Obtener los ultimos 5 archivos subidos' })
@@ -72,6 +80,7 @@ export class ResourcesController {
   }
 
   @Patch(':id/show-in-cardlist')
+  @ApiOperation({ summary: 'Actualizar visibilidad en la lista de tarjetas' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   updateCardListVisibility(
@@ -82,6 +91,7 @@ export class ResourcesController {
   }
 
   @Patch(':id/show-in-section/:section')
+  @ApiOperation({ summary: 'Actualizar visibilidad en una seccion especifica.' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   updateCardListSection(
@@ -93,6 +103,7 @@ export class ResourcesController {
   }
 
   @Get('/featured')
+  @ApiOperation({ summary: 'Obtener recursos destacados para la CardList' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   getFeaturedForCardList() {
@@ -100,6 +111,7 @@ export class ResourcesController {
   }
 
   @Get('/featured/section')
+  @ApiOperation({ summary: 'Obtener recursos destacados por seccion' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   getFeaturedForSection() {
@@ -107,6 +119,7 @@ export class ResourcesController {
   }
 
   @Get('/featured/section/:section')
+  @ApiOperation({ summary: 'Obtener recursos destacados de una seccion especifica' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   getFeaturedFilterSection(@Param('section') section: FileType) {
@@ -114,12 +127,14 @@ export class ResourcesController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener un recurso por su ID' })
   @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.resourcesService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar un recurso' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   update(@Param('id') id: string, @Body() updateDto: UpdateResourceDto) {
@@ -127,6 +142,7 @@ export class ResourcesController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Elimina un recurso' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseGuards(AuthGuard('jwt'))
