@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserState } from './entities/user-state.entity';
 import { User } from '../users/entities/user.entity';
 import { Emotion } from '../emotions/entities/emotion.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { Between, MoreThan, Repository } from 'typeorm';
 import { UpdateUserStateDto } from './dto/update-user-state.dto';
 
 @Injectable()
@@ -32,10 +32,13 @@ export class UserStateService {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     const existingToday = await this.userStateRepository.findOne({
       where: {
         user: { id: userId },
-        date: MoreThan(today),
+        date: Between(today, tomorrow),
       },
     });
 

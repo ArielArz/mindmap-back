@@ -1,9 +1,15 @@
-import { Controller, Post, Body, Req, Headers, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Req, Headers, HttpCode, UseGuards } from '@nestjs/common';
 import { StripeService } from './stripe.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
+
+
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 @Controller('stripe')
 export class StripeController {
-  constructor(private readonly stripeService: StripeService) {}
+  constructor(private readonly stripeService: StripeService) { }
 
   @Post('create-session')
   async createSession(@Body() body: { userId: string }) {
