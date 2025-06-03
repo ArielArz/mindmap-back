@@ -223,7 +223,7 @@ export class MailerService {
   }
 
   async sendPasswordResetEmail(to: string, token: string) {
-    const resetLink = `${process.env.FRONTEND_URL}/restablecer-contrasena?token=${token}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
     const html = `
       <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
         <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);">
