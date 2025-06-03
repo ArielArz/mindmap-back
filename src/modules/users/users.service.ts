@@ -40,7 +40,7 @@ export class UsersService {
     @InjectRepository(Emotion)
     private readonly emotionRepository: Repository<Emotion>,
     private readonly fileUpload: FilesUploadRepository,
-  ) {}
+  ) { }
 
   async findAll(dto: PaginationAndFilterDto) {
     try {

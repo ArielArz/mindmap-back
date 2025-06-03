@@ -4,6 +4,7 @@ import { createClient, RedisClientType } from 'redis';
 
 @Injectable()
 export class RedisService implements OnModuleInit {
+
   private client: RedisClientType;
 
   async onModuleInit() {
@@ -39,7 +40,9 @@ export class RedisService implements OnModuleInit {
     await this.client.expire(key, seconds);
   }
 
-
+  async del(key: string): Promise<number> {
+    return this.client.del(key);
+  }
 
 
   async get(key: string): Promise<string | null> {
