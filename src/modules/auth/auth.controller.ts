@@ -33,9 +33,6 @@ export class AuthController {
     description: 'Usuario registrado correctamente.',
   })
   async signup(@Body() data: SignUpDto) {
-    const user = await this.userRepository.findOneBy({ email: data.email });
-
-    if (user) throw new BadRequestException('El correo ya está registrado');
     return await this.authService.signUp(data);
   }
 

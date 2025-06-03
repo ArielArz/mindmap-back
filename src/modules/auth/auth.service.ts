@@ -20,7 +20,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
-  ) { }
+  ) {}
 
   async signUp(signUpDto: SignUpDto) {
     const { email, password } = signUpDto;
@@ -60,8 +60,10 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('Credenciales invalidas - E');
 
     // validar que el usuario este activo
-    if(user.status !== UserStatus.ACTIVE){
-      throw new UnauthorizedException('Este usuario ha sido inhabilitado y no puede iniciar sesion');
+    if (user.status !== UserStatus.ACTIVE) {
+      throw new UnauthorizedException(
+        'Este usuario ha sido inhabilitado y no puede iniciar sesion',
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -95,20 +97,22 @@ export class AuthService {
     let user = await this.usersService.findOneByEmail(googleUser.email);
 
     //Validar que el usuario este activo
-    if(user && user.status !== UserStatus.ACTIVE){
-      throw new UnauthorizedException('Este usuario ha sido unhabilitado y no puede iniciar sesion');
+    if (user && user.status !== UserStatus.ACTIVE) {
+      throw new UnauthorizedException(
+        'Este usuario ha sido unhabilitado y no puede iniciar sesion',
+      );
     }
 
     // Genera contraseña aleatoria
     const randomPassword = crypto.randomBytes(10).toString('base64url'); // por ejemplo, 10 bytes → ~14 caracteres
-    
+
     if (!user) {
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
       user = await this.usersService.createUser({
         name: googleUser.name,
         email: googleUser.email,
-        password: hashedPassword, 
+        password: hashedPassword,
         confirmPassword: hashedPassword,
         address: '',
         profileImage: googleUser.profileImage || '',
@@ -117,9 +121,16 @@ export class AuthService {
 
     //Enviar correo con la contraseña generada
     try {
-      await this.mailerService.sendGeneratedPasswordEmail(user.email, user.name, randomPassword);
+      await this.mailerService.sendGeneratedPasswordEmail(
+        user.email,
+        user.name,
+        randomPassword,
+      );
     } catch (error) {
-      console.warn(`No se pudo enviar el email con la contraseña a ${user.email}:`, error.message);
+      console.warn(
+        `No se pudo enviar el email con la contraseña a ${user.email}:`,
+        error.message,
+      );
     }
 
     // Enviar correo de bienvenida
@@ -163,10 +174,12 @@ export class AuthService {
     let user = await this.usersService.findOneByEmail(googleUser.email);
 
     // validar que el usuario este activo
-    if(user && user.status !== UserStatus.ACTIVE) {
-      throw new UnauthorizedException('Este usuario ha sido inhabilitado y no puede iniciar sesion');
+    if (user && user.status !== UserStatus.ACTIVE) {
+      throw new UnauthorizedException(
+        'Este usuario ha sido inhabilitado y no puede iniciar sesion',
+      );
     }
-    
+
     if (!user) {
       user = await this.usersService.createUser({
         name: googleUser.name,
