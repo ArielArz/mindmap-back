@@ -105,7 +105,6 @@ export class ResourcesController {
   @Get('/featured')
   @ApiOperation({ summary: 'Obtener recursos destacados para la CardList' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
   getFeaturedForCardList() {
     return this.resourcesService.findWhereShowInCardList();
   }
@@ -113,7 +112,6 @@ export class ResourcesController {
   @Get('/featured/section')
   @ApiOperation({ summary: 'Obtener recursos destacados por seccion' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
   getFeaturedForSection() {
     return this.resourcesService.findWhereShowInSection();
   }
@@ -121,7 +119,6 @@ export class ResourcesController {
   @Get('/featured/section/:section')
   @ApiOperation({ summary: 'Obtener recursos destacados de una seccion especifica' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
   getFeaturedFilterSection(@Param('section') section: FileType) {
     return this.resourcesService.findWhereFilterSection(section);
   }
