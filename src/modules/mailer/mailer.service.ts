@@ -287,7 +287,7 @@ export class MailerService {
       },
     );
 
-    const link = `https://tu-frontend.com/create-password?token=${token}`;
+    const link = `${process.env.FRONTEND_URL}/create-password?token=${token}`;
 
     const html = `
     <div style="font-family: 'Arial', sans-serif; background-color: #f9f9f9; padding: 30px;">
