@@ -95,24 +95,6 @@ export class EmotionsController {
     return this.emotionsService.puntajeEmocionalAnalisis(userId, 30);
   }
 
-  // @Get('/analysis/daily/:oid')
-  // @ApiOperation({ summary: 'Análisis emocional diario de un usuario por ID' })
-  // async analysisDay0(@Param('oid') oid: string) {
-  //   return this.emotionsService.puntajeEmocionalAnalisis(oid, 1);
-  // }
-
-  // @Get('/analysis/weekly/:oid')
-  // @ApiOperation({ summary: 'Análisis emocional semanal de un usuario por ID' })
-  // async analysisWeek(@Param('oid') oid: string) {
-  //   return this.emotionsService.puntajeEmocionalAnalisis(oid, 7);
-  // }
-
-  // @Get('/analysis/monthly/:oid')
-  // @ApiOperation({ summary: 'Análisis emocional mensual de un usuario por ID' })
-  // async analysisMonth(@Param('oid') oid: string) {
-  //   return this.emotionsService.puntajeEmocionalAnalisis(oid, 30);
-  // }
-
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una emoción por ID' })
   findOne(@Param('id') id: string) {
