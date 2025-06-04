@@ -2,12 +2,13 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } f
 import { HelppointsService } from './helppoints.service';
 import { CreateHelppointDto } from './dto/create-helppoint.dto';
 import { UpdateHelppointDto } from './dto/update-helppoint.dto';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from '../users/entities/enum/user-role.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/guard/roles.guard';
 
+@ApiBearerAuth()
 @ApiTags('helppoints')
 @Controller('helppoints')
 export class HelppointsController {
@@ -23,22 +24,22 @@ export class HelppointsController {
     return this.helppointsService.create(createHelppointDto);
   }
 
-@Get()
-@ApiOperation({ summary: 'Obtener todos los puntos de ayuda o filtrar por categoria y/o cercania.' })
-@ApiQuery({ name: 'category', required: false })
-@ApiQuery({ name: 'lat', required: false })
-@ApiQuery({ name: 'lng', required: false })
-@ApiQuery({ name: 'radius', required: false, description: 'Radio en metros (default: 10000)' })
-@ApiResponse({ status: 200, description: 'Lista de puntos de ayuda.' })
-findAll(
-  @Query('category') category?: string,
-  @Query('lat') lat?: string,
-  @Query('lng') lng?: string,
-  @Query('radius') radius?: string,
-) {
-  const latNum = lat ? parseFloat(lat) : undefined;
-  const lngNum = lng ? parseFloat(lng) : undefined;
-  const radiusNum = radius ? parseInt(radius) : 10000;
+  @Get()
+  @ApiOperation({ summary: 'Obtener todos los puntos de ayuda o filtrar por categoria y/o cercania.' })
+  @ApiQuery({ name: 'category', required: false })
+  @ApiQuery({ name: 'lat', required: false })
+  @ApiQuery({ name: 'lng', required: false })
+  @ApiQuery({ name: 'radius', required: false, description: 'Radio en metros (default: 10000)' })
+  @ApiResponse({ status: 200, description: 'Lista de puntos de ayuda.' })
+  findAll(
+    @Query('category') category?: string,
+    @Query('lat') lat?: string,
+    @Query('lng') lng?: string,
+    @Query('radius') radius?: string,
+  ) {
+    const latNum = lat ? parseFloat(lat) : undefined;
+    const lngNum = lng ? parseFloat(lng) : undefined;
+    const radiusNum = radius ? parseInt(radius) : 10000;
 
     if (latNum !== undefined && lngNum !== undefined) {
       return this.helppointsService.findNearbyWithCategory(
@@ -118,7 +119,7 @@ findAll(
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un punto de ayuda por ID.' })
   @ApiParam({ name: 'id', description: 'ID del punto de ayuda a eliminar.' })
-  @ApiResponse({ status: 200, description: 'Punto de ayuda eliminado correctamente.' }) 
+  @ApiResponse({ status: 200, description: 'Punto de ayuda eliminado correctamente.' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   remove(@Param('id') id: string) {
