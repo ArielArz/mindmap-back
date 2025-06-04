@@ -25,13 +25,10 @@ async function bootstrap() {
 
   const PORT = process.env.PORT ?? 3000;
 
-  // Middleware personalizado
   app.use(loggerDI);
 
-  // Habilitar CORS
   app.enableCors();
 
-  // Validaciones globales
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

@@ -35,11 +35,6 @@ import { ChatbotModule } from './modules/chatbot/chatbot.module';
         };
       },
     }),
-    // JwtModule.register({
-    //   global: true,
-    //   secret: process.env.JWT_SECRET,
-    //   signOptions: { expiresIn: '1h' },
-    // }),
     ScheduleModule.forRoot(),
     AuthModule,
     EmotionsModule,
