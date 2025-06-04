@@ -5,16 +5,17 @@ import * as sgTransport from 'nodemailer-sendgrid-transport';
 
 @Injectable()
 export class MailerService {
-  private transporter: nodemailer.Transporter;
+  private static transporter: nodemailer.Transporter;
 
   constructor(private readonly jwtService: JwtService) {
-    const options = {
-      auth: {
-        api_key: process.env.SENDGRID_API_KEY,
-      },
-    };
-
-    this.transporter = nodemailer.createTransport(sgTransport(options));
+    if(!MailerService.transporter){
+      const options = {
+        auth: {
+          api_key: process.env.SENDGRID_API_KEY,
+        },
+      };
+      MailerService.transporter = nodemailer.createTransport(sgTransport(options));
+    }
   }
 
   private commonMailOptions(
@@ -55,7 +56,7 @@ export class MailerService {
       </div>
     `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, '¡Bienvenido a Sentia!', html),
     );
   }
@@ -79,7 +80,7 @@ export class MailerService {
       </div>
     `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, 'Tu resumen semanal', html),
     );
   }
@@ -108,7 +109,7 @@ export class MailerService {
       </div>
     `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, 'Suscripción a Sentia Premium', html),
     );
   }
@@ -136,7 +137,7 @@ export class MailerService {
       </div>
     </div>
   `;
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, 'Renovación de Sentia Premium', html),
     );
   }
@@ -163,7 +164,7 @@ export class MailerService {
     </div>
   `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, 'Tu prueba gratuita en Sentia Premium', html),
     );
   }
@@ -188,7 +189,7 @@ export class MailerService {
       </div>
     `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, 'Tu suscripción a Sentia ha expirado', html),
     );
   }
@@ -217,7 +218,7 @@ export class MailerService {
     </div>
   `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, 'Tu suscripción está por expirar', html),
     );
   }
@@ -241,7 +242,7 @@ export class MailerService {
       </div>
     `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, 'Restablecer tu contraseña', html),
     );
   }
@@ -272,7 +273,7 @@ export class MailerService {
       </div>
     `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(to, 'Tu contraseña para iniciar sesión en Sentia', html),
     );
   }
@@ -312,7 +313,7 @@ export class MailerService {
     </div>
   `;
 
-    await this.transporter.sendMail(
+    await MailerService.transporter.sendMail(
       this.commonMailOptions(
         to,
         'Bienvenido a Sentia - Crea tu contraseña',
