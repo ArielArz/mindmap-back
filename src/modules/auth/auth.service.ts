@@ -116,10 +116,17 @@ export class AuthService {
         address: '',
         profileImage: googleUser.profileImage || '',
       });
+
     }
 
     //Enviar correo con la contraseña generada
     if(isNewUser && randomPassword) {
+      try {
+      await this.mailerService.sendWelcomeLoginGoogle(user.email, user.name);
+    } catch (error) {
+      console.warn(`No se pudo enviar el email de bienvenida a ${user.email}:`, error.message,);
+    }
+
       try {
         await this.mailerService.sendGeneratedPasswordEmail(user.email, user.name, randomPassword);
       } catch(error) {
