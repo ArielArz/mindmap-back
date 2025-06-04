@@ -95,13 +95,6 @@ export class UserStateService {
     const state = await this.userStateRepository.findOne({ where: { id: String(id) } });
     if (!state) throw new NotFoundException(`Estado con ID ${id} no encontrado`);
 
-    // if (dto.emotionId) {
-    //   const emotion = await this.emotionRepository.findOne({ where: { id: dto.emotionId } });
-    //   if (!emotion) throw new NotFoundException(`Emoción con ID ${dto.emotionId} no encontrada`);
-    //   state.emotion = emotion;
-    // }
-
-    // if (dto.intensidad !== undefined) state.intensidad = dto.intensidad;
     if (dto.comentario !== undefined) state.comentario = dto.comentario;
 
     return await this.userStateRepository.save(state);
