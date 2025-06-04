@@ -1,13 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 
 export function loggerDI(req: Request, res: Response, next: NextFunction) {
-  const start = Date.now(); // Guarda el tiempo de inicio de la petición
+  const start = Date.now();
 
   res.on('finish', () => {
-    const duration = Date.now() - start; // Calcula el tiempo de respuesta
-    const statusCode = res.statusCode; // Código de respuesta HTTP
+    const duration = Date.now() - start;
+    const statusCode = res.statusCode;
 
-    // Definir colores ANSI para la terminal
     const colors = {
       reset: '\x1b[0m',
       cyan: '\x1b[36m', // 200-299

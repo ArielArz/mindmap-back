@@ -24,5 +24,4 @@ export class ContactService {
 
     return { message: 'Mensaje enviado correctamente' };
   }
-
 }
