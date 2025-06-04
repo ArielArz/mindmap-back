@@ -35,15 +35,32 @@ export class UserStateService {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const existingToday = await this.userStateRepository.findOne({
+    const todayStatesCount = await this.userStateRepository.count({
       where: {
         user: { id: userId },
         date: Between(today, tomorrow),
       },
     });
+    let maxPerDay: number;
 
-    if (existingToday) {
-      throw new BadRequestException('Ya existe un estado para este usuario en el día de hoy');
+    switch (user.role) {
+      case 'free':
+        maxPerDay = 1;
+        break;
+      case 'premium':
+        maxPerDay = 5;
+        break;
+      case 'admin':
+        maxPerDay = 5;
+        break;
+      default:
+        throw new BadRequestException(`Rol desconocido: ${user.role}`);
+    }
+
+    if (todayStatesCount >= maxPerDay) {
+      throw new BadRequestException(
+        `Has alcanzado el límite de ${maxPerDay} estados por día para tu plan (${user.role})`
+      );
     }
 
     const newUserState = this.userStateRepository.create({
