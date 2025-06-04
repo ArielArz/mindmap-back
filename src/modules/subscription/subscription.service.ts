@@ -92,11 +92,8 @@ export class SubscriptionService {
         email: user.email,
         name: user.name,
         role: user.role,
-        startDate: existingSubscription.startDate.toLocaleDateString(
-          'es-ES',
-          dateFormatterOptions,
-        ),
-        endDate: formattedEndDate,
+        startDate: existingSubscription.startDate,
+        endDate: existingSubscription.endDate
       };
     }
 
@@ -144,8 +141,8 @@ export class SubscriptionService {
       email: user.email,
       name: user.name,
       role: user.role,
-      startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
-      endDate: formattedEndDate,
+      startDate: startDate,
+      endDate: endDate,
     };
   }
 
@@ -208,8 +205,8 @@ export class SubscriptionService {
       email: user.email,
       name: user.name,
       role: user.role,
-      startDate: startDate.toLocaleDateString('es-ES', dateFormatterOptions),
-      endDate: endDate.toLocaleDateString('es-ES', dateFormatterOptions),
+      startDate: startDate,
+      endDate: endDate,
     };
 
     const formattedEndDate = endDate.toLocaleDateString(
