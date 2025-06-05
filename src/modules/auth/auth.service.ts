@@ -100,11 +100,10 @@ export class AuthService {
     }
 
     // Genera contraseña aleatoria
-    let isNewUser = false;
     let randomPassword: string | null = null;
     
     if (!user) {
-      isNewUser = true;
+
       randomPassword = crypto.randomBytes(10).toString('base64url');
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
 
@@ -117,21 +116,11 @@ export class AuthService {
         profileImage: googleUser.profileImage || '',
       });
 
-    }
-
-    //Enviar correo con la contraseña generada
-    if(isNewUser && randomPassword) {
       try {
-      await this.mailerService.sendWelcomeLoginGoogle(user.email, user.name);
-    } catch (error) {
-      console.warn(`No se pudo enviar el email de bienvenida a ${user.email}:`, error.message,);
-    }
-
-      // try {
-      //   await this.mailerService.sendGeneratedPasswordEmail(user.email, user.name, randomPassword);
-      // } catch(error) {
-      //   console.warn(`No se pudo enviar el email con la contraseña a ${user.email}:`, error.message);
-      // }
+        await this.mailerService.sendWelcomeLoginGoogle(user.email, user.name);
+      } catch(error) {
+        console.warn(`No se pudo enviar el email de bienvenida con la contraseña a ${user.email}:`, error.message);
+      }
     }
 
     const payload = { sub: user.id, email: user.email, role: user.role };
