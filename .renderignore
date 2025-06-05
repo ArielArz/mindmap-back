@@ -1,0 +1,14 @@
+test/
+src/*/.spec.ts
+.spec.ts
+coverage/
+
+.env
+.log
+
+.vscode/
+.git/
+.prettierrc
+.eslintrc*
+nest-cli.json
+tsconfig.*
