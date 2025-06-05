@@ -127,11 +127,11 @@ export class AuthService {
       console.warn(`No se pudo enviar el email de bienvenida a ${user.email}:`, error.message,);
     }
 
-      try {
-        await this.mailerService.sendGeneratedPasswordEmail(user.email, user.name, randomPassword);
-      } catch(error) {
-        console.warn(`No se pudo enviar el email con la contraseña a ${user.email}:`, error.message);
-      }
+      // try {
+      //   await this.mailerService.sendGeneratedPasswordEmail(user.email, user.name, randomPassword);
+      // } catch(error) {
+      //   console.warn(`No se pudo enviar el email con la contraseña a ${user.email}:`, error.message);
+      // }
     }
 
     const payload = { sub: user.id, email: user.email, role: user.role };
