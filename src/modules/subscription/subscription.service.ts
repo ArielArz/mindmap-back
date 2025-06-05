@@ -93,7 +93,7 @@ export class SubscriptionService {
         name: user.name,
         role: user.role,
         startDate: existingSubscription.startDate,
-        endDate: existingSubscription.endDate
+        endDate: newEndDate,
       };
     }
 
